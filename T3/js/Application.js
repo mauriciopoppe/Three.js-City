@@ -11,13 +11,8 @@
  * Coordinates
  * THREEx.FullScreen
  */
-var scene = {};
 
-var Application = {
-    /**
-     * local reference to the global scene
-     */
-    scene: scene,               // reference to the scene
+T3.Application = {
     /**
      * Clock helper (its delta method is used to update the camera)
      */
@@ -26,20 +21,15 @@ var Application = {
      * THREE.WebGL Renderer
      */
     renderer: null,
-    /**
-     * THREE.PerspectiveCamera
-     */
-    camera: null,
 
-    // extra
     /**
-     * Stats helper
+     * Stats instance
      */
     stats: null,
     /**
-     * OrbitAndPanControls
+     * dat.GUI instance
      */
-    cameraControls: null,
+    gui: null,
     /**
      * References to the coordinate helper objects
      * e.g.
@@ -62,25 +52,6 @@ var Application = {
      */
     objects: {},
 
-    mouseX: null,
-    mouseY: null,
-
-    meshGUI: {
-        visible: true,
-
-        // silver
-//        ambient: '#313131',     // ambient
-//        color: '#818181',       // diffuse
-//        specular: '#818181',    // specular
-//        shininess: 0.4 * 128    // shininess
-
-        // gold
-        ambient: '#3f3212',     // ambient
-        color: '#bf9a39',       // diffuse
-        specular: '#a08d5d',    // specular
-        shininess: 0.4 * 128    // shininess
-    },
-
     /**
      * Crates the WebGL Renderer and binds the fullscreen key 'f'
      * @chainable
@@ -93,8 +64,7 @@ var Application = {
             Detector.addGetWebGLMessage();
         }
         me.renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: true
+            antialias: true
         });
         me.renderer.setClearColorHex( 0xAAAAAA, 1 );
         me.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -122,7 +92,7 @@ var Application = {
 
         // put a camera in the scene
         me.camera = new THREE.PerspectiveCamera( 38, canvasRatio, 1, 10000 );
-        me.camera.position.set( 10, 100, 150 );
+        me.camera.position.set( -510, 240, 100 );
 
         // transparently support window resize
         THREEx.WindowResize.bind(me.renderer, me.camera);
@@ -131,10 +101,9 @@ var Application = {
         if (parameters) {
             if (parameters.cameraPan) {
                 me.cameraControls = new THREE.OrbitAndPanControls(me.camera, me.renderer.domElement);
-                me.cameraControls.target.set(0, 0, 0);
+                me.cameraControls.target.set(0, 120, 0);
             }
         }
-
         return this;
     },
 
@@ -143,42 +112,29 @@ var Application = {
      * @chainable
      */
     createScene: function () {
-        // create the scene
+        // instantiate the scene (global)
         scene = new THREE.Scene();
+        scene.fog = new THREE.Fog( 0x808080, 2000, 4000 );
+
         return this;
     },
 
-    createLights: function () {
+    /**
+     * Creates the lights used in the scene
+     * @chainable
+     */
+    createSceneLights: function () {
         // create some lights to show lambert and phong material objects
-        var ambientLight = new THREE.AmbientLight( 0x101010 );
+        var ambientLight = new THREE.AmbientLight( 0x222222 );
         scene.add(ambientLight);
 
-        var directionalLight;
-        directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-        directionalLight.position.set(200, 400, 500);
-        scene.add(directionalLight);
+        var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
+        light.position.set( 20, 40, 50 );
+        scene.add(light);
 
-        directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-        directionalLight.position.set(-500, 250, -200);
-        scene.add(directionalLight);
-
-
-//        var colorLight = 0xffaa00;
-        var colorLight = 0xffffff;
-
-        var pointLight = new THREE.PointLight( colorLight );
-        pointLight.position.set(0, 0, 0);
-        scene.add(pointLight);
-
-        // light representation (little sphere)
-        var lightMesh;
-        this.objects.lightMesh = lightMesh = new THREE.Mesh(
-            new THREE.SphereGeometry( 100, 16, 8, 1 ),
-            new THREE.MeshBasicMaterial( {color: colorLight} )
-        );
-        lightMesh.scale.set(0.05, 0.05, 0.05);
-        lightMesh.position = pointLight.position;
-        scene.add(lightMesh);
+        var light2 = new THREE.DirectionalLight( 0xffffff, 1.0 );
+        light2.position.set( -50, 25, -20 );
+        scene.add(light2);
 
         return this;
     },
@@ -197,30 +153,25 @@ var Application = {
         // THREE.PointLight - Affects objects using MeshLambertMaterial or MeshPhongMaterial.
         // THREE.DirectionalLight - creates a light pointing to the target
 
-        // load model
-        var loader = new THREE.JSONLoader(),
-            addMesh = function ( geometry, scale, x, y, z, rx, ry, rz, material ) {
-                var mesh = new THREE.Mesh( geometry, material );
-                mesh.scale.set( scale, scale, scale );
-                mesh.position.set( x, y, z );
-                mesh.rotation.set( rx, ry, rz );
-                me.mesh = mesh;
-                console.log(mesh);
-                scene.add( mesh );
-            };
+        // cube example
+        var cubeGeometry = new THREE.CubeGeometry(10, 10, 10),
+            cubeMaterial = new THREE.MeshPhongMaterial({color: '#AAA'}),
+            cube;
+        me.objects.cube = cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        scene.add(cube);
 
-        loader.load('obj/Skyline.body.js', function (geometry) {
-            // let's create just one model for now
-            addMesh( geometry, 10, 0, 0, 0, 0, 0, 0, new THREE.MeshPhongMaterial({
-                ambient: me.meshGUI.ambient,
-                color: me.meshGUI.color,
-                specular: me.meshGUI.specular,
-                shininess: me.meshGUI.shininess
-            }) );
-        });
-//        var cube = new THREE.Mesh(new THREE.CubeGeometry(10, 10, 10), new THREE.MeshNormalMaterial());
-//        scene.add(cube);
-//        console.log(cube);
+        // point light example
+//        var light;
+//        me.objects.light = light = new THREE.PointLight(0xFFFFFF);
+//        light.position.set(10, 10, 10);
+//        light.target = cube;
+//        scene.add(light);
+
+        // directional light example
+//        var directionalLight;
+//        me.objects.directionalLight = directionalLight = new THREE.DirectionalLight(0xffffff);
+//        directionalLight.position.set(10, 10, 10);
+//        scene.add(directionalLight);
 
         return this;
     },
@@ -252,13 +203,7 @@ var Application = {
                 gridY: me.coordinatesGUI.gridY,
                 gridZ: me.coordinatesGUI.gridZ,
                 ground: me.coordinatesGUI.ground,
-                axes: me.coordinatesGUI.axes,
-
-                meshVisible: me.meshGUI.visible,
-                meshColor: me.meshGUI.color,
-                meshSpecular: me.meshGUI.specular,
-                meshAmbient: me.meshGUI.ambient,
-                meshShininess: me.meshGUI.shininess
+                axes: me.coordinatesGUI.axes
             };
 
         var gui = new dat.GUI(),
@@ -280,22 +225,7 @@ var Application = {
         folder.add(effectController, 'axes').name('Show axes').onFinishChange(function (value) {
             scene[value ? 'add' : 'remove'](me.coordinates.axes);
         });
-        folder = gui.addFolder('Car');
-        folder.add(effectController, 'meshVisible').name('Show car mesh').onFinishChange(function (value) {
-            scene[value ? 'add' : 'remove'](me.mesh);
-        });
-        folder.addColor(effectController, 'meshColor').name('Car Color').onChange(function (value) {
-            me.mesh.material.color.setHex(parseInt(value.substr(1), 16));
-        });
-        folder.addColor(effectController, 'meshSpecular').name('Car specular').onChange(function (value) {
-            me.mesh.material.specular.setHex(parseInt(value.substr(1), 16));
-        });
-        folder.addColor(effectController, 'meshAmbient').name('Car ambient').onChange(function (value) {
-            me.mesh.material.ambient.setHex(parseInt(value.substr(1), 16));
-        });
-        folder.add(effectController, 'meshShininess', 0, 128).name('Car shininess').onChange(function (value) {
-            me.mesh.material.shininess = value;
-        });
+
         return this;
     },
 
@@ -338,18 +268,6 @@ var Application = {
         return this;
     },
 
-    initAdditionalListeners: function () {
-        var me = this;
-        document.addEventListener('mousemove', me.onMouseMove, false);
-        return this;
-    },
-
-    onMouseMove: function (event) {
-        var me = Application;
-        me.mouseX = event.clientX - window.innerWidth / 2;
-        me.mouseY = event.clientY - window.innerHeight / 2;
-    },
-
     /**
      * Animation loop (calls Application.render)
      */
@@ -367,7 +285,6 @@ var Application = {
         Application.stats.update();
     },
 
-    r: 0,
     /**
      * Render loop
      */
@@ -376,20 +293,10 @@ var Application = {
             delta = me.clock.getDelta();
 
         // update camera controls
-        if (me.cameraControls) {
-            me.cameraControls.update(delta);
-        } else {
-            me.camera.position.x += ( me.mouseX - me.camera.position.x ) * .05;
-            me.camera.position.y += ( - me.mouseY - me.camera.position.y ) * .05;
-        }
+        me.cameraControls && me.cameraControls.update(delta);
 
-        me.camera.lookAt( scene.position );
-
-        me.objects.lightMesh.position.x = 100 * Math.cos( me.r );
-        me.objects.lightMesh.position.z = 100 * Math.sin( me.r );
-
-        me.r += 0.01;
-
+        // move the cube
+        me.objects.cube.rotation.y += 0.01;
 
         // actually render the scene
         me.renderer.render( scene, me.camera );
@@ -397,22 +304,18 @@ var Application = {
 };
 
 /************** START THE APPLICATION **************/
-Application
+T3.Application
     .initialize()
     .createScene()
-    .createLights()
+    .createSceneLights()
     .createCameras({
         cameraPan: true
     })
     .createObjects();
 
-Application
+T3.Application
     .initStats()
-    .initCoordinates({
-        ground: true,
-        gridX: true
-    })
-    .initDatGui()
-    .initAdditionalListeners();
+    .initCoordinates()
+    .initDatGui();
 
-Application.animate();
+T3.Application.animate();
