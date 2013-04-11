@@ -10,6 +10,7 @@
  * THREE
  * Coordinates
  * THREEx.FullScreen
+ * T3.ObjectManager
  */
 
 T3.Application = {
@@ -47,12 +48,6 @@ T3.Application = {
     coordinatesGUI: null,
 
     /**
-     * Map to each object that belong to this application, each object must have
-     * a reference from here to the object itself
-     */
-    objects: {},
-
-    /**
      * Crates the WebGL Renderer and binds the fullscreen key 'f'
      * @chainable
      */
@@ -80,34 +75,6 @@ T3.Application = {
     },
 
     /**
-     * Creates the cameras used in this application
-     * @param {Object} parameters
-     * @param {boolean} parameters.cameraPan If set to true then an instance of OrbitAndPanControls is
-     * created and referenced with Application.cemeraControls
-     * @returns {*}
-     */
-    createCameras: function (parameters) {
-        var me = this,
-            canvasRatio = window.innerWidth / window.innerHeight;
-
-        // put a camera in the scene
-        me.camera = new THREE.PerspectiveCamera( 38, canvasRatio, 1, 10000 );
-        me.camera.position.set( -510, 240, 100 );
-
-        // transparently support window resize
-        THREEx.WindowResize.bind(me.renderer, me.camera);
-
-        // create a camera control
-        if (parameters) {
-            if (parameters.cameraPan) {
-                me.cameraControls = new THREE.OrbitAndPanControls(me.camera, me.renderer.domElement);
-                me.cameraControls.target.set(0, 120, 0);
-            }
-        }
-        return this;
-    },
-
-    /**
      * Creates the basic scene adding some fog and lights
      * @chainable
      */
@@ -115,7 +82,6 @@ T3.Application = {
         // instantiate the scene (global)
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog( 0x808080, 2000, 4000 );
-
         return this;
     },
 
@@ -124,54 +90,63 @@ T3.Application = {
      * @chainable
      */
     createSceneLights: function () {
-        // create some lights to show lambert and phong material objects
-        var ambientLight = new THREE.AmbientLight( 0x222222 );
-        scene.add(ambientLight);
+        var light;
 
-        var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
-        light.position.set( 20, 40, 50 );
-        scene.add(light);
+        new T3.Object3D({
+            name: 'light-ambient',
+            real: new THREE.AmbientLight( 0x222222 )
+        });
 
-        var light2 = new THREE.DirectionalLight( 0xffffff, 1.0 );
-        light2.position.set( -50, 25, -20 );
-        scene.add(light2);
+        light = new T3.Object3D({
+            name: 'light-directional-1',
+            real: new THREE.DirectionalLight( 0xffffff, 1.0 )
+        });
+        light.real.position.set( 20, 40, 50 );
+
+        light = new T3.Object3D({
+            name: 'light-directional-2',
+            real: new THREE.DirectionalLight( 0xffffff, 1.0 )
+        });
+        light.real.position.set( -50, 25, -20 );
 
         return this;
     },
+
+    /**
+     * Creates the cameras used in this application
+     * @chainable
+     */
+    createCameras: function () {
+        var me = this;
+
+        var camera = new T3.Camera({
+            name: 'camera-main',
+            cameraPan: true,
+            renderer: me.renderer,
+            position: new THREE.Vector3( 10, 100, 150 )
+        });
+        return this;
+    },
+
 
     /**
      * Creates a basic green cube
      * @chainable
      */
     createObjects: function () {
-        var me = this;
-        // BASIC MATERIALS:
-        // THREE.MeshBasicMaterial() - (needs lighting)
-        // THREE.MeshNormalMaterial() - normal material with default coloring on the faces
-
-        // LIGHTS
-        // THREE.PointLight - Affects objects using MeshLambertMaterial or MeshPhongMaterial.
-        // THREE.DirectionalLight - creates a light pointing to the target
 
         // cube example
         var cubeGeometry = new THREE.CubeGeometry(10, 10, 10),
             cubeMaterial = new THREE.MeshPhongMaterial({color: '#AAA'}),
             cube;
-        me.objects.cube = cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        scene.add(cube);
-
-        // point light example
-//        var light;
-//        me.objects.light = light = new THREE.PointLight(0xFFFFFF);
-//        light.position.set(10, 10, 10);
-//        light.target = cube;
-//        scene.add(light);
-
-        // directional light example
-//        var directionalLight;
-//        me.objects.directionalLight = directionalLight = new THREE.DirectionalLight(0xffffff);
-//        directionalLight.position.set(10, 10, 10);
-//        scene.add(directionalLight);
+        cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        new T3.Object3D({
+            real: cube,
+            name: 'object-cube',
+            update: function () {
+                this.real.rotation.y += 0.01;
+            }
+        });
 
         return this;
     },
@@ -207,7 +182,8 @@ T3.Application = {
             };
 
         var gui = new dat.GUI(),
-            folder;
+            folder,
+            object;
 
         folder = gui.addFolder('Grid display');
         folder.add(effectController, 'gridX').name('Show XZ grid').onFinishChange(function (value) {
@@ -225,6 +201,13 @@ T3.Application = {
         folder.add(effectController, 'axes').name('Show axes').onFinishChange(function (value) {
             scene[value ? 'add' : 'remove'](me.coordinates.axes);
         });
+
+        // update all the objects in the scene (adding dat.GUI if desired)
+        for (object in T3.ObjectManager.objects) {
+            if ( T3.ObjectManager.objects.hasOwnProperty(object) ) {
+                T3.ObjectManager.objects[object].initDatGui(gui);
+            }
+        }
 
         return this;
     },
@@ -276,13 +259,13 @@ T3.Application = {
         // loop on request animation loop
         // - it has to be at the begining of the function
         // - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-        requestAnimationFrame( Application.animate );
+        requestAnimationFrame( T3.Application.animate );
 
         // do the render
-        Application.render();
+        T3.Application.render();
 
         // update stats
-        Application.stats.update();
+        T3.Application.stats.update();
     },
 
     /**
@@ -290,16 +273,18 @@ T3.Application = {
      */
     render: function () {
         var me = this,
+            object,
             delta = me.clock.getDelta();
 
-        // update camera controls
-        me.cameraControls && me.cameraControls.update(delta);
-
-        // move the cube
-        me.objects.cube.rotation.y += 0.01;
+        // update all the objects in the scene
+        for (object in T3.ObjectManager.objects) {
+            if ( T3.ObjectManager.objects.hasOwnProperty(object) ) {
+                T3.ObjectManager.objects[object].update(delta);
+            }
+        }
 
         // actually render the scene
-        me.renderer.render( scene, me.camera );
+        me.renderer.render( scene, T3.ObjectManager.getObject('camera-main').real );
     }
 };
 
@@ -308,9 +293,7 @@ T3.Application
     .initialize()
     .createScene()
     .createSceneLights()
-    .createCameras({
-        cameraPan: true
-    })
+    .createCameras()
     .createObjects();
 
 T3.Application
