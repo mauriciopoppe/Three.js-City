@@ -30,7 +30,7 @@ T3.Application = {
     /**
      * dat.GUI instance
      */
-    gui: null,
+    datGUI: new dat.GUI(),
     /**
      * References to the coordinate helper objects
      * e.g.
@@ -160,18 +160,18 @@ T3.Application = {
             addToScene: false       // the mesh will be added manually after it's loaded
         });
 
-        new T3.Car({
-            folder: 'Gold Car',
-            name: 'car-gold',
-            ambient: '#3f3212',     // ambient
-            color: '#bf9a39',       // diffuse
-            specular: '#a08d5d',    // specular
-            shininess: 0.4 * 128,    // shininess
-            addToScene: false,       // the mesh will be added manually after it's loaded,
-            onLoad: function () {
-                this.real.position.z += 60;
-            }
-        });
+//        new T3.Car({
+//            folder: 'Gold Car',
+//            name: 'car-gold',
+//            ambient: '#3f3212',     // ambient
+//            color: '#bf9a39',       // diffuse
+//            specular: '#a08d5d',    // specular
+//            shininess: 0.4 * 128,    // shininess
+//            addToScene: false,       // the mesh will be added manually after it's loaded,
+//            onLoad: function () {
+//                this.real.position.z += 60;
+//            }
+//        });
 
         return this;
     },
@@ -206,7 +206,7 @@ T3.Application = {
                 axes: me.coordinatesGUI.axes
             };
 
-        var gui = new dat.GUI(),
+        var gui = me.datGUI,
             folder,
             property,
             object3d;
@@ -227,14 +227,6 @@ T3.Application = {
         folder.add(effectController, 'axes').name('Show axes').onFinishChange(function (value) {
             scene[value ? 'add' : 'remove'](me.coordinates.axes);
         });
-
-        // update all the objects in the scene (adding dat.GUI if desired)
-        for (property in T3.ObjectManager.objects) {
-            if ( T3.ObjectManager.objects.hasOwnProperty(property) ) {
-                object3d = T3.ObjectManager.objects[property];
-                object3d.initDatGui && object3d.initDatGui(gui);
-            }
-        }
 
         return this;
     },

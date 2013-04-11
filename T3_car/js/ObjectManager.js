@@ -36,6 +36,10 @@ T3.ObjectManager = {
 
         // add this object to the scene
         addToScene && scene.add(object.real);
+
+        // init gui
+        object.initDatGui && object.initDatGui(T3.Application.datGUI);
+
     },
     /**
      * Removes an object from the ObjectManager and the scene

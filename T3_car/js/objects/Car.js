@@ -12,28 +12,46 @@ T3.Car = function (config) {
     T3.Object3D.call(this, config);
 
     /**
-     * Ambient color
+     * Body options (color, ambient, specular, shininess)
      * @type {Object}
      */
-    this.ambient = config.ambient || '#313131';
+    this.bodyOptions = config.bodyOptions;
 
     /**
-     * Diffuse color
+     * lightsBack options (color, ambient, specular, shininess)
      * @type {Object}
      */
-    this.color = config.color || '#818181';
+    this.lightsBackOptions = config.lightsBackOptions;
 
     /**
-     * Specular (works with the diffuse color)
+     * lightsFront options (color, ambient, specular, shininess)
      * @type {Object}
      */
-    this.specular = config.specular || '#818181';
+    this.lightsFrontOptions = config.lightsFrontOptions;
 
     /**
-     * Shininess
+     * window options (color, ambient, specular, shininess)
      * @type {Object}
      */
-    this.shininess = config.shininess || (0.4 * 128);
+    this.windowOptions = config.windowOptions;
+
+    /**
+     * interior options (color, ambient, specular, shininess)
+     * @type {Object}
+     */
+    this.interiorOptions = config.interiorOptions;
+
+    /**
+     * tire options (color, ambient, specular, shininess)
+     * @type {Object}
+     */
+    this.tireOptions = config.tireOptions;
+
+    /**
+     * rim options (color, ambient, specular, shininess)
+     * @type {Object}
+     */
+    this.rimOptions = config.rimOptions;
 
     T3.Car.prototype.init.call(this, config);
 };
@@ -47,78 +65,33 @@ T3.inheritFrom(T3.Car, T3.Object3D);
  */
 T3.Car.prototype.init = function (config) {
 
-    if (typeof config.onLoad === 'function') {
-        this.onLoad = config.onLoad
-    }
-    this.loader();
+    // compatibility with objects that have a real property
+    // that's different than itself
+    var loader = T3.JSONChainLoader(),
+        me = this;
+
+    scene.remove(me);
+
+    loader.register('obj/Skyline.body.js', function (geometry) {
+        var me = this,
+            body = new T3.Body({
+                name: 'car-body',
+                addToScene: false,
+                folder: 'Car body',
+                real: T3.createMesh({
+                    geometry: geometry,
+                    material: new THREE.MeshPhongMaterial(
+                        $.extend(T3.Body.prototype.materialOptions, me.bodyOptions)
+                    ),
+                    scale: 10
+                })
+            });
+        me.add(body.real);
+        scene.add(me);
+    }, me);
+
+    loader.execute();
     return this;
-};
-
-T3.Car.prototype.loader = function () {
-    var me = this,
-        loader = new THREE.JSONLoader(),
-        addMesh = function ( geometry, scale, x, y, z, rx, ry, rz, material ) {
-            var mesh;
-            me.real = mesh = new THREE.Mesh( geometry, material );
-            mesh.scale.set( scale, scale, scale );
-            mesh.position.set( x, y, z );
-            mesh.rotation.set( rx, ry, rz );
-            scene.add( mesh );
-            me.onLoad();
-        };
-
-    loader.load('obj/Skyline.body.js', function (geometry) {
-        // let's create just one model for now
-        addMesh( geometry, 10, 0, 0, 0, 0, 0, 0, new THREE.MeshPhongMaterial({
-            ambient: me.ambient,
-            color: me.color,
-            specular: me.specular,
-            shininess: me.shininess
-        }) );
-    });
-};
-
-T3.Car.prototype.onLoad = function () {
-
-};
-
-T3.Car.prototype.initDatGui = function (gui) {
-    var me = this,
-        folder = gui.addFolder(me.folder);
-    folder
-        .add(me, 'visible')
-        .name('Show car mesh')
-        .onFinishChange(function (value) {
-            scene[value ? 'add' : 'remove'](me.real);
-        });
-
-    folder
-        .addColor(me, 'color')
-        .name('Car Color')
-        .onChange(function (value) {
-            me.real.material.color.setHex(parseInt(value.substr(1), 16));
-        });
-
-    folder
-        .addColor(me, 'specular')
-        .name('Car specular')
-        .onChange(function (value) {
-            me.real.material.specular.setHex(parseInt(value.substr(1), 16));
-        });
-
-    folder
-        .addColor(me, 'ambient')
-        .name('Car ambient')
-        .onChange(function (value) {
-            me.real.material.ambient.setHex(parseInt(value.substr(1), 16));
-        });
-
-    folder
-        .add(me, 'shininess', 0, 128)
-        .name('Car shininess')
-        .onChange(function (value) {
-            me.real.material.shininess = value;
-        });
 };
 
 T3.Car.prototype.update = function (delta) {

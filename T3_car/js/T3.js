@@ -31,3 +31,41 @@ T3.inheritFrom = function (subClass, superClass) {
     subClass.prototype = prototype;
     subClass.superclass = superClass.prototype;
 };
+
+T3.JSONChainLoader = function () {
+
+    var queue = [],
+        loader = new THREE.JSONLoader();
+
+    var executeNextInQueue = function (index) {
+        if (index < queue.length) {
+            var element = queue[index];
+            loader.load(element.url, function (geometry) {
+                element.callback.call(element.scope, geometry);
+                executeNextInQueue(index + 1);
+            });
+        }
+    };
+
+    return {
+        register: function (url, callback, scope) {
+            queue.push({
+                url: url,
+                callback: callback,
+                scope: scope
+            });
+        },
+        execute: function () {
+            executeNextInQueue(0);
+        }
+    };
+};
+
+T3.createMesh = function (options) {
+    var mesh;
+    mesh = new THREE.Mesh( options.geometry, options.material );
+    mesh.scale.set( options.scale, options.scale, options.scale );
+    mesh.position.set( options.x || 0, options.y || 0, options.z || 0);
+    mesh.rotation.set( options.rx || 0, options.ry || 0, options.rz || 0);
+    return mesh;
+};
