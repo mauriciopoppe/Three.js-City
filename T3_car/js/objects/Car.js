@@ -46,6 +46,10 @@ T3.inheritFrom(T3.Car, T3.Object3D);
  * @chainable
  */
 T3.Car.prototype.init = function (config) {
+
+    if (typeof config.onLoad === 'function') {
+        this.onLoad = config.onLoad
+    }
     this.loader();
     return this;
 };
@@ -60,7 +64,7 @@ T3.Car.prototype.loader = function () {
             mesh.position.set( x, y, z );
             mesh.rotation.set( rx, ry, rz );
             scene.add( mesh );
-            console.log(me.real);
+            me.onLoad();
         };
 
     loader.load('obj/Skyline.body.js', function (geometry) {
@@ -74,10 +78,13 @@ T3.Car.prototype.loader = function () {
     });
 };
 
+T3.Car.prototype.onLoad = function () {
+
+};
 
 T3.Car.prototype.initDatGui = function (gui) {
     var me = this,
-        folder = gui.addFolder('Car');
+        folder = gui.addFolder(me.folder);
     folder
         .add(me, 'visible')
         .name('Show car mesh')

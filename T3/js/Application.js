@@ -92,22 +92,18 @@ T3.Application = {
     createSceneLights: function () {
         var light;
 
-        new T3.Object3D({
-            name: 'light-ambient',
-            real: new THREE.AmbientLight( 0x222222 )
-        });
+        // putting a light into a T3.Object3D won't render
+        // as expected, instead the light is faded
+        light = { real: new THREE.AmbientLight( 0x222222 ) };
+        T3.ObjectManager.addObject('ambient-light', light, true);
 
-        light = new T3.Object3D({
-            name: 'light-directional-1',
-            real: new THREE.DirectionalLight( 0xffffff, 1.0 )
-        });
-        light.real.position.set( 20, 40, 50 );
+        light = { real: new THREE.DirectionalLight( 0xffffff, 1 ) };
+        light.real.position.set(20, 40, 50);
+        T3.ObjectManager.addObject('directional-light-1', light, true);
 
-        light = new T3.Object3D({
-            name: 'light-directional-2',
-            real: new THREE.DirectionalLight( 0xffffff, 1.0 )
-        });
-        light.real.position.set( -50, 25, -20 );
+        light = { real: new THREE.DirectionalLight( 0xffffff, 1 ) };
+        light.real.position.set(-50, 25, -20);
+        T3.ObjectManager.addObject('directional-light-2', light, true);
 
         return this;
     },

@@ -92,30 +92,22 @@ T3.Application = {
     createSceneLights: function () {
         var light;
 
-        new T3.Object3D({
-            name: 'light-ambient',
-            real: new THREE.AmbientLight( 0x101010 )
-        });
+        light = { real: new THREE.AmbientLight( 0x101010 ) };
+        T3.ObjectManager.addObject('ambient-light', light, true);
 
-        light = new T3.Object3D({
-            name: 'light-directional-1',
-            real: new THREE.DirectionalLight( 0xffffff, 1 )
-        });
-        light.real.position.set( 200, 400, 500 );
+        light = { real: new THREE.DirectionalLight( 0xffffff, 1 ) };
+        light.real.position.set(200, 400, 500);
+        T3.ObjectManager.addObject('directional-light-1', light, true);
 
-        light = new T3.Object3D({
-            name: 'light-directional-2',
-            real: new THREE.DirectionalLight( 0xffffff, 1 )
-        });
-        light.real.position.set( -500, 250, -200 );
+        light = { real: new THREE.DirectionalLight( 0xffffff, 1 ) };
+        light.real.position.set(-500, 250, -200);
+        T3.ObjectManager.addObject('directional-light-2', light, true);
 
-        // ****** sphere + point light ******
+        //****** sphere + point light ******
         var colorLight = 0xffffff;
 
-        light = new T3.Object3D({
-            name: 'light-point',
-            real: new THREE.PointLight( colorLight )
-        });
+        light = { real: new THREE.PointLight( 0xffffff, 1 ) };
+        T3.ObjectManager.addObject('point-light', light, true);
 
         // light representation (little sphere)
         var sphereMesh, sphere;
@@ -162,9 +154,23 @@ T3.Application = {
     createObjects: function () {
 
         // cube example
-        var car = new T3.Car({
-            name: 'car',
+        new T3.Car({
+            name: 'car-silver',
+            folder: 'Silver Car',
             addToScene: false       // the mesh will be added manually after it's loaded
+        });
+
+        new T3.Car({
+            folder: 'Gold Car',
+            name: 'car-gold',
+            ambient: '#3f3212',     // ambient
+            color: '#bf9a39',       // diffuse
+            specular: '#a08d5d',    // specular
+            shininess: 0.4 * 128,    // shininess
+            addToScene: false,       // the mesh will be added manually after it's loaded,
+            onLoad: function () {
+                this.real.position.z += 60;
+            }
         });
 
         return this;
@@ -202,7 +208,8 @@ T3.Application = {
 
         var gui = new dat.GUI(),
             folder,
-            object;
+            property,
+            object3d;
 
         folder = gui.addFolder('Grid display');
         folder.add(effectController, 'gridX').name('Show XZ grid').onFinishChange(function (value) {
@@ -222,9 +229,10 @@ T3.Application = {
         });
 
         // update all the objects in the scene (adding dat.GUI if desired)
-        for (object in T3.ObjectManager.objects) {
-            if ( T3.ObjectManager.objects.hasOwnProperty(object) ) {
-                T3.ObjectManager.objects[object].initDatGui(gui);
+        for (property in T3.ObjectManager.objects) {
+            if ( T3.ObjectManager.objects.hasOwnProperty(property) ) {
+                object3d = T3.ObjectManager.objects[property];
+                object3d.initDatGui && object3d.initDatGui(gui);
             }
         }
 
@@ -292,13 +300,15 @@ T3.Application = {
      */
     render: function () {
         var me = this,
-            object,
+            property,
+            object3d,
             delta = me.clock.getDelta();
 
         // update all the objects in the scene
-        for (object in T3.ObjectManager.objects) {
-            if ( T3.ObjectManager.objects.hasOwnProperty(object) ) {
-                T3.ObjectManager.objects[object].update(delta);
+        for (property in T3.ObjectManager.objects) {
+            if ( T3.ObjectManager.objects.hasOwnProperty(property) ) {
+                object3d = T3.ObjectManager.objects[property];
+                object3d.update && object3d.update(delta);
             }
         }
 
@@ -319,7 +329,8 @@ T3.Application
     .initStats()
     .initCoordinates({
         ground: true,
-        gridX: true
+        gridX: true,
+        axes: true
     })
     .initDatGui();
 

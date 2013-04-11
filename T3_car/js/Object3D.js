@@ -33,20 +33,26 @@ T3.Object3D = function (config) {
      * Visibility of this object
      * @type {Object}
      */
-    this.visible = config.visible || true;
+    this.visible = config.visible != undefined ? config.visible : true;
+
+    /**
+     * Name of the dat.GUI folder to be added
+     * @type {string}
+     */
+    this.folder = config.folder !== undefined ? config.folder : 'generic';
 
     /**
      * Name of this object
      * @type {string}
      */
-    this.addToScene = config.addToScene || true;
+    this.addToScene = config.addToScene !== undefined ? config.addToScene : true;
 
     /**
      * `this` instance is just a wrapper to a inner element
      * which might be a Mesh, Object3D or camera
      * The real instance is stored in `this.object`
      */
-    this.real = config.real || null;
+    this.real = config.real !== undefined ? config.real : null;
 
     T3.Object3D.prototype.init.call(this, config);
 };
