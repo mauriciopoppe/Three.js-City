@@ -94,20 +94,46 @@ T3.Application = {
 
         new T3.Object3D({
             name: 'light-ambient',
-            real: new THREE.AmbientLight( 0x222222 )
+            real: new THREE.AmbientLight( 0x101010 )
         });
 
         light = new T3.Object3D({
             name: 'light-directional-1',
-            real: new THREE.DirectionalLight( 0xffffff, 1.0 )
+            real: new THREE.DirectionalLight( 0xffffff, 1 )
         });
-        light.real.position.set( 20, 40, 50 );
+        light.real.position.set( 200, 400, 500 );
 
         light = new T3.Object3D({
             name: 'light-directional-2',
-            real: new THREE.DirectionalLight( 0xffffff, 1.0 )
+            real: new THREE.DirectionalLight( 0xffffff, 1 )
         });
-        light.real.position.set( -50, 25, -20 );
+        light.real.position.set( -500, 250, -200 );
+
+        // ****** sphere + point light ******
+        var colorLight = 0xffffff;
+
+        light = new T3.Object3D({
+            name: 'light-point',
+            real: new THREE.PointLight( colorLight )
+        });
+
+        // light representation (little sphere)
+        var sphereMesh, sphere;
+        sphereMesh = new THREE.Mesh(
+            new THREE.SphereGeometry( 100, 16, 8, 1 ),
+            new THREE.MeshBasicMaterial( {color: colorLight} )
+        );
+        sphere = new T3.Object3D({
+            name: 'sphere-light-point',
+            real: sphereMesh,
+            update: function () {
+                typeof this.r !== "undefined" ? (this.r += 0.01) : (this.r = 0);
+                this.real.position.x = 100 * Math.cos( this.r );
+                this.real.position.z = 100 * Math.sin( this.r );
+            }
+        });
+        sphere.real.scale.set(0.05, 0.05, 0.05);
+        sphere.real.position = light.real.position;
 
         return this;
     },
@@ -136,16 +162,9 @@ T3.Application = {
     createObjects: function () {
 
         // cube example
-        var cubeGeometry = new THREE.CubeGeometry(10, 10, 10),
-            cubeMaterial = new THREE.MeshPhongMaterial({color: '#AAA'}),
-            cube;
-        cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        new T3.Object3D({
-            real: cube,
-            name: 'object-cube',
-            update: function () {
-                this.real.rotation.y += 0.01;
-            }
+        var car = new T3.Car({
+            name: 'car',
+            addToScene: false       // the mesh will be added manually after it's loaded
         });
 
         return this;
@@ -298,7 +317,10 @@ T3.Application
 
 T3.Application
     .initStats()
-    .initCoordinates()
+    .initCoordinates({
+        ground: true,
+        gridX: true
+    })
     .initDatGui();
 
 T3.Application.animate();
