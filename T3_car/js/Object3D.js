@@ -30,6 +30,12 @@ T3.Object3D = function (config) {
     this.name = config.name;
 
     /**
+     * Visibility of this object
+     * @type {Object}
+     */
+    this.visible = config.visible || true;
+
+    /**
      * Name of this object
      * @type {string}
      */
