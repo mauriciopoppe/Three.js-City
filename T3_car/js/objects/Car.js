@@ -75,7 +75,7 @@ T3.Car.prototype.init = function (config) {
     var body = new T3.Body({
         name: 'car-body',
         folder: 'Car body',
-        parent: me,
+        originalParent: me,
         loader: {
             enabled: true,
             url: 'obj/Skyline.body.js'
@@ -86,7 +86,7 @@ T3.Car.prototype.init = function (config) {
     var exhaust = new T3.Exhaust({
         name: 'car-exhaust',
         folder: 'Car exhaust and front',
-        parent: me,
+        originalParent: me,
         loader: {
             enabled: true,
             url: 'obj/Skyline.exhaust.js'
@@ -97,7 +97,7 @@ T3.Car.prototype.init = function (config) {
     var windows = new T3.Window({
         name: 'car-windows',
         folder: 'Car Windows',
-        parent: me,
+        originalParent: me,
         loader: {
             enabled: true,
             url: 'obj/Skyline.windows.js'
@@ -108,7 +108,7 @@ T3.Car.prototype.init = function (config) {
     var lightsBack = new T3.LightsBack({
         name: 'car-lights-back',
         folder: 'Car lights - Back',
-        parent: me,
+        originalParent: me,
         loader: {
             enabled: true,
             url: 'obj/Skyline.lightsBack.js'
@@ -119,7 +119,7 @@ T3.Car.prototype.init = function (config) {
     var lightsFront = new T3.LightsFront({
         name: 'car-lights-front',
         folder: 'Car lights - Front',
-        parent: me,
+        originalParent: me,
         loader: {
             enabled: true,
             url: 'obj/Skyline.lightsFront.js'
@@ -130,7 +130,7 @@ T3.Car.prototype.init = function (config) {
     var interior = new T3.Interior({
         name: 'car-interior',
         folder: 'Car interior',
-        parent: me,
+        originalParent: me,
         loader: {
             enabled: true,
             url: 'obj/Skyline.interior.js'
@@ -141,6 +141,19 @@ T3.Car.prototype.init = function (config) {
     return this;
 };
 
+T3.Car.prototype.initDatGui = function (gui) {
+    var me = this,
+        folder = gui.addFolder('Car Mesh');
+    folder
+        .add(me, 'visible')
+        .name('Show mesh')
+        .onFinishChange(function (value) {
+            T3.Utils.traverse(me, function (object) {
+                object.visible = value;
+            });
+        });
+};
+
 T3.Car.prototype.update = function (delta) {
-//    this.rotation.y += 0.01;
+    this.rotation.y += 0.01;
 };

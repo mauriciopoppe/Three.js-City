@@ -42,7 +42,8 @@ T3.CarPart.prototype.init = function (config) {
                 type: 'JSONLoader',
                 callback: function(arguments) {
                     me.createRealObject(arguments);
-                    me.parent.add(me.real);
+                    me.originalParent.add(me);
+                    console.log(scene);
                 },
                 scope: me
             },
@@ -88,6 +89,8 @@ T3.CarPart.prototype.createRealObject = function (geometry) {
         ),
         scale: 10
     });
+    me.add(me.real);
+    console.log(scene);
 };
 
 T3.CarPart.prototype.initDatGui = function (gui) {
@@ -97,7 +100,9 @@ T3.CarPart.prototype.initDatGui = function (gui) {
         .add(me, 'visible')
         .name('Show mesh')
         .onFinishChange(function (value) {
-            scene[value ? 'add' : 'remove'](me.real);
+            T3.Utils.traverse(me, function (object) {
+                object.visible = value;
+            });
         });
 
     folder

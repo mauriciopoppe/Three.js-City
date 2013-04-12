@@ -92,21 +92,21 @@ T3.Application = {
     createSceneLights: function () {
         var light;
 
-        light = { real: new THREE.AmbientLight( 0x101010 ) };
+        light = new THREE.AmbientLight( 0x101010 );
         T3.ObjectManager.addObject('ambient-light', light, true);
 
-        light = { real: new THREE.DirectionalLight( 0xffffff, 1 ) };
-        light.real.position.set(200, 400, 500);
+        light = new THREE.DirectionalLight( 0xffffff, 1 );
+        light.position.set(200, 400, 500);
         T3.ObjectManager.addObject('directional-light-1', light, true);
 
-        light = { real: new THREE.DirectionalLight( 0xffffff, 1 ) };
-        light.real.position.set(-500, 250, -200);
+        light = new THREE.DirectionalLight( 0xffffff, 1 );
+        light.position.set(-500, 250, -200);
         T3.ObjectManager.addObject('directional-light-2', light, true);
 
         //****** sphere + point light ******
         var colorLight = 0xffffff;
 
-        light = { real: new THREE.PointLight( 0xffffff, 1 ) };
+        light = new THREE.PointLight( 0xffffff, 1 );
         T3.ObjectManager.addObject('point-light', light, true);
 
         // light representation (little sphere)
@@ -125,7 +125,7 @@ T3.Application = {
             }
         });
         sphere.real.scale.set(0.05, 0.05, 0.05);
-        sphere.real.position = light.real.position;
+        sphere.real.position = light.position;
 
         return this;
     },
@@ -205,9 +205,7 @@ T3.Application = {
             };
 
         var gui = me.datGUI,
-            folder,
-            property,
-            object3d;
+            folder;
 
         folder = gui.addFolder('Grid display');
         folder.add(effectController, 'gridX').name('Show XZ grid').onFinishChange(function (value) {
@@ -317,10 +315,12 @@ T3.Application
 
 T3.Application
     .initStats()
-    .initCoordinates({
-        ground: true,
-        gridX: true
-    })
+    .initCoordinates(
+//    {
+//        ground: true,
+//        gridX: true
+//    }
+    )
     .initDatGui();
 
 T3.Application.animate();

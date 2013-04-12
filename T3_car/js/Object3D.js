@@ -33,7 +33,7 @@ T3.Object3D = function (config) {
      * The parent of this object
      * @type {T3.Object3D|undefined}
      */
-    this.parent = config.parent;
+    this.originalParent = config.originalParent;
 
     /**
      * Visibility of this object
