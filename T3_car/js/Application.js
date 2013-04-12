@@ -155,9 +155,7 @@ T3.Application = {
 
         // cube example
         new T3.Car({
-            name: 'car-silver',
-            folder: 'Silver Car',
-            addToScene: false       // the mesh will be added manually after it's loaded
+            name: 'car-silver'
         });
 
 //        new T3.Car({

@@ -30,6 +30,12 @@ T3.Object3D = function (config) {
     this.name = config.name;
 
     /**
+     * The parent of this object
+     * @type {T3.Object3D|undefined}
+     */
+    this.parent = config.parent;
+
+    /**
      * Visibility of this object
      * @type {Object}
      */
@@ -49,10 +55,11 @@ T3.Object3D = function (config) {
 
     /**
      * `this` instance is just a wrapper to a inner element
-     * which might be a Mesh, Object3D or camera
+     * which might be a Mesh, camera or even itself!
+     * (the real pointer points to `this` if it's null)
      * The real instance is stored in `this.object`
      */
-    this.real = config.real !== undefined ? config.real : null;
+    this.real = config.real !== undefined ? config.real : this;
 
     T3.Object3D.prototype.init.call(this, config);
 };

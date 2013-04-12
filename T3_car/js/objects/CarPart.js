@@ -11,6 +11,10 @@ T3.CarPart = function (config) {
 
     T3.Object3D.call(this, config);
 
+    this.loader = null;
+
+    this.meshOptions = null;
+
     T3.CarPart.prototype.init.call(this, config);
 };
 
@@ -29,7 +33,61 @@ T3.CarPart.prototype.materialOptions = {
  * @chainable
  */
 T3.CarPart.prototype.init = function (config) {
+    var me = this,
+        loader,
+        defaults = {
+            loader: {
+                enabled: false,
+                url: undefined,
+                type: 'JSONLoader',
+                callback: function(arguments) {
+                    me.createRealObject(arguments);
+                    me.parent.add(me.real);
+                },
+                scope: me
+            },
+            meshOptions: {
+                type: 'MeshPhongMaterial',
+                geometryOptions: null,
+                materialOptions: null,
+                afterOptions: null
+            }
+        };
+
+    $.extend(true, defaults, config);
+
+    // set
+    me.loader = defaults.loader;
+    me.meshOptions = defaults.meshOptions;
+
+    if (me.loader.enabled) {
+        loader = new THREE[me.loader.type]();
+        loader.load(me.loader.url, function (geometry) {
+            me.loader.callback.call(me.loader.scope, geometry);
+        });
+    }
+
     return this;
+};
+
+/**
+ * @template
+ * Creates the real object (function executed when the method is ready to be called),
+ * be sure to set me.real in this method for the callback to work
+ * @param geometry
+ */
+T3.CarPart.prototype.createRealObject = function (geometry) {
+    var me = this;
+    me.real = T3.createMesh({
+        geometry: geometry,
+        material: new THREE[me.meshOptions.type](
+            $.extend(
+                me.materialOptions,
+                me.meshOptions.materialOptions
+            )
+        ),
+        scale: 10
+    });
 };
 
 T3.CarPart.prototype.initDatGui = function (gui) {

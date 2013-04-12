@@ -70,119 +70,73 @@ T3.inheritFrom(T3.Car, T3.Object3D);
  * @chainable
  */
 T3.Car.prototype.init = function (config) {
+    var me = this;
 
-    // compatibility with objects that have a real property
-    // that's different than itself
-    var loader = T3.JSONChainLoader(),
-        scale = 10,
-        me = this;
+    var body = new T3.Body({
+        name: 'car-body',
+        folder: 'Car body',
+        parent: me,
+        loader: {
+            enabled: true,
+            url: 'obj/Skyline.body.js'
+        },
+        meshOptions: { materialOptions: me.bodyOptions }
+    });
 
-    scene.remove(me);
+    var exhaust = new T3.Exhaust({
+        name: 'car-exhaust',
+        folder: 'Car exhaust and front',
+        parent: me,
+        loader: {
+            enabled: true,
+            url: 'obj/Skyline.exhaust.js'
+        },
+        meshOptions: { materialOptions: me.exhaustOptions }
+    });
 
-    loader.register('obj/Skyline.body.js', function (geometry) {
-        var me = this,
-            body = new T3.Body({
-                name: 'car-body',
-                addToScene: false,
-                folder: 'Car body',
-                real: T3.createMesh({
-                    geometry: geometry,
-                    material: new THREE.MeshPhongMaterial(
-                        $.extend(T3.Body.prototype.materialOptions, me.bodyOptions)
-                    ),
-                    scale: scale
-                })
-            });
-        me.add(body.real);
-    }, me);
+    var windows = new T3.Window({
+        name: 'car-windows',
+        folder: 'Car Windows',
+        parent: me,
+        loader: {
+            enabled: true,
+            url: 'obj/Skyline.windows.js'
+        },
+        meshOptions: { materialOptions: me.windowOptions }
+    });
 
-    loader.register('obj/Skyline.windows.js', function (geometry) {
-        var me = this,
-            body = new T3.Window({
-                name: 'car-windows',
-                addToScene: false,
-                folder: 'Car windows',
-                real: T3.createMesh({
-                    geometry: geometry,
-                    material: new THREE.MeshPhongMaterial(
-                        $.extend(T3.Window.prototype.materialOptions, me.windowOptions)
-                    ),
-                    scale: scale
-                })
-            });
-        me.add(body.real);
-    }, me);
+    var lightsBack = new T3.LightsBack({
+        name: 'car-lights-back',
+        folder: 'Car lights - Back',
+        parent: me,
+        loader: {
+            enabled: true,
+            url: 'obj/Skyline.lightsBack.js'
+        },
+        meshOptions: { materialOptions: me.lightsBackOptions }
+    });
 
-    loader.register('obj/Skyline.exhaust.js', function (geometry) {
-        var me = this,
-            body = new T3.Exhaust({
-                name: 'car-exhaust',
-                addToScene: false,
-                folder: 'Car exhaust and front',
-                real: T3.createMesh({
-                    geometry: geometry,
-                    material: new THREE.MeshPhongMaterial(
-                        $.extend(T3.Exhaust.prototype.materialOptions, me.exhaustOptions)
-                    ),
-                    scale: scale
-                })
-            });
-        me.add(body.real);
-    }, me);
+    var lightsFront = new T3.LightsFront({
+        name: 'car-lights-front',
+        folder: 'Car lights - Front',
+        parent: me,
+        loader: {
+            enabled: true,
+            url: 'obj/Skyline.lightsFront.js'
+        },
+        meshOptions: { materialOptions: me.lightsFrontOptions }
+    });
 
-    loader.register('obj/Skyline.lightsBack.js', function (geometry) {
-        var me = this,
-            body = new T3.LightsBack({
-                name: 'car-lights-back',
-                addToScene: false,
-                folder: 'Car lights - Back',
-                real: T3.createMesh({
-                    geometry: geometry,
-                    material: new THREE.MeshPhongMaterial(
-                        $.extend(T3.LightsBack.prototype.materialOptions, me.lightsBackOptions)
-                    ),
-                    scale: scale
-                })
-            });
-        me.add(body.real);
-    }, me);
-
-    loader.register('obj/Skyline.lightsFront.js', function (geometry) {
-        var me = this,
-            body = new T3.LightsFront({
-                name: 'car-lights-front',
-                addToScene: false,
-                folder: 'Car lights - Front',
-                real: T3.createMesh({
-                    geometry: geometry,
-                    material: new THREE.MeshPhongMaterial(
-                        $.extend(T3.LightsFront.prototype.materialOptions, me.lightsFrontOptions)
-                    ),
-                    scale: scale
-                })
-            });
-        me.add(body.real);
-    }, me);
-
-    loader.register('obj/Skyline.interior.js', function (geometry) {
-        var me = this,
-            body = new T3.Interior({
-                name: 'car-interior',
-                addToScene: false,
-                folder: 'Car interior',
-                real: T3.createMesh({
-                    geometry: geometry,
-                    material: new THREE.MeshPhongMaterial(
-                        $.extend(T3.Interior.prototype.materialOptions, me.interiorOptions)
-                    ),
-                    scale: scale
-                })
-            });
-        me.add(body.real);
-        scene.add(me);
-    }, me);
-
-    loader.execute();
+    var interior = new T3.Interior({
+        name: 'car-interior',
+        folder: 'Car interior',
+        parent: me,
+        loader: {
+            enabled: true,
+            url: 'obj/Skyline.interior.js'
+        },
+        meshOptions: { materialOptions: me.interiorOptions }
+    });
 
     return this;
 };

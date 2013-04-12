@@ -61,10 +61,15 @@ T3.JSONChainLoader = function () {
     };
 };
 
+/**
+ * Creates a mesh given its geometry, material and afterOptions
+ * @param options
+ * @returns {THREE.Mesh}
+ */
 T3.createMesh = function (options) {
     var mesh;
     mesh = new THREE.Mesh( options.geometry, options.material );
-    mesh.scale.set( options.scale, options.scale, options.scale );
+    mesh.scale.set( options.scale || 1, options.scale || 1, options.scale || 1);
     mesh.position.set( options.x || 0, options.y || 0, options.z || 0);
     mesh.rotation.set( options.rx || 0, options.ry || 0, options.rz || 0);
     return mesh;
