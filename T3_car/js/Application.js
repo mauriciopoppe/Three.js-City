@@ -321,8 +321,7 @@ T3.Application
     .initStats()
     .initCoordinates({
         ground: true,
-        gridX: true,
-        axes: true
+        gridX: true
     })
     .initDatGui();
 
