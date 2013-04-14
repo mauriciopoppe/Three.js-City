@@ -8,7 +8,11 @@
 
 // globals
 var scene,
-    T3 = {};
+    T3 = {
+        model: {},
+        controller: {},
+        view: {}
+    };
 
 T3.inheritFrom = function (subClass, superClass) {
     var prototype;
@@ -31,3 +35,32 @@ T3.inheritFrom = function (subClass, superClass) {
     subClass.prototype = prototype;
     subClass.superclass = superClass.prototype;
 };
+
+/**
+ * Creates a mesh given its geometry, material and afterOptions
+ * @param options
+ * @returns {THREE.Mesh}
+ */
+T3.createMesh = function (options) {
+    var mesh;
+    mesh = new THREE.Mesh( options.geometry, options.material );
+    mesh.scale.set( options.scale || 1, options.scale || 1, options.scale || 1);
+    mesh.position.set( options.x || 0, options.y || 0, options.z || 0);
+    mesh.rotation.set( options.rx || 0, options.ry || 0, options.rz || 0);
+    return mesh;
+};
+
+T3.traverse = function (object, callback) {
+    var i,
+        inner;
+    if (object.children) {
+        for (i = 0; i < object.children.length; i += 1) {
+            inner = object.children[i];
+            if (inner instanceof THREE.Mesh) {
+                callback(inner);
+            } else {
+                T3.traverse(inner, callback);
+            }
+        }
+    }
+}

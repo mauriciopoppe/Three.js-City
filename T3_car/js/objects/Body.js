@@ -16,12 +16,13 @@ T3.Body = function (config) {
 
 T3.inheritFrom(T3.Body, T3.CarPart);
 
-T3.Body.prototype.materialOptions = {
-    ambient: '#ffffff',     // ambient
-    color: '#016b93',       // diffuse
-    specular: '#016b93',    // specular
-    shininess: 0.4 * 128    // shininess
-};
+// ALTERNATIVE: BLUE
+//T3.Body.prototype.materialOptions = {
+//    ambient: '#ffffff',     // ambient
+//    color: '#016b93',       // diffuse
+//    specular: '#016b93',    // specular
+//    shininess: 0.4 * 128    // shininess
+//};
 
 // ALTERNATIVE: SILVER
 //T3.Body.prototype.materialOptions = {
@@ -30,6 +31,15 @@ T3.Body.prototype.materialOptions = {
 //    specular: '#818181',    // specular
 //    shininess: 0.4 * 128    // shininess
 //};
+
+//ALTERNATIVE: METALLIC SILVER
+T3.Body.prototype.materialOptions = {
+    ambient: '#ffffff',     // ambient
+    color: '#464646',       // diffuse
+    specular: '#f0f0f0',    // specular
+    shininess: 51,           // shininess
+    wireframe: true
+};
 
 /**
  * Init this object

@@ -6,46 +6,10 @@
  * To change this template use File | Settings | File Templates.
  */
 
-T3.Car = function (config) {
+T3.Wheel = function (config) {
     config = config || {};
 
     T3.Object3D.call(this, config);
-
-    /**
-     * Body options (color, ambient, specular, shininess)
-     * @type {Object}
-     */
-    this.bodyOptions = config.bodyOptions;
-
-    /**
-     * Body options (color, ambient, specular, shininess)
-     * @type {Object}
-     */
-    this.exhaustOptions = config.exhaustOptions;
-
-    /**
-     * lightsBack options (color, ambient, specular, shininess)
-     * @type {Object}
-     */
-    this.lightsBackOptions = config.lightsBackOptions;
-
-    /**
-     * lightsFront options (color, ambient, specular, shininess)
-     * @type {Object}
-     */
-    this.lightsFrontOptions = config.lightsFrontOptions;
-
-    /**
-     * window options (color, ambient, specular, shininess)
-     * @type {Object}
-     */
-    this.windowOptions = config.windowOptions;
-
-    /**
-     * interior options (color, ambient, specular, shininess)
-     * @type {Object}
-     */
-    this.interiorOptions = config.interiorOptions;
 
     /**
      * tire options (color, ambient, specular, shininess)
@@ -59,33 +23,33 @@ T3.Car = function (config) {
      */
     this.rimOptions = config.rimOptions;
 
-    T3.Car.prototype.init.call(this, config);
+    T3.Wheel.prototype.init.call(this, config);
 };
 
-T3.inheritFrom(T3.Car, T3.Object3D);
+T3.inheritFrom(T3.Wheel, T3.Object3D);
 
 /**
  * Init this object
  * @param {Object} config
  * @chainable
  */
-T3.Car.prototype.init = function (config) {
+T3.Wheel.prototype.init = function (config) {
     var me = this;
 
-    var body = new T3.Body({
-        name: 'car-body',
-        folder: 'Car body',
+    var body = new T3.Tire({
+        name: 'car-tire',
+        folder: 'Wheel body',
         originalParent: me,
         loader: {
             enabled: true,
             url: 'obj/Skyline.body.js'
         },
-        meshOptions: { materialOptions: me.bodyOptions }
+        meshOptions: { materialOptions: me.tireOptions }
     });
 
     var exhaust = new T3.Exhaust({
         name: 'car-exhaust',
-        folder: 'Car exhaust and front',
+        folder: 'Wheel exhaust and front',
         originalParent: me,
         loader: {
             enabled: true,
@@ -96,7 +60,7 @@ T3.Car.prototype.init = function (config) {
 
     var windows = new T3.Window({
         name: 'car-windows',
-        folder: 'Car Windows',
+        folder: 'Wheel Windows',
         originalParent: me,
         loader: {
             enabled: true,
@@ -107,7 +71,7 @@ T3.Car.prototype.init = function (config) {
 
     var lightsBack = new T3.LightsBack({
         name: 'car-lights-back',
-        folder: 'Car lights - Back',
+        folder: 'Wheel lights - Back',
         originalParent: me,
         loader: {
             enabled: true,
@@ -118,7 +82,7 @@ T3.Car.prototype.init = function (config) {
 
     var lightsFront = new T3.LightsFront({
         name: 'car-lights-front',
-        folder: 'Car lights - Front',
+        folder: 'Wheel lights - Front',
         originalParent: me,
         loader: {
             enabled: true,
@@ -129,7 +93,7 @@ T3.Car.prototype.init = function (config) {
 
     var interior = new T3.Interior({
         name: 'car-interior',
-        folder: 'Car interior',
+        folder: 'Wheel interior',
         originalParent: me,
         loader: {
             enabled: true,
@@ -139,30 +103,15 @@ T3.Car.prototype.init = function (config) {
     });
 
     // wheel
-//    var wheel = new T3.Wheel({
-//        name: 'car-wheel',
-//        folder: 'Car wheels',
-//        originalParent: me,
-//        tireOptions: me.tireOptions,
-//        rimOptions: me.rimOptions
-//    });
+    var wheel = new T3.Wheel({
+
+    });
 
     return this;
 };
 
-T3.Car.prototype.initDatGui = function (gui) {
-    var me = this,
-        folder = gui.addFolder('Car Mesh');
-    folder
-        .add(me, 'visible')
-        .name('Show mesh')
-        .onFinishChange(function (value) {
-            T3.Utils.traverse(me, function (object) {
-                object.visible = value;
-            });
-        });
+T3.Wheel.prototype.initDatGui = function (gui) {
 };
 
-T3.Car.prototype.update = function (delta) {
-    this.rotation.y += 0.01;
+T3.Wheel.prototype.update = function (delta) {
 };

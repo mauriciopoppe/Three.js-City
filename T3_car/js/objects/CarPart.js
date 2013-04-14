@@ -43,7 +43,6 @@ T3.CarPart.prototype.init = function (config) {
                 callback: function(arguments) {
                     me.createRealObject(arguments);
                     me.originalParent.add(me);
-                    console.log(scene);
                 },
                 scope: me
             },
@@ -90,7 +89,6 @@ T3.CarPart.prototype.createRealObject = function (geometry) {
         scale: 10
     });
     me.add(me.real);
-    console.log(scene);
 };
 
 T3.CarPart.prototype.initDatGui = function (gui) {

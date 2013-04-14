@@ -26,6 +26,7 @@ T3.ObjectManager = {
      * Registers an object in this manager
      */
     addObject: function (name, object, addToScene) {
+        addToScene = addToScene !== undefined ? addToScene : true;
         if (!name) {
             throw new Error('T3.ObjectManager.addObject(): name required')
         }
@@ -35,7 +36,15 @@ T3.ObjectManager = {
         this.objects[name] = object;
 
         // add this object to the scene
-        addToScene && scene.add(object.real);
+        if (object.real !== object) {
+            object instanceof THREE.Object3D &&
+                object.add &&
+                object.add(object.real);
+        }
+        addToScene && scene.add(object);
+
+        // init gui
+        object.initDatGui && object.initDatGui(T3.Application.datGUI);
     },
     /**
      * Removes an object from the ObjectManager and the scene

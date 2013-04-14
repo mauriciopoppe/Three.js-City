@@ -22,7 +22,10 @@ T3.Application = {
      * THREE.WebGL Renderer
      */
     renderer: null,
-
+    /**
+     * Instance of T3.controller.Application
+     */
+    controller: null,
     /**
      * Stats instance
      */
@@ -30,28 +33,12 @@ T3.Application = {
     /**
      * dat.GUI instance
      */
-    gui: null,
-    /**
-     * References to the coordinate helper objects
-     * e.g.
-     *      axes: THREE.Object3D(),
-     *      ground: THREE.Mesh(),
-     *      gridX: THREE.Mesh(),
-     *      gridY: THREE.Mesh(),
-     *      gridZ: THREE.Mesh()
-     */
-    coordinates: {},
-    /**
-     * dat.GUI true/false values used to determine the visibility
-     * of each coordinate helper object
-     */
-    coordinatesGUI: null,
-
+    datGUI: new dat.GUI(),
     /**
      * Crates the WebGL Renderer and binds the fullscreen key 'f'
      * @chainable
      */
-    initialize: function () {
+    createRender: function () {
         var me = this;
 
         // init the renderer
@@ -92,18 +79,40 @@ T3.Application = {
     createSceneLights: function () {
         var light;
 
-        // putting a light into a T3.Object3D won't render
-        // as expected, instead the light is faded
-        light = { real: new THREE.AmbientLight( 0x222222 ) };
-        T3.ObjectManager.addObject('ambient-light', light, true);
+        light = new THREE.AmbientLight( 0x101010 );
+        T3.ObjectManager.addObject('ambient-light', light);
 
-        light = { real: new THREE.DirectionalLight( 0xffffff, 1 ) };
-        light.real.position.set(20, 40, 50);
-        T3.ObjectManager.addObject('directional-light-1', light, true);
+        light = new THREE.DirectionalLight( 0xffffff, 1 );
+        light.position.set(200, 400, 500);
+        T3.ObjectManager.addObject('directional-light-1', light);
 
-        light = { real: new THREE.DirectionalLight( 0xffffff, 1 ) };
-        light.real.position.set(-50, 25, -20);
-        T3.ObjectManager.addObject('directional-light-2', light, true);
+        light = new THREE.DirectionalLight( 0xffffff, 1 );
+        light.position.set(-500, 250, -200);
+        T3.ObjectManager.addObject('directional-light-2', light);
+
+        //****** sphere + point light ******
+        var colorLight = 0xffffff;
+
+        light = new THREE.PointLight( 0xffffff, 1 );
+        T3.ObjectManager.addObject('point-light', light);
+
+        // light representation (little sphere)
+        var sphereMesh, sphere;
+        sphereMesh = new THREE.Mesh(
+            new THREE.SphereGeometry( 100, 16, 8, 1 ),
+            new THREE.MeshBasicMaterial( {color: colorLight} )
+        );
+        sphere = new T3.model.Object3D({
+            name: 'sphere-light-point',
+            real: sphereMesh,
+            update: function () {
+                typeof this.r !== "undefined" ? (this.r += 0.01) : (this.r = 0);
+                this.real.position.x = 100 * Math.cos( this.r );
+                this.real.position.z = 100 * Math.sin( this.r );
+            }
+        });
+        sphere.real.scale.set(0.05, 0.05, 0.05);
+        sphere.real.position = light.position;
 
         return this;
     },
@@ -115,7 +124,7 @@ T3.Application = {
     createCameras: function () {
         var me = this;
 
-        var camera = new T3.Camera({
+        var camera = new T3.model.Camera({
             name: 'camera-main',
             cameraPan: true,
             renderer: me.renderer,
@@ -126,24 +135,15 @@ T3.Application = {
 
 
     /**
-     * Creates a basic green cube
+     * Initializes the world controller
      * @chainable
      */
-    createObjects: function () {
-
-        // cube example
-        var cubeGeometry = new THREE.CubeGeometry(10, 10, 10),
-            cubeMaterial = new THREE.MeshPhongMaterial({color: '#AAA'}),
-            cube;
-        cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        new T3.Object3D({
-            real: cube,
-            name: 'object-cube',
-            update: function () {
-                this.real.rotation.y += 0.01;
-            }
+    initController: function () {
+        var me = this;
+        me.controller = new T3.controller.Application({
+            renderer: me.renderer,
+            activeCamera: T3.ObjectManager.getObject('camera-main')
         });
-
         return this;
     },
 
@@ -151,7 +151,7 @@ T3.Application = {
      * Initializes the Stat helper
      * @chainable
      */
-    initStats: function () {
+    initHelpers: function () {
         var me = this;
         // add Stats.js - https://github.com/mrdoob/stats.js
         me.stats = new Stats();
@@ -162,139 +162,52 @@ T3.Application = {
     },
 
     /**
-     * Initializes the dat.GUI helper adding some basic options to
-     * the coordinates helpers
-     * @chainable
-     */
-    initDatGui: function () {
-
-        var me = this,
-            effectController = {
-                gridX: me.coordinatesGUI.gridX,
-                gridY: me.coordinatesGUI.gridY,
-                gridZ: me.coordinatesGUI.gridZ,
-                ground: me.coordinatesGUI.ground,
-                axes: me.coordinatesGUI.axes
-            };
-
-        var gui = new dat.GUI(),
-            folder,
-            object;
-
-        folder = gui.addFolder('Grid display');
-        folder.add(effectController, 'gridX').name('Show XZ grid').onFinishChange(function (value) {
-            scene[value ? 'add' : 'remove'](me.coordinates.gridX);
-        });
-        folder.add(effectController, 'gridY').name('Show YZ grid').onFinishChange(function (value) {
-            scene[value ? 'add' : 'remove'](me.coordinates.gridY);
-        });
-        folder.add(effectController, 'gridZ').name('Show XY grid').onFinishChange(function (value) {
-            scene[value ? 'add' : 'remove'](me.coordinates.gridZ);
-        });
-        folder.add(effectController, 'ground').name('Show ground').onFinishChange(function (value) {
-            scene[value ? 'add' : 'remove'](me.coordinates.ground);
-        });
-        folder.add(effectController, 'axes').name('Show axes').onFinishChange(function (value) {
-            scene[value ? 'add' : 'remove'](me.coordinates.axes);
-        });
-
-        // update all the objects in the scene (adding dat.GUI if desired)
-        for (object in T3.ObjectManager.objects) {
-            if ( T3.ObjectManager.objects.hasOwnProperty(object) ) {
-                T3.ObjectManager.objects[object].initDatGui(gui);
-            }
-        }
-
-        return this;
-    },
-
-    /**
-     * Initializes the Coordinates helper, by default it draws the xyz-axes, a ground and
-     * a grid in the XZ plane
-     * @param [options]
-     * @param {boolean} options.axes True to draw axes
-     * @param {boolean} options.ground True to draw the ground
-     * @param {boolean} options.gridX True to draw a grid in the XZ plane
-     * @param {boolean} options.gridY True to draw a grid in the YZ plane
-     * @param {boolean} options.gridZ True to draw a grid in the XY plane
-     * @returns {*}
-     */
-    initCoordinates: function (options) {
-        var me = this;
-        me.coordinatesGUI = {
-            axes: false,
-            ground: false,
-            gridX: false,
-            gridY: false,
-            gridZ: false
-        };
-        $.extend(me.coordinatesGUI, options);
-        
-        // add all coordinates helpers to the scene
-        me.coordinates.ground = Coordinates.drawGround({size:10000});
-        me.coordinates.gridX = Coordinates.drawGrid({size:10000,scale:0.01});
-        me.coordinates.gridY = Coordinates.drawGrid({size:10000,scale:0.01, orientation:"y"});
-        me.coordinates.gridZ = Coordinates.drawGrid({size:10000,scale:0.01, orientation:"z"});
-        me.coordinates.axes = Coordinates.drawAllAxes({axisLength:100,axisRadius:1,axisTess:50});
-
-        // remove objects depending on me.coordinatesGUI
-        !me.coordinatesGUI.ground && scene.remove(me.coordinates.ground);
-        !me.coordinatesGUI.gridX && scene.remove(me.coordinates.gridX);
-        !me.coordinatesGUI.gridY && scene.remove(me.coordinates.gridY);
-        !me.coordinatesGUI.gridZ && scene.remove(me.coordinates.gridZ);
-        !me.coordinatesGUI.axes && scene.remove(me.coordinates.axes);
-
-        return this;
-    },
-
-    /**
      * Animation loop (calls Application.render)
      */
     animate: function () {
+        var me = this,
+            delta = T3.Application.clock.getDelta();
 
         // loop on request animation loop
         // - it has to be at the begining of the function
         // - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
         requestAnimationFrame( T3.Application.animate );
 
-        // do the render
-        T3.Application.render();
-
-        // update stats
+        // TODO: MOVE THIS TO THE CONTROLLER
         T3.Application.stats.update();
+
+        // do the render
+        T3.Application.controller.update(delta);
+        T3.Application.controller.render();
     },
 
-    /**
-     * Render loop
-     */
-    render: function () {
-        var me = this,
-            object,
-            delta = me.clock.getDelta();
+    /************** LAUNCHER *************/
+    launch: function () {
+        // init the world
+        this.createRender()
+            .createScene()
+            .createSceneLights()
+            .createCameras();
 
-        // update all the objects in the scene
-        for (object in T3.ObjectManager.objects) {
-            if ( T3.ObjectManager.objects.hasOwnProperty(object) ) {
-                T3.ObjectManager.objects[object].update(delta);
-            }
-        }
+        this.initHelpers();
 
-        // actually render the scene
-        me.renderer.render( scene, T3.ObjectManager.getObject('camera-main').real );
+        // inits the world controller
+        this.initController();
+
+        // animate the world and the scene
+        this.animate();
     }
 };
 
 /************** START THE APPLICATION **************/
-T3.Application
-    .initialize()
-    .createScene()
-    .createSceneLights()
-    .createCameras()
-    .createObjects();
-
-T3.Application
-    .initStats()
-    .initCoordinates()
-    .initDatGui();
-
-T3.Application.animate();
+(function () {
+    T3.AssetLoader.debug();
+    T3.AssetLoader
+        .register('obj/Skyline.body.js', 'car-body-geometry')
+        .register('obj/Skyline.exhaust.js', 'car-exhaust-geometry')
+        .register('obj/Skyline.windows.js', 'car-windows-geometry')
+        .register('obj/Skyline.lightsBack.js', 'car-lights-back-geometry')
+        .register('obj/Skyline.lightsFront.js', 'car-lights-front-geometry')
+        .register('obj/Skyline.interior.js', 'car-interior-geometry');
+    T3.AssetLoader.load(T3.Application.launch, T3.Application);
+})();
