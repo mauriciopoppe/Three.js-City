@@ -144,6 +144,9 @@ T3.Application = {
             renderer: me.renderer,
             activeCamera: T3.ObjectManager.getObject('camera-main')
         });
+
+        // keyboard controller
+        T3.controller.Keyboard.init();
         return this;
     },
 
@@ -208,6 +211,8 @@ T3.Application = {
         .register('obj/Skyline.windows.js', 'car-windows-geometry')
         .register('obj/Skyline.lightsBack.js', 'car-lights-back-geometry')
         .register('obj/Skyline.lightsFront.js', 'car-lights-front-geometry')
+        .register('obj/Skyline.tire.js', 'car-tire-geometry')
+        .register('obj/Skyline.rim.js', 'car-rim-geometry')
         .register('obj/Skyline.interior.js', 'car-interior-geometry');
     T3.AssetLoader.load(T3.Application.launch, T3.Application);
 })();

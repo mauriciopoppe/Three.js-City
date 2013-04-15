@@ -43,7 +43,7 @@
          * Visibility of this object
          * @type {Object}
          */
-        this.visible = config.visible != undefined ? config.visible : true;
+        this.visible = config.visible !== undefined ? config.visible : true;
     
         /**
          * Name of the dat.GUI folder to be added
@@ -81,7 +81,7 @@
             Object3D.prototype.update = config.update;
         }
     
-        T3.ObjectManager.addObject(this.name, this, this.addToScene);
+        T3.ObjectManager.addObject(this.name, this, this.originalParent);
         return this;
     };
     

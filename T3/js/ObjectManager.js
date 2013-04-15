@@ -25,8 +25,8 @@ T3.ObjectManager = {
     /**
      * Registers an object in this manager
      */
-    addObject: function (name, object, addToScene) {
-        addToScene = addToScene !== undefined ? addToScene : true;
+    addObject: function (name, object, parent) {
+        parent = parent !== undefined ? parent : scene;
         if (!name) {
             throw new Error('T3.ObjectManager.addObject(): name required')
         }
@@ -41,7 +41,7 @@ T3.ObjectManager = {
                 object.add &&
                 object.add(object.real);
         }
-        addToScene && scene.add(object);
+        parent.add(object);
 
         // init gui
         object.initDatGui && object.initDatGui(T3.Application.datGUI);

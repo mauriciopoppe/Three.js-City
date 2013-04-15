@@ -20,29 +20,40 @@
     T3.inheritFrom(Body, T3.model.Mesh);
     
     // ALTERNATIVE: BLUE
-    //Body.prototype.materialOptions = {
-    //    ambient: '#ffffff',     // ambient
-    //    color: '#016b93',       // diffuse
-    //    specular: '#016b93',    // specular
-    //    shininess: 0.4 * 128    // shininess
-    //};
+    Body.prototype.materialOptions = {
+        ambient: '#ffffff',     // ambient
+        color: '#016b93',       // diffuse
+        specular: '#016b93',    // specular
+        shininess: 0.4 * 128,   // shininess
+        wireframe: false
+    };
     
     // ALTERNATIVE: SILVER
     //Body.prototype.materialOptions = {
     //    ambient: '#313131',     // ambient
     //    color: '#818181',       // diffuse
     //    specular: '#818181',    // specular
-    //    shininess: 0.4 * 128    // shininess
+    //    shininess: 0.4 * 128,   // shininess
+    //    wireframe: false
     //};
-    
+
+    // ALTERNATIVE: RED
+    //Body.prototype.materialOptions = {
+    //    ambient: '#ffffff',     // ambient
+    //    color: '#4d0000',       // diffuse
+    //    specular: '#be2323',    // specular
+    //    shininess: 0.4 * 128,   // shininess
+    //    wireframe: false
+    //};
+
     //ALTERNATIVE: METALLIC SILVER
-    Body.prototype.materialOptions = {
-        ambient: '#ffffff',     // ambient
-        color: '#464646',       // diffuse
-        specular: '#f0f0f0',    // specular
-        shininess: 51,          // shininess
-        wireframe: false
-    };
+//    Body.prototype.materialOptions = {
+//        ambient: '#ffffff',     // ambient
+//        color: '#464646',       // diffuse
+//        specular: '#f0f0f0',    // specular
+//        shininess: 51,          // shininess
+//        wireframe: false
+//    };
     
     /**
      * Init this object

@@ -93,13 +93,12 @@
             scale: 10
         });
         me.add(me.real);
-        me.originalParent.add(me);
     };
     
     Mesh.prototype.initDatGui = function (gui) {
         var me = this,
             folder = gui.addFolder(me.folder);
-        
+
         folder
             .add(me.materialOptions, 'wireframe')
             .name('Wireframe')
