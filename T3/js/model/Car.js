@@ -63,7 +63,7 @@
         this.rimOptions = config.rimOptions;
 
         this.carOrientation = 0;
-        this.steeringRadiusRatio = 0.05;
+        this.steeringRadiusRatio = 0.04;
         this.acceleration = 50;
         this.deacceleration = -50;
         this.speed = 0;
@@ -81,7 +81,9 @@
      * @chainable
      */
     Car.prototype.init = function (config) {
-        var me = this;
+        var me = this,
+            wheel,
+            suffix = 'back-left';
 
         var body = new T3.model.Body({
             name: 'car-body',
@@ -125,7 +127,6 @@
             geometryConfig: { initialized: T3.AssetLoader.get('car-lights-back-geometry') }
         });
 
-        var suffix = 'back-left';
         wheel = new T3.model.Wheel({
             name: 'car-wheel-' + suffix,
             suffix: suffix,

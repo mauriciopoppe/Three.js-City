@@ -31,7 +31,7 @@
 
         new T3.model.Coordinates({
             // config goes here
-//            ground: true,
+            ground: true,
             gridX: true
         });
 
@@ -50,9 +50,10 @@
         // CAMERA
         activeCamera.update(delta);
 
-        // LIGHTS
+        // ROTATING LIGHT
         manager.getObject('sphere-light-point').update(delta);
 
+        // CAR MOVEMENT
         if (T3.Keyboard.query('A')) {
             manager.getObject('car-wheel-front-left').rotate('left');
             manager.getObject('car-wheel-front-right').rotate('left');
@@ -61,8 +62,6 @@
             manager.getObject('car-wheel-front-left').rotate('right');
             manager.getObject('car-wheel-front-right').rotate('right');
         }
-
-        // accelerate
         if (T3.Keyboard.query('W')) {
             manager.getObject('car').move('forward', delta);
             // update the rotation of the wheels based on the speed of the car
@@ -71,7 +70,7 @@
             manager.getObject('car').move('backward', delta);
         }
 
-        // decay
+        // SPEED AND WHEEL ROTATION DECAY
         if ( !T3.Keyboard.query('W') && !T3.Keyboard.query('S') ) {
             manager.getObject('car').move('decay', delta);
         }
@@ -93,7 +92,7 @@
             backRight = manager.getObject('car-wheel-back-right'),
             radius = frontLeft.radius;
 
-        angularSpeedRatio = speed / (radius * 100);
+        angularSpeedRatio = speed / (radius * 50);     // magic number xD
 
         frontLeft.tire.rotation.x += angularSpeedRatio;
         frontLeft.rim.rotation.x += angularSpeedRatio;
