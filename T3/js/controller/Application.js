@@ -40,6 +40,7 @@
             name: 'car'
         });
 
+        me.initCameras();
     };
 
     Application.prototype.update = function (delta) {
@@ -104,6 +105,50 @@
 
     Application.prototype.render = function () {
         renderer.render(scene, activeCamera.real);
+    };
+
+    Application.prototype.initCameras = function () {
+        var me = this,
+            camera;
+
+        // world camera
+        new T3.model.Camera({
+            name: 'camera-main',
+            cameraPan: true,
+            renderer: renderer,
+            position: new THREE.Vector3( 10, 100, 150 )
+        });
+
+        // car camera back
+        camera = new T3.model.Camera({
+            name: 'camera-car-back',
+            position: new THREE.Vector3(0, 30, -100),
+            renderer: renderer
+        });
+        camera.real.lookAt(new THREE.Vector3(0, 0, 0));
+        me.car.add(camera.real);
+
+        // car camera in
+        camera = new T3.model.Camera({
+            name: 'camera-car-driver',
+            position: new THREE.Vector3(4, 11, -5),
+//            cameraPan: true,
+            renderer: renderer
+        });
+        camera.real.lookAt(new THREE.Vector3(-5, 0, 50));
+        me.car.add(camera.real);
+
+        // active camera is the world camera
+        activeCamera = T3.ObjectManager.getObject('camera-car-back');
+
+        // listen to camera switches
+        var cameras = ['camera-main', 'camera-car-back', 'camera-car-driver'],
+            current = 1;
+        $('#switch').on('click', function () {
+            var next = (current + 1) % cameras.length;
+            activeCamera = T3.ObjectManager.getObject(cameras[next]);
+            current = next;
+        });
     };
 
     T3.controller.Application = Application;
