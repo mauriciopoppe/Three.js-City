@@ -118,23 +118,6 @@ T3.Application = {
     },
 
     /**
-     * Creates the cameras used in this application
-     * @chainable
-     */
-    createCameras: function () {
-        var me = this;
-
-        var camera = new T3.model.Camera({
-            name: 'camera-main',
-            cameraPan: true,
-            renderer: me.renderer,
-            position: new THREE.Vector3( 10, 100, 150 )
-        });
-        return this;
-    },
-
-
-    /**
      * Initializes the world controller
      * @chainable
      */
@@ -189,8 +172,7 @@ T3.Application = {
         // init the world
         this.createRender()
             .createScene()
-            .createSceneLights()
-            .createCameras();
+            .createSceneLights();
 
         this.initHelpers();
 

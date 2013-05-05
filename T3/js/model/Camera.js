@@ -31,25 +31,33 @@
      */
     Camera.prototype.init = function (config) {
         var defaults = {
-            type: config.type || 'PerspectiveCamera',
-            fov: config.fov || 38,
-            ratio: config.ratio || window.innerWidth / window.innerHeight,
-            near: config.near || 1,
-            far: config.far || 10000,
-            position: config.position || new THREE.Vector3(0, 0, 0)
+            renderer: null,
+            type: 'PerspectiveCamera',
+            fov: 38,
+            ratio: window.innerWidth / window.innerHeight,
+            near: 1,
+            far: 10000,
+            position: new THREE.Vector3(100, 100, 100)
         }, camera;
+
+        $.extend(defaults, config);
+
+        if (defaults.renderer == null) {
+            console.log('[WARN]: The renderer is null');
+        }
+
         camera = this.real = new THREE[defaults.type](
             defaults.fov,
             defaults.ratio,
             defaults.near,
             defaults.far
         );
-        camera.position = config.position;
+        camera.position = defaults.position;
         // transparently support window resize
-        THREEx.WindowResize.bind(config.renderer, camera);
+        THREEx.WindowResize.bind(defaults.renderer, camera);
 
         if (config.cameraPan) {
-            this.cameraControls = new THREE.OrbitAndPanControls(camera, config.renderer.domElement);
+            this.cameraControls = new THREE.OrbitAndPanControls(camera, defaults.renderer.domElement);
             this.cameraControls.target.set(0, 0, 0);
         }
         return this;
