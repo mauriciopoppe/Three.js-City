@@ -41,6 +41,10 @@
 
         query: function (key) {
             return this.keys[key.charCodeAt(0)];
+        },
+
+        set: function (key, value) {
+            this.keys[key.charCodeAt(0)] = value;
         }
     };
 

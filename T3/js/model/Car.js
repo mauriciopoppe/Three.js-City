@@ -63,7 +63,7 @@
         this.rimOptions = config.rimOptions;
 
         this.carOrientation = 0;
-        this.steeringRadiusRatio = 0.04;
+        this.steeringRadiusRatio = 0.02;
         this.acceleration = 50;
         this.deacceleration = -50;
         this.speed = 0;

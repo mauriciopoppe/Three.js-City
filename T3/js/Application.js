@@ -123,13 +123,14 @@ T3.Application = {
      */
     initController: function () {
         var me = this;
+        // keyboard controller
+        T3.controller.Keyboard.init();
+
+        // application
         me.controller = new T3.controller.Application({
             renderer: me.renderer,
             activeCamera: T3.ObjectManager.getObject('camera-main')
         });
-
-        // keyboard controller
-        T3.controller.Keyboard.init();
         return this;
     },
 

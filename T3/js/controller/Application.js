@@ -41,6 +41,8 @@
         });
 
         me.initCameras();
+
+        me.initAcceleration();
     };
 
     Application.prototype.update = function (delta) {
@@ -149,6 +151,25 @@
             activeCamera = T3.ObjectManager.getObject(cameras[next]);
             current = next;
         });
+    };
+
+    Application.prototype.initAcceleration = function () {
+        var $button = $('#acceleration'),
+            status = false;
+        $button.on('click', function () {
+            var $me = $(this);
+            if (status) {
+                $me.addClass('off');
+                $me.removeClass('on');
+                T3.Keyboard.set('W', false);
+            } else {
+                $me.addClass('on');
+                $me.removeClass('off');
+                T3.Keyboard.set('W', true);
+            }
+            status = !status;
+        });
+        $button.trigger('click');
     };
 
     T3.controller.Application = Application;

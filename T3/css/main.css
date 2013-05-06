@@ -1,0 +1,22 @@
+#canvas-source, #video {
+    display: none;
+}
+
+#canvas-blended {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    /*border: 1px solid #aaa;*/
+
+    -webkit-box-shadow: 0px 0px 4px 0px #ffffff;
+    box-shadow: 0px 0px 4px 0px #ffffff;
+
+}
+
+.off {
+    background-color: #ff0000;
+}
+
+.on {
+    background-color: #00ff00;
+}
