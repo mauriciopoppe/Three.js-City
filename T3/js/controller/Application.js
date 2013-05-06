@@ -156,20 +156,20 @@
     Application.prototype.initAcceleration = function () {
         var $button = $('#acceleration'),
             status = false;
+        T3.controller.MotionDetection.initialize();
         $button.on('click', function () {
             var $me = $(this);
             if (status) {
+                T3.controller.MotionDetection.stop();
                 $me.addClass('off');
                 $me.removeClass('on');
-                T3.Keyboard.set('W', false);
             } else {
+                T3.controller.MotionDetection.start();
                 $me.addClass('on');
                 $me.removeClass('off');
-                T3.Keyboard.set('W', true);
             }
             status = !status;
         });
-        $button.trigger('click');
     };
 
     T3.controller.Application = Application;
