@@ -80,8 +80,9 @@
         if (typeof config.update === 'function') {
             Object3D.prototype.update = config.update;
         }
-    
-        T3.ObjectManager.addObject(this.name, this, this.originalParent);
+
+        // name, object, parent
+        T3.ObjectManager.add(this.name, this, this.originalParent);
         return this;
     };
     

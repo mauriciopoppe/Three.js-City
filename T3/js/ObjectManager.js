@@ -24,11 +24,14 @@ T3.ObjectManager = {
     },
     /**
      * Registers an object in this manager
+     * @param name Name of the object (the `get` method uses this name)
+     * @param object The object itself
+     * @param [parent=scene] parent of this object, defaults to the global scene
      */
-    addObject: function (name, object, parent) {
+    add: function (name, object, parent) {
         parent = parent !== undefined ? parent : scene;
         if (!name) {
-            throw new Error('T3.ObjectManager.addObject(): name required')
+            throw new Error('T3.ObjectManager.add(): name required')
         }
         if (this.objects[name]) {
             console.log('[WARN]: registering an object with the same name: ' + name);
@@ -49,7 +52,7 @@ T3.ObjectManager = {
     /**
      * Removes an object from the ObjectManager and the scene
      */
-    removeObject: function (name) {
+    remove: function (name) {
         // add this object to the scene
         scene.remove(this.objects[name].real);
         this.objects[name] && delete this.objects[name];
@@ -58,7 +61,7 @@ T3.ObjectManager = {
      * Gets an object from this manager
      * @returns {T3.Object3D | T3.Mesh}
      */
-    getObject: function (name) {
+    get: function (name) {
         return this.objects[name];
     }
 };

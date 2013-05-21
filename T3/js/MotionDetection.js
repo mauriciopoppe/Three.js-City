@@ -13,6 +13,9 @@ T3.controller.MotionDetection = (function () {
         canvasBlended, contextBlended,
         userMediaStream;
 
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
     function initialize() {
         video = document.getElementById('video');
         width = video.width;
@@ -30,7 +33,7 @@ T3.controller.MotionDetection = (function () {
 
     function start() {
         // get the webcam's stream
-        navigator.webkitGetUserMedia({video: true}, onSuccess, function () {});
+        navigator.getUserMedia({video: true}, onSuccess, function () {});
     }
 
     function stop() {
@@ -66,11 +69,6 @@ T3.controller.MotionDetection = (function () {
         setTimeout(draw, 200);
     }
 
-    function fastAbs(value) {
-        // equivalent to Math.abs();
-        return (value ^ (value >> 31)) - (value >> 31);
-    }
-
     function threshold(value) {
         return (value > 0x20) ? 0xFF : 0;
     }
@@ -82,15 +80,16 @@ T3.controller.MotionDetection = (function () {
             tolerance = 1000,
             diffLeft = 0,
             diffRight = 0,
-            side;
+            side,
+            current = 0;
         while (i < lim) {
-            var average1 = (oldData[4*i] + oldData[4*i+1] + oldData[4*i+2]) / 3;
-            var average2 = (newData[4*i] + newData[4*i+1] + newData[4*i+2]) / 3;
-            var diff = threshold(fastAbs(average1 - average2));
-            dest[4*i] = diff;
-            dest[4*i+1] = diff;
-            dest[4*i+2] = diff;
-            dest[4*i+3] = 0xFF;
+            var average1 = (oldData[current] + oldData[current + 1] + oldData[current + 2]) / 3;
+            var average2 = (newData[current] + newData[current + 1] + newData[current + 2]) / 3;
+            var diff = threshold(Math.abs(average1 - average2));
+            dest[current] = diff;
+            dest[current + 1] = diff;
+            dest[current + 2] = diff;
+            dest[current + 3] = 0xFF;
 
             // check if there was a change
             if (diff == 0xFF) {
@@ -99,6 +98,7 @@ T3.controller.MotionDetection = (function () {
                 side ? diffRight++ : diffLeft++;
             }
             ++i;
+            current += 4;
         }
         // trigger 'A' and 'D'
     //    console.log("lim = " + lim);

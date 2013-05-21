@@ -23,7 +23,7 @@ T3.Application = {
      */
     renderer: null,
     /**
-     * Instance of T3.controller.Application
+     * Instance of T3.controller.World
      */
     controller: null,
     /**
@@ -55,7 +55,6 @@ T3.Application = {
         // allow 'f' to go fullscreen where this feature is supported
         if( THREEx.FullScreen.available() ){
             THREEx.FullScreen.bindKey();
-            document.getElementById('fullscreen').innerHTML	+= "Press <i>f</i> for fullscreen";
         }
 
         return this;
@@ -80,21 +79,21 @@ T3.Application = {
         var light;
 
         light = new THREE.AmbientLight( 0x101010 );
-        T3.ObjectManager.addObject('ambient-light', light);
+        T3.ObjectManager.add('ambient-light', light);
 
         light = new THREE.DirectionalLight( 0xffffff, 1 );
         light.position.set(200, 400, 500);
-        T3.ObjectManager.addObject('directional-light-1', light);
+        T3.ObjectManager.add('directional-light-1', light);
 
         light = new THREE.DirectionalLight( 0xffffff, 1 );
         light.position.set(-500, 250, -200);
-        T3.ObjectManager.addObject('directional-light-2', light);
+        T3.ObjectManager.add('directional-light-2', light);
 
         //****** sphere + point light ******
         var colorLight = 0xffffff;
 
         light = new THREE.PointLight( 0xffffff, 1 );
-        T3.ObjectManager.addObject('point-light', light);
+        T3.ObjectManager.add('point-light', light);
 
         // light representation (little sphere)
         var sphereMesh, sphere;
@@ -126,10 +125,10 @@ T3.Application = {
         // keyboard controller
         T3.controller.Keyboard.init();
 
-        // application
-        me.controller = new T3.controller.Application({
+        // World
+        me.world = new T3.controller.World({
             renderer: me.renderer,
-            activeCamera: T3.ObjectManager.getObject('camera-main')
+            activeCamera: T3.ObjectManager.get('camera-main')
         });
         return this;
     },
@@ -156,7 +155,7 @@ T3.Application = {
             delta = T3.Application.clock.getDelta();
 
         // loop on request animation loop
-        // - it has to be at the begining of the function
+        // - it has to be at the beggining of the function
         // - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
         requestAnimationFrame( T3.Application.animate );
 
@@ -164,8 +163,8 @@ T3.Application = {
         T3.Application.stats.update();
 
         // do the render
-        T3.Application.controller.update(delta);
-        T3.Application.controller.render();
+        T3.Application.world.update(delta);
+        T3.Application.world.render();
     },
 
     /************** LAUNCHER *************/

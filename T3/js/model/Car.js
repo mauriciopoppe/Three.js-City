@@ -83,7 +83,7 @@
     Car.prototype.init = function (config) {
         var me = this,
             wheel,
-            suffix = 'back-left';
+            suffix;
 
         var body = new T3.model.Body({
             name: 'car-body',
@@ -113,52 +113,53 @@
             geometryConfig: { initialized: T3.AssetLoader.get('car-interior-geometry') }
         });
 
-        var lfront = new T3.model.LightsFront({
+        new T3.model.LightsFront({
             name: 'car-lights-front',
             folder: 'Car lights - front',
             originalParent: me,
             geometryConfig: { initialized: T3.AssetLoader.get('car-lights-front-geometry') }
         });
 
-        var lback = new T3.model.LightsBack({
+        new T3.model.LightsBack({
             name: 'car-lights-back',
             folder: 'Car lights - back',
             originalParent: me,
             geometryConfig: { initialized: T3.AssetLoader.get('car-lights-back-geometry') }
         });
 
-        wheel = new T3.model.Wheel({
+        suffix = 'back-left';
+        me.wheelBackLeft = new T3.model.Wheel({
             name: 'car-wheel-' + suffix,
             suffix: suffix,
             originalParent: me
         });
-        wheel.position.set(7, wheel.radius, -13.2);
+        me.wheelBackLeft.position.set(7, me.wheelBackLeft.radius, -13.2);
 
         suffix = 'back-right';
-        wheel = new T3.model.Wheel({
+        me.wheelBackRight = new T3.model.Wheel({
             name: 'car-wheel-' + suffix,
             suffix: suffix,
             originalParent: me
         });
-        wheel.position.set(-7, wheel.radius, -13.2);
-        wheel.real.rotation.z += Math.PI;
+        me.wheelBackRight.position.set(-7, me.wheelBackRight.radius, -13.2);
+        me.wheelBackRight.real.rotation.z += Math.PI;
 
         suffix = 'front-left';
-        wheel = new T3.model.Wheel({
+        me.wheelFrontLeft = new T3.model.Wheel({
             name: 'car-wheel-' + suffix,
             suffix: suffix,
             originalParent: me
         });
-        wheel.position.set(7, wheel.radius, 13.5);
+        me.wheelFrontLeft.position.set(7, me.wheelFrontLeft.radius, 13.5);
 
         suffix = 'front-right';
-        wheel = new T3.model.Wheel({
+        me.wheelFrontRight = new T3.model.Wheel({
             name: 'car-wheel-' + suffix,
             suffix: suffix,
             originalParent: me
         });
-        wheel.position.set(-7, wheel.radius, 13.5);
-        wheel.real.rotation.z += Math.PI;
+        me.wheelFrontRight.position.set(-7, me.wheelFrontRight.radius, 13.5);
+        me.wheelFrontRight.real.rotation.z += Math.PI;
         return this;
     };
 
@@ -177,7 +178,7 @@
 
     Car.prototype.move = function (direction, delta) {
         var me = this,
-            wheelOrientation = T3.ObjectManager.getObject('car-wheel-front-left').rotation.y,
+            wheelOrientation = T3.ObjectManager.get('car-wheel-front-left').rotation.y,
             oldSpeed = me.speed,
             newSpeed,
             forwardDelta;
@@ -217,6 +218,56 @@
             }
         }
         return newSpeed;
+    };
+
+    Car.prototype.update = function (delta) {
+        var me = this;
+        if (T3.Keyboard.query('A')) {
+            me.wheelFrontLeft.rotate('left');
+            me.wheelFrontRight.rotate('left');
+        }
+        if (T3.Keyboard.query('D')) {
+            me.wheelFrontLeft.rotate('right');
+            me.wheelFrontRight.rotate('right');
+        }
+        if (T3.Keyboard.query('W')) {
+            me.move('forward', delta);
+            // update the rotation of the wheels based on the speed of the car
+        }
+        if (T3.Keyboard.query('S')) {
+            me.move('backward', delta);
+        }
+
+        // SPEED AND WHEEL ROTATION DECAY
+        if ( !T3.Keyboard.query('W') && !T3.Keyboard.query('S') ) {
+            me.move('decay', delta);
+        }
+        if ( !T3.Keyboard.query('A') && !T3.Keyboard.query('D') ) {
+            me.wheelFrontLeft.decay();
+            me.wheelFrontRight.decay();
+        }
+
+        // CAR WHEELS ROTATION
+        me.updateWheelsRotation(me.speed);
+    };
+
+    Car.prototype.updateWheelsRotation = function (speed) {
+        var me = this,
+            angularSpeedRatio,
+            frontLeft = me.wheelFrontLeft,
+            frontRight = me.wheelFrontRight,
+            backLeft = me.wheelBackLeft,
+            backRight = me.wheelBackRight,
+            radius = frontLeft.radius;
+
+        angularSpeedRatio = speed / (radius * 50);     // magic number xD
+
+        frontLeft.tire.rotation.x += angularSpeedRatio;
+        frontLeft.rim.rotation.x += angularSpeedRatio;
+        frontRight.tire.rotation.x -= angularSpeedRatio;
+        frontRight.rim.rotation.x -= angularSpeedRatio;
+        backLeft.rotation.x += angularSpeedRatio;
+        backRight.rotation.x += angularSpeedRatio;
     };
 
     T3.model.Car = Car;
