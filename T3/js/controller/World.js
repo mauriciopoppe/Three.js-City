@@ -9,10 +9,12 @@
     var World,
         renderer,
         activeCamera;
+
     World = function (config) {
 
         /**
-         * Private active camera
+         * The world can have many cameras, so the this is a reference to
+         * the active camera that's being used right now
          * @type {T3.model.Camera}
          */
         activeCamera = config.activeCamera;
@@ -27,8 +29,7 @@
     };
 
     // statics
-    World.gravity = 9.81;
-
+    World.GRAVITY = 9.81;
 
     World.prototype = {
         init: function () {
@@ -45,6 +46,9 @@
             me.initCarAutoAcceleration();
         },
 
+        /**
+         * Initializes the coordinate helper
+         */
         initCoordinates: function () {
             new T3.model.Coordinates({
                 // config goes here
@@ -53,6 +57,9 @@
             });
         },
 
+        /**
+         * Creates an instance of a car
+         */
         createCar: function () {
             var me = this;
             me.car = new T3.model.Car({
@@ -64,6 +71,9 @@
             me.car.add(T3.ObjectManager.get('camera-car-driver').real);
         },
 
+        /**
+         * Creates an instance of the rain system
+         */
         createRain: function () {
             var me = this;
             me.rainSystem = new T3.model.RainSystem({
@@ -71,6 +81,10 @@
             });
         },
 
+        /**
+         * The world is responsible of updating its children
+         * @param delta
+         */
         update: function (delta) {
             var me = this,
                 manager = T3.ObjectManager;
@@ -93,9 +107,11 @@
             renderer.render(scene, activeCamera.real);
         },
 
+        /**
+         * Initializes the cameras used in the world
+         */
         initCameras: function () {
-            var me = this,
-                camera;
+            var camera;
 
             // orbit and pan camera
             new T3.model.Camera({

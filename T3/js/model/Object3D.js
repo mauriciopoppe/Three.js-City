@@ -17,7 +17,9 @@
     var Object3D;
     
     /**
-     * Abstract class used represent a group of objects
+     * Abstract class used wrap a THREE.Mesh or THREE.Object3D, each instance of this class
+     * will hold a reference to a real THREE.Mesh which is `this.real`, the idea of this class is to
+     * have a master class that adds additional properties to both meshes and object3Ds
      * @abstract
      * @constructor
      * @extends THREE.Object3D
@@ -96,7 +98,8 @@
     
     /**
      * Updates the properties of this Object3D, typically
-     * this is the function that must be overriden
+     * this is the function that must be overridden to update this object during
+     * each call of the `update` method of the render loop
      * @abstract
      */
     Object3D.prototype.update = function (delta) {

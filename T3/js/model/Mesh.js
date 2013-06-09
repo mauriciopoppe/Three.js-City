@@ -38,7 +38,7 @@
     };
     
     /**
-     * Init this object
+     * Init a mesh object setting some default variables
      * @param {Object} config
      * @chainable
      */
@@ -60,7 +60,7 @@
         me.geometryConfig = defaults.geometryConfig;
         me.materialConfig = defaults.materialConfig;
 
-        me.createRealObject(
+        me.createMesh(
             defaults.geometryConfig,
             defaults.materialConfig
         );
@@ -69,19 +69,19 @@
     };
     
     /**
-     * @template
-     * Creates the real object (function executed when the method is ready to be called),
-     * be sure to set me.real in this method for the callback to work
+     * Creates the mesh using the meshFactory and also adds the created mesh to
+     * this (this is an instance of T3.model.Object3D)
      * @param geometry
      * @param material
      */
-    Mesh.prototype.createRealObject = function (geometry, material) {
+    Mesh.prototype.createMesh = function (geometry, material) {
         var me = this;
 
         if (!geometry.initialized){
-            throw new Error('Mesh.prototype.createRealObject(): geometry must be initialized');
+            throw new Error('Mesh.prototype.createMesh(): geometry must be initialized');
         }
 
+        // call the mesh factory
         me.real = T3.createMesh({
             geometry: geometry.initialized,
             material: material.initialized || new THREE[material.type](

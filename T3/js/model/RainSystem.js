@@ -30,8 +30,22 @@
          */
         this.zLimit = 200;
 
-        T3.model.Object3D.call(this, config);
+        /**
+         * The total number of particles to be created
+         * as rain drops
+         * @type {number}
+         */
+        this.particleCount = 7000;
 
+        /**
+         * A copy of the total number of particles to be created (is used
+         * by the dat.GUI instance to limit the totalNumber)
+         * @private
+         * @type {number}
+         */
+        this.maxParticleCount = this.particleCount;
+
+        T3.model.Object3D.call(this, config);
 
         RainSystem.prototype.init.call(this);
     };
@@ -39,17 +53,19 @@
     T3.inheritFrom(RainSystem, T3.model.Object3D);
 
     /**
-     * Init this object
+     * Inits the rains system
      * @chainable
      */
     RainSystem.prototype.init = function () {
         var me = this,
             i,
-            particleCount = 5000,
+            particleCount = me.particleCount,
             sprite = THREE.ImageUtils.loadTexture('images/raindrop.png'),
             geometry = new THREE.Geometry(),
             material,
             particles;
+
+        me.maxParticleCount = me.particleCount;
 
         for (i = 0; i < particleCount; i += 1) {
             var particle = new THREE.Vector3();
@@ -62,7 +78,7 @@
             // Vf^2 = Vo^2 + 2 * a * d
             // Vf^2 = 2 * g * h             (applied to free fall)
             // Vf = sqrt(2 * g * h)
-            particle.velocity = new THREE.Vector3(0, -Math.sqrt(2 * T3.World.gravity * (me.yLimit - particle.y)), 0);
+            particle.velocity = new THREE.Vector3(0, -Math.sqrt(2 * T3.World.GRAVITY * (me.yLimit - particle.y)), 0);
             geometry.vertices.push(particle);
         }
 
@@ -77,30 +93,59 @@
         particles.sortParticles = true;
 
         me.add(me.real);
-        console.log(me.real.position);
     };
 
+    /**
+     * Create a new folder and add the visible and particle count
+     * sliders to the instance of dat.GUI
+     * @param {dat.GUI} gui
+     */
     RainSystem.prototype.initDatGui = function (gui) {
+        var me = this,
+            folder = gui.addFolder('Rain System');
+
+        folder
+            .add(me, 'visible')
+            .name('Visible')
+            .onFinishChange(function (value) {
+                me.real.visible = value;
+            });
+
+        folder
+            .add(me, 'particleCount', 0, me.maxParticleCount)
+            .name('Number of raindrops');
     };
 
+    /**
+     * Updates this system and makes it follow the car (so that the user can see a constant rain
+     * without rendering many particles in the world)
+     * @param delta
+     */
     RainSystem.prototype.update = function (delta) {
         var me = this,
             particles = me.real.geometry,
             particle,
             car,
-            length = particles.vertices.length;
+            length = ~~me.particleCount;
 
+        if (!me.visible) {
+            return;
+        }
         while (length--) {
             particle = particles.vertices[length];
             if (particle.y <= 0) {
                 particle.y = me.yLimit;
-                particle.velocity.y = -Math.random() * 10;
+                particle.velocity.y = -Math.random() * 10;  // random speed factor
             }
 
             // equation of free fall
             // vf = vo - gt
-            particle.velocity.y = particle.velocity.y - T3.World.gravity * delta;
+            particle.velocity.y = particle.velocity.y - T3.World.GRAVITY * delta;
             particle.y += particle.velocity.y * delta;
+        }
+        for (length = ~~me.particleCount; length < particles.vertices.length; length += 1) {
+            particle = particles.vertices[length];
+            particle.y = me.yLimit;
         }
 
         // move the particle system above the car
