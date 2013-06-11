@@ -18,6 +18,11 @@
  */
 T3.ObjectManager = {
     /**
+     * In the case where an object has no id, generate a new id
+     * automatically using this number
+     */
+    id: 0,
+    /**
      * Map to all the objects created in the application
      */
     objects: {
@@ -31,7 +36,7 @@ T3.ObjectManager = {
     add: function (name, object, parent) {
         parent = parent !== undefined ? parent : scene;
         if (!name) {
-            throw new Error('T3.ObjectManager.add(): name required')
+            name = this.id++;
         }
         if (this.objects[name]) {
             console.log('[WARN]: registering an object with the same name: ' + name);

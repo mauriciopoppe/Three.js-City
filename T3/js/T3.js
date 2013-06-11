@@ -14,6 +14,13 @@ var scene,
         view: {}
     };
 
+/**
+ * An object in this world has a dimension equal to its
+ * real size times T3.scale
+ * @type {number}
+ */
+T3.scale = 10;
+
 T3.inheritFrom = function (subClass, superClass) {
     var prototype;
 

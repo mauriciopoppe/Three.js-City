@@ -51,7 +51,7 @@
          * Name of the dat.GUI folder to be added
          * @type {string}
          */
-        this.folder = config.folder !== undefined ? config.folder : 'generic';
+        this.folder = config.folder;
     
         /**
          * Name of this object

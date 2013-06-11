@@ -13,14 +13,24 @@
 	<!-- three.js container -->
     <div id="webgl-container"></div>
 
-    <div style="position: absolute; top: 0px; right: 40%;">
+    <div style="position: absolute; top: 0; right: 40%;">
         <button id="switch">Change Camera</button>
-        <button id="acceleration" class="off">Motion detection</button>
+        <button data-motion="MotionDetection" class="motion off">
+            Motion detection using pixel diff between frames
+        </button>
+        <button data-motion="MotionDetectionHeadtrackr" class="motion off">
+            Motion detection using headtrackr
+        </button>
     </div>
 
+    <!-- MOTION DETECTION VARS -->
+    <!-- own face detection system -->
     <video id="video" width="240" height="160"></video>
     <canvas id="canvas-source" width="240" height="160"></canvas>
     <canvas id="canvas-blended" width="240" height="160"></canvas>
+    <!-- headtrackr -->
+    <canvas id="inputCanvas" width="320" height="240"></canvas>
+    <video id="inputVideo" autoplay loop style="display: none"></video>
 
 	<!-- info on screen display -->
 	<div id="info" style="position: absolute; top: 0px; right: 0px;">
@@ -28,6 +38,7 @@
 	</div>
 
     <!-- Library -->
+    <script src="../boilerplate_lib/vendor/extra/headtrackr.min.js"></script>
     <script src="../boilerplate_lib/vendor/extra/jquery-1.9.1.js"></script>
     <script src="../boilerplate_lib/vendor/three.js/three.js"></script>
     <script src="../boilerplate_lib/vendor/three.js/Detector.js"></script>
@@ -69,6 +80,12 @@
     <!-- Rain -->
     <script type="text/javascript" src="js/model/RainSystem.js"></script>
 
+    <!-- City -->
+    <script type="text/javascript" src="js/model/Building.js"></script>
+    <script type="text/javascript" src="js/model/building/Box.js"></script>
+    <script type="text/javascript" src="js/model/building/Block.js"></script>
+    <script type="text/javascript" src="js/model/building/Classic.js"></script>
+
     <!-- Controllers -->
     <script type="text/javascript" src="js/controller/Keyboard.js"></script>
     <script type="text/javascript" src="js/controller/World.js"></script>
@@ -76,7 +93,11 @@
 	<script type="text/javascript" src="js/Application.js"></script>
 
     <!--Motion detection-->
+    <!-- toggle between these imports to unable my motion detection system or -->
+    <!-- headtrackr motion detection system -->
+
     <script src="js/MotionDetection.js"></script>
+    <script src="js/MotionDetectionHeadtrackr.js"></script>
 
 </body>
 </html>

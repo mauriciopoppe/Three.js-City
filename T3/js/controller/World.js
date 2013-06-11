@@ -34,15 +34,22 @@
     World.prototype = {
         init: function () {
             var me = this;
+            // put the scene in a huge cube
+            me.initSkyBox();
+
             // cameras used for the world
             me.initCameras();
             // coordinates helper
             me.initCoordinates();
 
+            // world objects
+            me.createBuildingBlocks();
             // car
             me.createCar();
             // rain!
             me.createRain();
+
+            // car auto acceleration (for the motion detection system)
             me.initCarAutoAcceleration();
         },
 
@@ -82,6 +89,67 @@
         },
 
         /**
+         * Creates the building blocks of the world (supported: block, classic),
+         * the idea is to create a grid of roads and make a block in each space that
+         * is not in the grid
+         */
+        createBuildingBlocks: function () {
+            var me = this,
+                rows = [],
+                cols = [],
+                total,
+                gridSize = 10,
+                i,
+                j;
+
+            // grid generation
+            total = 0;
+            rows[total] = cols[total] = 0;
+            total += 1;
+            while (total < gridSize) {
+                rows[total] = rows[total - 1] + 2 + ~~(Math.random() * 3);
+                cols[total] = cols[total - 1] + 2 + ~~(Math.random() * 3);
+                total += 1;
+            }
+
+            for (i = 0; i < gridSize - 1; i += 1) {
+                for (j = 0; j < gridSize - 1; j += 1) {
+                    me.createBuildings(
+                        rows[i] + 1, cols[j] + 1,
+                        rows[i + 1] - 1, cols[j + 1] - 1
+                    );
+                }
+            }
+        },
+
+        createBuildings: function (x1, y1, x2, y2) {
+            var object,
+                models = ['Block', 'Classic'],
+                probability = [0, 0.9, 1],
+                random,
+                width = 10,
+                depth = 10;
+
+            random = Math.random();
+            for (var i = 0; i < probability.length - 1; i += 1) {
+                if (random >= probability[i] && random < probability[i + 1]) {
+                    random = i;
+                    break;
+                }
+            }
+
+            object = new T3.model[models[random]]({
+                width: width * (x2 - x1 + 1),
+                depth: depth * (y2 - y1 + 1)
+            });
+            object.position.set(
+                x1 * width * T3.scale,
+                0,
+                y1 * depth * T3.scale
+            );
+        },
+
+        /**
          * The world is responsible of updating its children
          * @param delta
          */
@@ -105,6 +173,37 @@
 
         render: function () {
             renderer.render(scene, activeCamera.real);
+        },
+
+        /**
+         * Wraps the world in a cube with a texture in the inside of it
+         */
+        initSkyBox: function () {
+            var path = "images/cube/",
+                urls = [ path + "posx.jpg", path + "negx.jpg",
+                    path + "posy.jpg", path + "negy.jpg",
+                    path + "posz.jpg", path + "negz.jpg" ],
+                textureCube = THREE.ImageUtils.loadTextureCube(urls);
+
+            var shader = THREE.ShaderLib[ "cube" ];
+            shader.uniforms[ "tCube" ].value = textureCube;
+
+            var material = new THREE.ShaderMaterial( {
+                fragmentShader: shader.fragmentShader,
+                vertexShader: shader.vertexShader,
+                uniforms: shader.uniforms,
+                depthWrite: false,
+                side: THREE.BackSide
+            });
+
+            new T3.model.Mesh({
+                geometryConfig: {
+                    initialized: new THREE.CubeGeometry(1000, 1000, 1000)
+                },
+                materialConfig: {
+                    initialized: material
+                }
+            });
         },
 
         /**
@@ -139,7 +238,7 @@
 
             // ******* ACTIVE CAMERA *******
             // active camera is the world camera
-            activeCamera = T3.ObjectManager.get('camera-car-back');
+            activeCamera = T3.ObjectManager.get('camera-main');
 
             // listen to camera switches
             var cameras = ['camera-main', 'camera-car-back', 'camera-car-driver'],
@@ -152,19 +251,39 @@
         },
 
         initCarAutoAcceleration: function () {
-            var $button = $('#acceleration'),
-                $canvas = $('#canvas-blended'),
-                status = false;
-            T3.controller.MotionDetection.initialize();
-            $button.on('click', function () {
-                var $me = $(this);
+            var $buttons = $('.motion'),
+                i,
+                motionDetectionSystems =
+                    ['MotionDetection', 'MotionDetectionHeadtrackr'],
+                status = false,
+                activeController;
+
+            for (i = 0; i < motionDetectionSystems.length; i += 1) {
+                T3.controller[motionDetectionSystems[i]].initialize();
+            }
+
+            $buttons.on('click', function () {
+                var $me = $(this),
+                    motion = $me.data('motion'),
+                    controller = T3.controller[motion],
+                    $canvas = $(controller.canvas);
+
+                // only one controller might be available at any time,
+                // so in the case where the user wants to activate the old controller
+                //
+                if (status && controller != activeController) {
+                    return;
+                }
+                activeController = controller;
                 if (status) {
-                    T3.controller.MotionDetection.stop();
+                    T3.Keyboard.set('W', false);
+                    controller.stop();
                     $canvas.fadeOut();
                     $me.addClass('off');
                     $me.removeClass('on');
                 } else {
-                    T3.controller.MotionDetection.start();
+                    T3.Keyboard.set('W', true);
+                    controller.start();
                     $canvas.fadeIn();
                     $me.addClass('on');
                     $me.removeClass('off');

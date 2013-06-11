@@ -10,7 +10,8 @@ T3.controller.MotionDetection = (function () {
     var video, width, height,
         oldData,
         canvasSource, contextSource,
-        canvasBlended, contextBlended,
+        canvasBlended = document.getElementById('canvas-blended'),
+        contextBlended,
         userMediaStream;
 
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
@@ -27,7 +28,6 @@ T3.controller.MotionDetection = (function () {
         contextSource.translate(canvasSource.width, 0);
         contextSource.scale(-1, 1);
 
-        canvasBlended = document.getElementById('canvas-blended');
         contextBlended = canvasBlended.getContext('2d');
     }
 
@@ -37,14 +37,12 @@ T3.controller.MotionDetection = (function () {
     }
 
     function stop() {
-        T3.Keyboard.set('W', false);
         userMediaStream.stop();
         video.pause();
     }
 
     function onSuccess(stream) {
         userMediaStream = stream;
-        T3.Keyboard.set('W', true);
         video.src = URL.createObjectURL(stream);
         video.play();
         requestAnimationFrame(draw);
@@ -103,15 +101,13 @@ T3.controller.MotionDetection = (function () {
         // trigger 'A' and 'D'
     //    console.log("lim = " + lim);
     //    console.log(i);
-        console.log(diffLeft, diffRight);
-    //    if (diffLeft == 0 && diffRight == 0) {
-    //        console.log('why!');
-    //    }
+    //    console.log(diffLeft, diffRight);
         T3.Keyboard.set('A', diffLeft > tolerance);
         T3.Keyboard.set('D', diffRight > tolerance);
     }
 
     return {
+        canvas: canvasBlended,
         initialize: initialize,
         start: start,
         stop: stop

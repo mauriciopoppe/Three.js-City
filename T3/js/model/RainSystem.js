@@ -93,6 +93,10 @@
         particles.sortParticles = true;
 
         me.add(me.real);
+
+        me.visible = false;
+        me.real.visible = false;
+
     };
 
     /**
@@ -104,6 +108,7 @@
         var me = this,
             folder = gui.addFolder('Rain System');
 
+        me.visible = false;
         folder
             .add(me, 'visible')
             .name('Visible')
@@ -113,7 +118,7 @@
 
         folder
             .add(me, 'particleCount', 0, me.maxParticleCount)
-            .name('Number of raindrops');
+            .name('Total');
     };
 
     /**

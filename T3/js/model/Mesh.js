@@ -59,6 +59,7 @@
 
         me.geometryConfig = defaults.geometryConfig;
         me.materialConfig = defaults.materialConfig;
+        defaults.materialOptions && (me.materialOptions = defaults.materialOptions);
 
         me.createMesh(
             defaults.geometryConfig,
@@ -86,18 +87,24 @@
             geometry: geometry.initialized,
             material: material.initialized || new THREE[material.type](
                 $.extend(
+                    {},
                     me.materialOptions,
                     material.options
                 )
             ),
-            scale: 10
+            scale: geometry.scale || T3.scale
         });
         me.add(me.real);
     };
     
     Mesh.prototype.initDatGui = function (gui) {
         var me = this,
-            folder = gui.addFolder(me.folder);
+            folder;
+
+        if (!me.folder) {
+            return null;
+        }
+        folder = gui.addFolder(me.folder);
 
         folder
             .add(me.materialOptions, 'wireframe')
