@@ -54,12 +54,6 @@
         this.folder = config.folder;
     
         /**
-         * Name of this object
-         * @type {string}
-         */
-        this.addToScene = config.addToScene !== undefined ? config.addToScene : true;
-    
-        /**
          * `this` instance is just a wrapper to a inner element
          * which might be a Mesh, camera or even itself!
          * (the real pointer points to `this` if it's null)

@@ -44,6 +44,7 @@
 
             // world objects
             me.createBuildingBlocks();
+            me.createLampParticles();
             // car
             me.createCar();
             // rain!
@@ -91,14 +92,15 @@
         /**
          * Creates the building blocks of the world (supported: block, classic),
          * the idea is to create a grid of roads and make a block in each space that
-         * is not in the grid
+         * is not in the grid, after the method is complete {@link T3.model.Block}
+         * has an array of the lamps created in each block
          */
         createBuildingBlocks: function () {
             var me = this,
                 rows = [],
                 cols = [],
                 total,
-                gridSize = 10,
+                gridSize = 7,
                 i,
                 j;
 
@@ -111,18 +113,26 @@
                 cols[total] = cols[total - 1] + 2 + ~~(Math.random() * 3);
                 total += 1;
             }
-
             for (i = 0; i < gridSize - 1; i += 1) {
                 for (j = 0; j < gridSize - 1; j += 1) {
                     me.createBuildings(
-                        rows[i] + 1, cols[j] + 1,
-                        rows[i + 1] - 1, cols[j + 1] - 1
+                        cols[i] + 1, rows[j] + 1,
+                        cols[i + 1] - 1, rows[j + 1] - 1
                     );
                 }
             }
         },
 
-        createBuildings: function (x1, y1, x2, y2) {
+        /**
+         * Creates a single building given its top left and bottom right coordinates
+         * (in the [x, z] axis respectively), this method creates either a Block
+         * building or Classic building
+         * @param x1
+         * @param z1
+         * @param x2
+         * @param z2
+         */
+        createBuildings: function (x1, z1, x2, z2) {
             var object,
                 models = ['Block', 'Classic'],
                 probability = [0, 0.9, 1],
@@ -132,21 +142,62 @@
 
             random = Math.random();
             for (var i = 0; i < probability.length - 1; i += 1) {
-                if (random >= probability[i] && random < probability[i + 1]) {
+                if (random >= probability[i] && random <= probability[i + 1]) {
                     random = i;
                     break;
                 }
             }
-
             object = new T3.model[models[random]]({
                 width: width * (x2 - x1 + 1),
-                depth: depth * (y2 - y1 + 1)
+                depth: depth * (z2 - z1 + 1)
             });
             object.position.set(
                 x1 * width * T3.scale,
                 0,
-                y1 * depth * T3.scale
+                z1 * depth * T3.scale
             );
+        },
+
+        /**
+         * Creates a particle systems with the lamps created in each building block
+         */
+        createLampParticles: function () {
+            var lamps = T3.model.Block.prototype.lamps,
+                position,
+                i,
+                j,
+                factor = 1.1,
+                dx = [factor, -factor, 0, 0],
+                dz = [0, 0, -factor, factor],
+                geometry = new THREE.Geometry(),
+                material = new THREE.ParticleBasicMaterial({
+                    size: 100,
+                    color: 0xffffff,
+                    map: T3.AssetLoader.get('lensflare-0'),
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false
+                }),
+                lamp,
+                particleSystem;
+
+
+            for (i = 0; i < lamps.length; i += 1) {
+                lamp = lamps[i];
+                lamp.parent.updateMatrixWorld();
+                position = lamp.parent.localToWorld(lamp.position);
+                for (j = 0; j < 4; j += 1) {
+                    geometry.vertices.push(
+                        new THREE.Vector3(
+                            position.x + dx[j] * lamp.topXLike.height * T3.scale / 2,
+                            lamp.base.height * T3.scale,
+                            position.z + dz[j] * lamp.topXLike.height * T3.scale / 2
+                        )
+                    );
+                }
+            }
+            particleSystem = new THREE.ParticleSystem(geometry, material);
+            T3.ObjectManager.add('lensflare', particleSystem);
         },
 
         /**

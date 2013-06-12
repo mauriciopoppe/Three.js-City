@@ -49,24 +49,30 @@
             height = [0.6, 0.8, 0.9, 1],
             total = proportion.length,
             i,
+            j,
             box,
-            tetrahedron;
-
-        me.boxes = [];
+            tetrahedron,
+            textures = ['texture-office'],
+            texture = T3.AssetLoader.get(textures[~~(Math.random() * textures.length)]),
+            faceMaterials;
 
         // create boxes that make the Classic
         for (i = 0; i < total; i += 1) {
+            faceMaterials= [];
+            for (j = 0; j < 6; j += 1) {
+                if (j == 2 || j == 3) {     // top and bottom faces
+                    faceMaterials.push(new THREE.MeshBasicMaterial());
+                } else {
+                    faceMaterials.push(new THREE.MeshBasicMaterial({map: texture}));
+                }
+            }
             box = new T3.model.Box({
                 originalParent: me,
                 width: me.width * proportion[i],
                 height: me.height * height[i],
                 depth: me.depth * proportion[i],
-                materialOptions: {
-                    ambient: '#ffffff',     // ambient
-                    color: color,       // diffuse
-                    specular: color,    // specular
-                    shininess: 0.4 * 128,   // shininess
-                    wireframe: false
+                materialConfig: {
+                    initialized: new THREE.MeshFaceMaterial(faceMaterials)
                 }
             });
             box.position.set(
@@ -77,8 +83,9 @@
                 // z
                 (me.depth - box.depth) / 2
             );
-            me.boxes.push(box);
         }
+
+        // top
         tetrahedron = new T3.model.Mesh({
             originalParent: me,
             geometryConfig: {
@@ -93,8 +100,24 @@
                 })
             }
         });
-        me.boxes.push(tetrahedron);
         tetrahedron.position.set(box.width, me.height * T3.scale, box.depth);
+
+        // base
+        box = new T3.model.Box({
+            originalParent: me,
+            width: me.width,
+            height: 0.2,
+            depth: me.depth
+        });
+        box.position.set(
+            // x
+            Math.random() * (me.width - box.width),
+            // y
+            box.height * T3.scale / 2,
+            // z
+            Math.random() * (me.depth - box.depth)
+        );
+
         return this;
     };
 

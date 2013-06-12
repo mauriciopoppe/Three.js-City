@@ -188,6 +188,13 @@ T3.Application = {
 (function () {
     T3.AssetLoader.debug();
     T3.AssetLoader
+        .registerAsset('texture-glass', THREE.ImageUtils.loadTexture('images/textures/glass.jpg'))
+        .registerAsset('texture-glass_2', THREE.ImageUtils.loadTexture('images/textures/glass_2.jpg'))
+        .registerAsset('texture-office', THREE.ImageUtils.loadTexture('images/textures/offices.jpg'))
+        .registerAsset('texture-gravel', THREE.ImageUtils.loadTexture('images/textures/gravel.jpg'))
+        .registerAsset('texture-residential', THREE.ImageUtils.loadTexture('images/textures/residential.jpg'))
+        .registerAsset('lensflare-0', THREE.ImageUtils.loadTexture('images/lensflare0_alpha.png'));
+    T3.AssetLoader
         .register('obj/Skyline.body.js', 'car-body-geometry')
         .register('obj/Skyline.exhaust.js', 'car-exhaust-geometry')
         .register('obj/Skyline.windows.js', 'car-windows-geometry')

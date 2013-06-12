@@ -55,6 +55,16 @@ T3.AssetLoader = (function () {
             return this;
         },
         /**
+         * Registers an existing asset using `name` as its key
+         * @param name
+         * @param asset
+         * @chainable
+         */
+        registerAsset: function (name, asset) {
+            assets[name] = asset;
+            return this;
+        },
+        /**
          * Loads all the assets registered using `T3.AssetLoader.register`, each asset
          * is loaded in the same order as they were registered, when all the assets finished
          * loading then `callback` will be called with a scope equal to `scope`

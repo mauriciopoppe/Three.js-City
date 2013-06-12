@@ -46,16 +46,18 @@
     };
 
     Box.prototype.fixConfig = function (config) {
-        $.extend(config, {
+        var defaults = {
             geometryConfig: {
                 initialized: new THREE.CubeGeometry(this.width, this.height, this.depth)
+            },
+            materialConfig: {
+                type: 'MeshPhongMaterial',
+                options: {}
             }
-        });
+        };
+        $.extend(defaults, config);
 
-        $.extend(this.materialOptions, {
-        });
-
-        return config;
+        return defaults;
     };
 
     /**
@@ -64,6 +66,9 @@
      * @chainable
      */
     Box.prototype.init = function (config) {
+        var me = this;
+        me.real.matrixAutoUpdate = false;
+        me.real.updateMatrix();
         return this;
     };
     
