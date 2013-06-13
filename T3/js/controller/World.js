@@ -7,7 +7,6 @@
  */
 (function () {
     var World,
-        renderer,
         activeCamera;
 
     World = function (config) {
@@ -23,7 +22,14 @@
          * THREE Renderer
          * @type {Object}
          */
-        renderer = config.renderer;
+        World.renderer = config.renderer;
+
+
+        /**
+         * The number of calls to the update method % 1000000007
+         * @type {number}
+         */
+        World.ticks = 0;
 
         World.prototype.init.call(this);
     };
@@ -55,13 +61,12 @@
         },
 
         /**
-         * Initializes the coordinate helper
+         * Initializes the coordinate helper (its wrapped in a model in T3)
          */
         initCoordinates: function () {
             new T3.model.Coordinates({
-                // config goes here
-                ground: true,
-                gridX: true
+//                ground: true,
+//                gridX: true
             });
         },
 
@@ -75,7 +80,9 @@
             });
 
             // attach cameras to the car
-            me.car.add(T3.ObjectManager.get('camera-car-back').real);
+            me.car.add(T3.ObjectManager.get('camera-main').real);
+            me.car.add(T3.ObjectManager.get('camera-car-back-1').real);
+            me.car.add(T3.ObjectManager.get('camera-car-back-2').real);
             me.car.add(T3.ObjectManager.get('camera-car-driver').real);
         },
 
@@ -197,6 +204,17 @@
                 }
             }
             particleSystem = new THREE.ParticleSystem(geometry, material);
+            particleSystem.initDatGui = function(gui) {
+                var me = this,
+                    folder = gui.addFolder('Lamps');
+
+                folder
+                    .add(me, 'visible')
+                    .name('Visible')
+                    .onFinishChange(function (value) {
+                        me.visible = value;
+                    });
+            };
             T3.ObjectManager.add('lensflare', particleSystem);
         },
 
@@ -207,6 +225,8 @@
         update: function (delta) {
             var me = this,
                 manager = T3.ObjectManager;
+
+            World.ticks = (World.ticks + 1) % 1000000007;
 
             // game update logic goes here
             // CAMERA
@@ -223,17 +243,20 @@
         },
 
         render: function () {
-            renderer.render(scene, activeCamera.real);
+            World.renderer.render(scene, activeCamera.real);
         },
 
         /**
          * Wraps the world in a cube with a texture in the inside of it
          */
         initSkyBox: function () {
-            var path = "images/cube/",
-                urls = [ path + "posx.jpg", path + "negx.jpg",
-                    path + "posy.jpg", path + "negy.jpg",
-                    path + "posz.jpg", path + "negz.jpg" ],
+            var path = "images/cube/ice/",
+                extension = '.jpg',
+                dimension = 10000,
+                mesh,
+                urls = [ path + 'posx' + extension, path + 'negx' + extension,
+                    path + 'posy' + extension, path + 'negy' + extension,
+                    path + 'posz' + extension, path + 'negz' + extension],
                 textureCube = THREE.ImageUtils.loadTextureCube(urls);
 
             var shader = THREE.ShaderLib[ "cube" ];
@@ -247,14 +270,12 @@
                 side: THREE.BackSide
             });
 
-            new T3.model.Mesh({
-                geometryConfig: {
-                    initialized: new THREE.CubeGeometry(1000, 1000, 1000)
-                },
-                materialConfig: {
-                    initialized: material
-                }
-            });
+            mesh = new THREE.Mesh(
+                new THREE.CubeGeometry(dimension, dimension, dimension),
+                material
+            );
+//            mesh.position.y = dimension * 0.47;
+            T3.ObjectManager.add('skybox', mesh);
         },
 
         /**
@@ -263,19 +284,36 @@
         initCameras: function () {
             var camera;
 
+            // cube camera (used to reflect what the camera is targeting)
+            camera = new THREE.CubeCamera(
+                T3.model.Camera.near,       // near
+                1000,        // far
+                256                           // cube resolution
+            );
+            camera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
+            T3.ObjectManager.add('camera-cube', camera);
+
             // orbit and pan camera
             new T3.model.Camera({
                 name: 'camera-main',
                 cameraPan: true,
-                renderer: renderer,
-                position: new THREE.Vector3( 10, 100, 150 )
+                renderer: World.renderer,
+                position: new THREE.Vector3(10, 100, 150)
             });
 
             // car camera back
             camera = new T3.model.Camera({
-                name: 'camera-car-back',
-                position: new THREE.Vector3(0, 30, -100),
-                renderer: renderer
+                name: 'camera-car-back-1',
+                position: new THREE.Vector3(0, 15, -100),
+                renderer: World.renderer
+            });
+            camera.real.lookAt(new THREE.Vector3(0, 0, 0));
+
+            // car camera back
+            camera = new T3.model.Camera({
+                name: 'camera-car-back-2',
+                position: new THREE.Vector3(0, 30, -150),
+                renderer: World.renderer
             });
             camera.real.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -283,7 +321,7 @@
             camera = new T3.model.Camera({
                 name: 'camera-car-driver',
                 position: new THREE.Vector3(4, 11, -5),
-                renderer: renderer
+                renderer: World.renderer
             });
             camera.real.lookAt(new THREE.Vector3(-5, 0, 50));
 
@@ -292,7 +330,7 @@
             activeCamera = T3.ObjectManager.get('camera-main');
 
             // listen to camera switches
-            var cameras = ['camera-main', 'camera-car-back', 'camera-car-driver'],
+            var cameras = ['camera-main', 'camera-car-back-1', 'camera-car-back-2', 'camera-car-driver'],
                 current = cameras.indexOf(activeCamera.name);
             $('#switch').on('click', function () {
                 var next = (current + 1) % cameras.length;
@@ -301,6 +339,10 @@
             });
         },
 
+        /**
+         * Makes the car auto accelerate and activates one of the motion detection
+         * systems, the pixel diff between frames or the Headtrackr library
+         */
         initCarAutoAcceleration: function () {
             var $buttons = $('.motion'),
                 i,

@@ -22,6 +22,9 @@
         Camera.prototype.init.call(this, config);
     };
 
+    Camera.near = 1;
+    Camera.far = 10000;
+
     T3.inheritFrom(Camera, T3.model.Object3D);
 
     /**
@@ -35,8 +38,8 @@
             type: 'PerspectiveCamera',
             fov: 38,
             ratio: window.innerWidth / window.innerHeight,
-            near: 1,
-            far: 10000,
+            near: Camera.near,
+            far: Camera.far,
             position: new THREE.Vector3(100, 100, 100)
         }, camera;
 

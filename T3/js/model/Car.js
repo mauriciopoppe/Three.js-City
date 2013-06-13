@@ -12,6 +12,12 @@
     Car = function (config) {
         config = config || {};
 
+        /**
+         * Dat.gui flag to enable or disable cube map reflections
+         * @type {boolean}
+         */
+        this.enableCubeMap = false;
+
         T3.model.Object3D.call(this, config);
 
         /**
@@ -62,12 +68,41 @@
          */
         this.rimOptions = config.rimOptions;
 
+        /**
+         * Car orientation (is updated using the y orientation of any front wheel)
+         * @type {number}
+         */
         this.carOrientation = 0;
+        /**
+         * Steering radius, if a higher number is set it will make the car rotate
+         * on its y axis!
+         * @type {number}
+         */
         this.steeringRadiusRatio = 0.02;
+        /**
+         * Car acceleration factor
+         * @type {number}
+         */
         this.acceleration = 50;
-        this.deacceleration = -50;
+        /**
+         * Car deceleration factor
+         * @type {number}
+         */
+        this.deceleration = -50;
+        /**
+         * Current speed of the car
+         * @type {number}
+         */
         this.speed = 0;
+        /**
+         * Max speed of the car
+         * @type {number}
+         */
         this.maxSpeed = 100;
+        /**
+         * Min speed of the car
+         * @type {number}
+         */
         this.minSpeed = -50;
 
         Car.prototype.init.call(this, config);
@@ -85,7 +120,7 @@
             wheel,
             suffix;
 
-        var body = new T3.model.Body({
+        me.body = new T3.model.Body({
             name: 'car-body',
             folder: 'Car body',
             originalParent: me,
@@ -165,17 +200,39 @@
 
     Car.prototype.initDatGui = function (gui) {
         var me = this,
+            camera = T3.ObjectManager.get('camera-cube'),
             folder = gui.addFolder('Car Mesh');
         folder
             .add(me, 'visible')
             .name('Show mesh')
             .onFinishChange(function (value) {
-                T3.traverse(me, function (object) {
-                    object.visible = value;
-                });
+                me.setVisible(value);
+            });
+        folder
+            .add(me, 'enableCubeMap')
+            .name('Enable cube map')
+            .onFinishChange(function (value) {
+                me.body.updateMaterial(value);
             });
     };
 
+    /**
+     * Updates the visibility of this car and all its children
+     * @param value
+     */
+    Car.prototype.setVisible = function (value) {
+        var me = this;
+        me.visible = value;
+        T3.traverse(me, function (object) {
+            object.visible = value;
+        });
+    };
+
+    /**
+     * Moves the car updating its speed, position and rotation
+     * @param direction Either 'left' or 'right'
+     * @param delta
+     */
     Car.prototype.move = function (direction, delta) {
         var me = this,
             wheelOrientation = T3.ObjectManager.get('car-wheel-front-left').rotation.y,
@@ -196,6 +253,14 @@
         me.speed = newSpeed;
     };
 
+    /**
+     * Computes the new speed considering the maxSpeed and minSpeed as limits
+     * to this new speed
+     * @param direction
+     * @param oldSpeed
+     * @param delta
+     * @returns {*}
+     */
     Car.prototype.computeSpeed = function (direction, oldSpeed, delta) {
         var me = this,
             eps = 0.1,
@@ -206,13 +271,13 @@
         if (direction === 'forward') {
             newSpeed = Math.min(me.maxSpeed, oldSpeed + me.acceleration * delta);
         } else if (direction === 'backward') {
-            newSpeed = Math.max(me.minSpeed, oldSpeed + me.deacceleration * delta);
+            newSpeed = Math.max(me.minSpeed, oldSpeed + me.deceleration * delta);
         } else {
             // decay
             if (Math.abs(oldSpeed) <= eps) {
                 return 0;
             } else if (oldSpeed > eps) {
-                newSpeed = oldSpeed + me.deacceleration * delta;
+                newSpeed = oldSpeed + me.deceleration * delta;
             } else if (oldSpeed < -eps) {
                 newSpeed = oldSpeed + me.acceleration * delta;
             }
@@ -220,6 +285,12 @@
         return newSpeed;
     };
 
+    /**
+     * Listens to the events that happen in the world an updates this model
+     * and the view, also this method is responsible to update the cube camera
+     * used to compute the reflection texture applied to the body of this car
+     * @param {Number} delta
+     */
     Car.prototype.update = function (delta) {
         var me = this;
         if (T3.Keyboard.query('A')) {
@@ -249,8 +320,16 @@
 
         // CAR WHEELS ROTATION
         me.updateWheelsRotation(me.speed);
+
+        // UPDATE CUBE CAMERA POSITION
+        me.enableCubeMap && me.updateCubeCamera();
     };
 
+    /**
+     * Updates the rotation of the wheels (only x rotation in the back wheels and
+     * x, y rotation on the front wheels)
+     * @param speed
+     */
     Car.prototype.updateWheelsRotation = function (speed) {
         var me = this,
             angularSpeedRatio,
@@ -270,6 +349,22 @@
         backRight.rotation.x += angularSpeedRatio;
     };
 
+    /**
+     * Updates the cube camera used to create the dynamic texture
+     * based on the images that 6 cameras capture (CubeCamera)
+     */
+    Car.prototype.updateCubeCamera = function () {
+        var me = this,
+            cubeCamera,
+            renderer;
+        if (T3.World.ticks % 10 == 0) {
+            cubeCamera = T3.ObjectManager.get('camera-cube');
+            cubeCamera.position = me.position;
+            renderer = T3.World.renderer;
+            me.setVisible(false);
+            cubeCamera.updateCubeMap(renderer, scene);
+            me.setVisible(true);
+        }
+    };
     T3.model.Car = Car;
-
 })();

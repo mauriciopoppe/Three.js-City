@@ -35,13 +35,7 @@ T3.ObjectManager = {
      */
     add: function (name, object, parent) {
         parent = parent !== undefined ? parent : scene;
-        if (!name) {
-            name = this.id++;
-        }
-        if (this.objects[name]) {
-            console.log('[WARN]: registering an object with the same name: ' + name);
-        }
-        this.objects[name] = object;
+        this.register(name, object);
 
         // add this object to the scene
         if (object.real !== object) {
@@ -53,6 +47,21 @@ T3.ObjectManager = {
 
         // init gui
         object.initDatGui && object.initDatGui(T3.Application.datGUI);
+    },
+    /**
+     * Registers an object in the map of objects that the object manager holds,
+     * this method does not add the object to the scene
+     * @param name
+     * @param object
+     */
+    register: function (name, object) {
+        if (!name) {
+            name = this.id++;
+        }
+        if (this.objects[name]) {
+            console.log('[WARN]: registering an object with the same name: ' + name);
+        }
+        this.objects[name] = object;
     },
     /**
      * Removes an object from the ObjectManager and the scene

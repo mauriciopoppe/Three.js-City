@@ -46,7 +46,7 @@ T3.Application = {
             Detector.addGetWebGLMessage();
         }
         me.renderer = new THREE.WebGLRenderer({
-            antialias: true
+//            antialias: true
         });
         me.renderer.setClearColorHex( 0xAAAAAA, 1 );
         me.renderer.setSize( window.innerWidth, window.innerHeight );
