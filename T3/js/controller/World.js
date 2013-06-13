@@ -65,7 +65,7 @@
          */
         initCoordinates: function () {
             new T3.model.Coordinates({
-//                ground: true,
+                ground: true
 //                gridX: true
             });
         },
@@ -287,8 +287,8 @@
             // cube camera (used to reflect what the camera is targeting)
             camera = new THREE.CubeCamera(
                 T3.model.Camera.near,       // near
-                1000,        // far
-                256                           // cube resolution
+                1000,                       // far
+                128                         // cube resolution
             );
             camera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
             T3.ObjectManager.add('camera-cube', camera);

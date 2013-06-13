@@ -191,17 +191,17 @@ T3.Application = {
         .registerAsset('texture-glass', THREE.ImageUtils.loadTexture('images/textures/glass.jpg'))
         .registerAsset('texture-glass_2', THREE.ImageUtils.loadTexture('images/textures/glass_2.jpg'))
         .registerAsset('texture-office', THREE.ImageUtils.loadTexture('images/textures/offices.jpg'))
-        .registerAsset('texture-gravel', THREE.ImageUtils.loadTexture('images/textures/gravel.jpg'))
+        .registerAsset('texture-sidewalk', THREE.ImageUtils.loadTexture('images/textures/sidewalk.jpg'))
         .registerAsset('texture-residential', THREE.ImageUtils.loadTexture('images/textures/residential.jpg'))
         .registerAsset('lensflare-0', THREE.ImageUtils.loadTexture('images/lensflare0_alpha.png'));
     T3.AssetLoader
-        .register('obj/Skyline.body.js', 'car-body-geometry')
-        .register('obj/Skyline.exhaust.js', 'car-exhaust-geometry')
-        .register('obj/Skyline.windows.js', 'car-windows-geometry')
-        .register('obj/Skyline.lightsBack.js', 'car-lights-back-geometry')
-        .register('obj/Skyline.lightsFront.js', 'car-lights-front-geometry')
-        .register('obj/Skyline.tire.js', 'car-tire-geometry')
-        .register('obj/Skyline.rim.js', 'car-rim-geometry')
-        .register('obj/Skyline.interior.js', 'car-interior-geometry');
+        .addToLoadQueue('obj/Skyline.body.js', 'car-body-geometry')
+        .addToLoadQueue('obj/Skyline.exhaust.js', 'car-exhaust-geometry')
+        .addToLoadQueue('obj/Skyline.windows.js', 'car-windows-geometry')
+        .addToLoadQueue('obj/Skyline.lightsBack.js', 'car-lights-back-geometry')
+        .addToLoadQueue('obj/Skyline.lightsFront.js', 'car-lights-front-geometry')
+        .addToLoadQueue('obj/Skyline.tire.js', 'car-tire-geometry')
+        .addToLoadQueue('obj/Skyline.rim.js', 'car-rim-geometry')
+        .addToLoadQueue('obj/Skyline.interior.js', 'car-interior-geometry');
     T3.AssetLoader.load(T3.Application.launch, T3.Application);
 })();

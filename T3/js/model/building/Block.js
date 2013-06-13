@@ -102,7 +102,15 @@
             originalParent: me,
             width: me.width,
             height: 0.2,
-            depth: me.depth
+            depth: me.depth,
+            materialConfig: {
+                initialized: new THREE.MeshFaceMaterial(
+                    me.generateFaceMaterials(
+                        T3.AssetLoader.get('texture-sidewalk'),
+                        []
+                    )
+                )
+            }
         });
         box.position.set(
             // x

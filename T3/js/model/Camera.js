@@ -61,6 +61,8 @@
 
         if (config.cameraPan) {
             this.cameraControls = new THREE.OrbitAndPanControls(camera, defaults.renderer.domElement);
+            // avoid panning to see the bottom face
+            this.cameraControls.maxPolarAngle = Math.PI / 2 * 0.99;
             this.cameraControls.target.set(0, 0, 0);
         }
         return this;

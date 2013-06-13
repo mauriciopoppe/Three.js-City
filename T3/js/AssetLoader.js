@@ -47,7 +47,7 @@ T3.AssetLoader = (function () {
          * @param {string} name Name of the asset registered with
          * @chainable
          */
-        register: function (url, name) {
+        addToLoadQueue: function (url, name) {
             queue.push({
                 url: url,
                 name: name

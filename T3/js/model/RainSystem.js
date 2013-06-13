@@ -118,7 +118,7 @@
 
         folder
             .add(me, 'particleCount', 0, me.maxParticleCount)
-            .name('Total');
+            .name('Raindrops');
     };
 
     /**

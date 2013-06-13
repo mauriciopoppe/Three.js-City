@@ -33,7 +33,7 @@
             $.extend(me.gui, options);
 
             // add all coordinates helpers to the scene
-            me.ref.ground = Coordinates.drawGround({size:10000, color: '#aaaaaa'});
+            me.ref.ground = Coordinates.drawGround({size:10000, color: '#111'});
             me.ref.gridX = Coordinates.drawGrid({size:10000,scale:0.01});
             me.ref.gridY = Coordinates.drawGrid({size:10000,scale:0.01, orientation:"y"});
             me.ref.gridZ = Coordinates.drawGrid({size:10000,scale:0.01, orientation:"z"});
