@@ -191,6 +191,8 @@ T3.Application = {
         .registerAsset('texture-glass', THREE.ImageUtils.loadTexture('images/textures/glass.jpg'))
         .registerAsset('texture-glass_2', THREE.ImageUtils.loadTexture('images/textures/glass_2.jpg'))
         .registerAsset('texture-office', THREE.ImageUtils.loadTexture('images/textures/offices.jpg'))
+        .registerAsset('texture-road-x', THREE.ImageUtils.loadTexture('images/textures/roadposx.png'))
+        .registerAsset('texture-road-z', THREE.ImageUtils.loadTexture('images/textures/roadposz.png'))
         .registerAsset('texture-sidewalk', THREE.ImageUtils.loadTexture('images/textures/sidewalk.jpg'))
         .registerAsset('texture-residential', THREE.ImageUtils.loadTexture('images/textures/residential.jpg'))
         .registerAsset('lensflare-0', THREE.ImageUtils.loadTexture('images/lensflare0_alpha.png'));

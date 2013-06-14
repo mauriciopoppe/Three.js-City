@@ -44,7 +44,21 @@
     Block.prototype.init = function () {
         var me = this;
         me.createBlocks();
-        // TODO: create the lights in each block
+//        me.real = new THREE.Mesh(
+//            new THREE.CubeGeometry(
+//                me.width * T3.scale,
+//                me.height * T3.scale,
+//                me.depth * T3.scale
+//            ),
+//            new THREE.MeshNormalMaterial()
+//        );
+//        me.add(me.real);
+//        me.real.position.set(
+//            me.width * T3.scale / 2,
+//            me.height * T3.scale / 2,
+//            me.depth * T3.scale / 2
+//        );
+
         me.createLights();
     };
 
@@ -93,12 +107,10 @@
                 0.1 * me.depth +
                     Math.random() * (me.depth * 0.8 - box.depth)
             );
-            box.matrixAutoUpdate = false;
-            box.updateMatrix();
         }
 
         // base block
-        box = new T3.model.Box({
+        new T3.model.Box({
             originalParent: me,
             width: me.width,
             height: 0.2,
@@ -112,20 +124,6 @@
                 )
             }
         });
-        box.position.set(
-            // x
-            Math.random() * (me.width - box.width),
-            // y
-            box.height * T3.scale / 2,
-            // z
-            Math.random() * (me.depth - box.depth)
-        );
-        box.matrixAutoUpdate = false;
-        box.updateMatrix();
-
-        // lights
-        // color, intensity, distance
-
         return this;
     };
 

@@ -39,7 +39,9 @@
 
     World.prototype = {
         init: function () {
-            var me = this;
+            var me = this,
+                gridSize = 7,
+                freeSpace;
             // put the scene in a huge cube
             me.initSkyBox();
 
@@ -49,7 +51,8 @@
             me.initCoordinates();
 
             // world objects
-            me.createBuildingBlocks();
+            freeSpace = me.createBuildingBlocks(gridSize);
+            me.createRoads(freeSpace);
             me.createLampParticles();
             // car
             me.createCar();
@@ -101,13 +104,13 @@
          * the idea is to create a grid of roads and make a block in each space that
          * is not in the grid, after the method is complete {@link T3.model.Block}
          * has an array of the lamps created in each block
+         * @param {number} gridSize
          */
-        createBuildingBlocks: function () {
+        createBuildingBlocks: function (gridSize) {
             var me = this,
                 rows = [],
                 cols = [],
                 total,
-                gridSize = 7,
                 i,
                 j;
 
@@ -116,8 +119,8 @@
             rows[total] = cols[total] = 0;
             total += 1;
             while (total < gridSize) {
-                rows[total] = rows[total - 1] + 2 + ~~(Math.random() * 3);
-                cols[total] = cols[total - 1] + 2 + ~~(Math.random() * 3);
+                rows[total] = rows[total - 1] + 3 + ~~(Math.random() * 3);
+                cols[total] = cols[total - 1] + 3 + ~~(Math.random() * 3);
                 total += 1;
             }
             for (i = 0; i < gridSize - 1; i += 1) {
@@ -128,6 +131,7 @@
                     );
                 }
             }
+            return {rows: rows, cols: cols};
         },
 
         /**
@@ -158,11 +162,93 @@
                 width: width * (x2 - x1 + 1),
                 depth: depth * (z2 - z1 + 1)
             });
+
+            // since each object is added with its center at the center of the parent
+            // lets move the object such that its bottom x,y,z corner is at the center
+            // of the parent
             object.position.set(
-                x1 * width * T3.scale,
+                x1 * width * T3.scale + object.width * T3.scale / 2,
                 0,
-                z1 * depth * T3.scale
+                z1 * depth * T3.scale + object.depth * T3.scale / 2
             );
+        },
+
+        /**
+         * Creates the road used in the app
+         * @param {Object} freeSpace
+         */
+        createRoads: function (freeSpace) {
+            var i,
+                j,
+                width = 10,
+                depth = 10,
+                mesh,
+                lastCol = freeSpace.cols[freeSpace.cols.length - 1],
+                lastRow = freeSpace.rows[freeSpace.rows.length - 1],
+                texture,
+                boxWidth,
+                geometry,
+                material;
+
+            // cols (x)
+            texture = T3.AssetLoader.get('texture-road-z');
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat = new THREE.Vector2(1, -3);
+            material = new THREE.MeshBasicMaterial({ map: texture });
+
+            for (i = 0; i < freeSpace.cols.length; i += 1) {
+                mesh = new T3.model.Mesh({
+                    geometryConfig: {
+                        initialized: new THREE.CubeGeometry(width, 0.2, depth * (lastRow + 1))
+                    },
+                    materialConfig: {
+                        initialized: material
+                    }
+                });
+
+                // since each object is added with its center at the center of the parent
+                // lets move the object such that its bottom x,y,z corner is at the center
+                // of the parent
+                mesh.position.set(
+                    freeSpace.cols[i] * width * T3.scale + width * T3.scale / 2,
+                    -1,
+                    depth * (lastRow + 1) * T3.scale / 2
+                );
+            }
+
+            // rows (z)
+            texture = T3.AssetLoader.get('texture-road-x');
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat = new THREE.Vector2(1, -1);
+            material = new THREE.MeshBasicMaterial({ map: texture });
+
+            for (i = 0; i < freeSpace.rows.length; i += 1) {
+                for (j = 0; j < freeSpace.cols.length - 1; j += 1) {
+                    boxWidth = width * (freeSpace.cols[j + 1] - freeSpace.cols[j] - 1);
+                    geometry = new THREE.CubeGeometry(
+                        boxWidth,
+                        0.2,
+                        depth
+                    );
+                    mesh = new T3.model.Mesh({
+                        geometryConfig: {
+                            initialized: geometry
+                        },
+                        materialConfig: {
+                            initialized: material
+                        }
+                    });
+
+                    // since each object is added with its center at the center of the parent
+                    // lets move the object such that its bottom x,y,z corner is at the center
+                    // of the parent
+                    mesh.position.set(
+                        boxWidth * T3.scale / 2 + width * (freeSpace.cols[j] + 1) * T3.scale,
+                        -1,
+                        freeSpace.rows[i] * depth * T3.scale + depth * T3.scale / 2
+                    );
+                }
+            }
         },
 
         /**
