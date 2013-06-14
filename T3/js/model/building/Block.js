@@ -107,10 +107,12 @@
                 0.1 * me.depth +
                     Math.random() * (me.depth * 0.8 - box.depth)
             );
+            box.real.receiveShadow = true;
+            box.real.castShadow = true;
         }
 
         // base block
-        new T3.model.Box({
+        box = new T3.model.Box({
             originalParent: me,
             width: me.width,
             height: 0.2,
@@ -124,6 +126,8 @@
                 )
             }
         });
+        box.real.receiveShadow = true;
+
         return this;
     };
 

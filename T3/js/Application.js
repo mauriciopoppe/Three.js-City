@@ -48,6 +48,15 @@ T3.Application = {
         me.renderer = new THREE.WebGLRenderer({
 //            antialias: true
         });
+        me.renderer.shadowMapEnabled = true;
+        me.renderer.shadowCameraNear = 0;
+        me.renderer.shadowCameraFar = 1000;
+        me.renderer.shadowCameraFov = 100;
+
+        me.renderer.shadowMapBias = 0.0039;
+        me.renderer.shadowMapDarkness = 0.5;
+        me.renderer.shadowMapWidth = 2048;
+        me.renderer.shadowMapHeight = 2048;
         me.renderer.setClearColorHex( 0xAAAAAA, 1 );
         me.renderer.setSize( window.innerWidth, window.innerHeight );
         document.getElementById('webgl-container').appendChild(me.renderer.domElement);
@@ -76,27 +85,43 @@ T3.Application = {
      * @chainable
      */
     createSceneLights: function () {
-        var light;
+        var light,
+            k, d;
 
         light = new THREE.AmbientLight( 0x101010 );
         T3.ObjectManager.add('ambient-light', light);
 
         light = new THREE.DirectionalLight( 0xffffff, 1 );
         light.position.set(200, 400, 500);
+//        light.castShadow = true;
+//        light.shadowCameraVisible = true;
         T3.ObjectManager.add('directional-light-1', light);
 
         light = new THREE.DirectionalLight( 0xffffff, 1 );
         light.position.set(-500, 250, -200);
+//        light.castShadow = true;
+//        light.shadowCameraVisible = true;
         T3.ObjectManager.add('directional-light-2', light);
 
         // directional light to simulate sun light
         // 100W Tungsten like color: http://planetpixelemporium.com/tutorialpages/light.html
+        k = 4;
+        d = 1000;
         light = new THREE.DirectionalLight( 0xffd6aa, 3 );
-        light.position.set(100, 10, -20);
+        light.position.set(1000 * k, 100 * k, -200 * k);
         T3.ObjectManager.add('directional-light-3', light);
-        var mesh = new THREE.Mesh(new THREE.CubeGeometry(10, 10, 10), new THREE.MeshNormalMaterial());
-        mesh.position.set(100, 10, -20);
-        scene.add(mesh);
+        light.castShadow = true;
+        light.shadowCameraNear = 1000;
+        light.shadowCameraFar= 5000;
+
+        light.shadowCameraVisible = true;
+        light.shadowCameraLeft = -d * 4;
+        light.shadowCameraRight = 0;
+        light.shadowCameraTop = d;
+        light.shadowCameraBottom = -d;
+//        var mesh = new THREE.Mesh(new THREE.CubeGeometry(10, 10, 10), new THREE.MeshNormalMaterial());
+//        mesh.position.set(100, 10, -20);
+//        scene.add(mesh);
 
         //****** sphere + point light ******
 //        var colorLight = 0xffffff;

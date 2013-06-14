@@ -213,6 +213,9 @@
                     -1,
                     depth * (lastRow + 1) * T3.scale / 2
                 );
+
+                mesh.real.receiveShadow = true;
+
             }
 
             // rows (z)
@@ -246,6 +249,9 @@
                         -1,
                         freeSpace.rows[i] * depth * T3.scale + depth * T3.scale / 2
                     );
+
+                    mesh.real.receiveShadow = true;
+
                 }
             }
         },
@@ -383,7 +389,7 @@
                 name: 'camera-main',
                 cameraPan: true,
                 renderer: World.renderer,
-                position: new THREE.Vector3(10, 100, 150)
+                position: new THREE.Vector3(-100, 30, -100)
             });
 
             // car camera back

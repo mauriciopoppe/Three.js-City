@@ -64,15 +64,18 @@
         var me = this,
             cube = T3.ObjectManager.get('camera-cube');
         me.real.geometry.dynamic = true;
-
         // materials (to enable dynamic material change)
         me.materials = [
             me.real.material,
             new THREE.MeshPhongMaterial({
-                envMap: cube && cube.renderTarget
+                ambient: '#313131',
+                color: '#525252',
+                specular: '#000000',
+                envMap: cube && cube.renderTarget,
+                shininess: 0
             })
         ];
-
+        me.real.receiveShadow = true;
         return this;
     };
 

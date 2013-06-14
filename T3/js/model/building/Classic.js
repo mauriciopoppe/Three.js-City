@@ -83,6 +83,8 @@
                 // z
                 (me.depth - box.depth) / 2
             );
+            box.real.castShadow = true;
+            box.real.receiveShadow = true;
         }
 
         // top
@@ -117,6 +119,7 @@
             // z
             Math.random() * (me.depth - box.depth)
         );
+        box.real.receiveShadow = true;
 
         return this;
     };
