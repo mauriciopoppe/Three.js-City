@@ -12,7 +12,7 @@ The project consists of two folders, all the common files are in the folder `boi
 - *Rain* can be enabled using the panel on the top right corner of the document
 - There are two *motion detection* systems that allow you to drive the car only with your movements, one uses [headtrackr](https://github.com/auduno/headtrackr/) and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left
 - The texture of the body of the car can be updated in runtime using a *cubemap texture* (*cough* dropping the fps)
-- If you clone the repo, you can see the development process step by step using git's tag system, i.e. `git checkout r3`, 'git checkout r4', etc.
+- If you clone the repo, you can see the development process step by step using git's tag system, i.e. `git checkout r3`, `git checkout r4`, etc.
 
 ## How to launch the project
 - Set up a web server in the root path of this project and goto `/T3/index.html`

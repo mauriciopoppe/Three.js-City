@@ -210,6 +210,8 @@
             depth: 0.2,
             height: 7
         });
+//        base.real.castShadow = true;
+        base.real.receiveShadow = true;
         base.position.y = base.height * T3.scale / 2;
         lightContainer.base = base;
 
@@ -220,6 +222,8 @@
             depth: 0.2,
             height: 3
         });
+        left.real.castShadow = true;
+        left.real.receiveShadow = true;
         left.rotation.x = -Math.PI / 2;
         left.position.y = base.height * T3.scale;
 
@@ -229,6 +233,8 @@
             depth: 0.2,
             height: 3
         });
+        right.real.castShadow = true;
+        right.real.receiveShadow = true;
         right.rotation.z = -Math.PI / 2;
         right.position.y = base.height * T3.scale;
 
