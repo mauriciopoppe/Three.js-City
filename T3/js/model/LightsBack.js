@@ -12,6 +12,18 @@
 
         T3.model.Mesh.call(this, config);
 
+        /**
+         * Instance of point light simulating the left light
+         * @type {Object}
+         */
+        this.lightLeft = null;
+
+        /**
+         * Instance of point light simulating the left right
+         * @type {Object}
+         */
+        this.lightRight = null;
+
         LightsBack.prototype.init.call(this, config);
     };
 
@@ -31,10 +43,31 @@
      * @chainable
      */
     LightsBack.prototype.init = function (config) {
+        var me = this,
+            lightLeft,
+            lightRight;
+        me.lightLeft = lightLeft = new THREE.PointLight(0xff0000, 1, 5);
+        T3.ObjectManager.add('car-light-left', lightLeft);
+        lightLeft.position.set(6, 9, -25);
+        me.add(lightLeft);
+
+        me.lightRight = lightRight= new THREE.PointLight(0xff0000, 1, 5);
+        T3.ObjectManager.add('car-light-right', lightRight);
+        lightRight.position.set(-6, 9, -25);
+        me.add(lightRight);
+
         return this;
     };
 
-    LightsBack.prototype.update = function (delta) {
+    LightsBack.prototype.update = function (delta, brakes) {
+        var me = this;
+        if (brakes) {
+            me.lightLeft.intensity = 10;
+            me.lightRight.intensity = 10;
+        } else {
+            me.lightLeft.intensity = 5;
+            me.lightRight.intensity = 5;
+        }
     };
 
     T3.model.LightsBack = LightsBack;

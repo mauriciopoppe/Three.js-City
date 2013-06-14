@@ -155,7 +155,7 @@
             geometryConfig: { initialized: T3.AssetLoader.get('car-lights-front-geometry') }
         });
 
-        new T3.model.LightsBack({
+        me.ligthsBack = new T3.model.LightsBack({
             name: 'car-lights-back',
             folder: 'Car lights - back',
             originalParent: me,
@@ -317,6 +317,9 @@
             me.wheelFrontLeft.decay();
             me.wheelFrontRight.decay();
         }
+
+        // CAR BACK LIGHTS
+        me.ligthsBack.update(delta, T3.Keyboard.query('S'));
 
         // CAR WHEELS ROTATION
         me.updateWheelsRotation(me.speed);
