@@ -1,0 +1,26 @@
+#canvas-source, #video {
+    display: none;
+}
+
+#inputCanvas {
+    display: none !important;
+}
+
+#canvas-blended {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    /*border: 1px solid #aaa;*/
+
+    -webkit-box-shadow: 0px 0px 4px 0px #ffffff;
+    box-shadow: 0px 0px 4px 0px #ffffff;
+}
+
+.off {
+    background-color: #ff0000;
+}
+
+.on {
+    background-color: #00ff00;
+}

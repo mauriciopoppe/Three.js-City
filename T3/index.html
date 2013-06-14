@@ -1,9 +1,103 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <title>Hello world</title>
-</head>
+	<head>
+		<title>T3 Car</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+        <link href="../boilerplate_lib/css/reset.css" rel="stylesheet"/>
+        <link href="css/main.css" rel="stylesheet"/>
+
+	</head>
 <body>
-    <h1>Hello world!</h1>
+	<!-- three.js container -->
+    <div id="webgl-container"></div>
+
+    <div style="position: absolute; top: 0; right: 40%;">
+        <button id="switch">Change Camera</button>
+        <button data-motion="MotionDetection" class="motion off">
+            Motion detection using pixel diff between frames
+        </button>
+        <button data-motion="MotionDetectionHeadtrackr" class="motion off">
+            Motion detection using headtrackr
+        </button>
+    </div>
+
+    <!-- MOTION DETECTION VARS -->
+    <!-- own face detection system -->
+    <video id="video" width="240" height="160"></video>
+    <canvas id="canvas-source" width="240" height="160"></canvas>
+    <canvas id="canvas-blended" width="240" height="160"></canvas>
+    <!-- headtrackr -->
+    <canvas id="inputCanvas" width="320" height="240"></canvas>
+    <video id="inputVideo" autoplay loop style="display: none"></video>
+
+	<!-- info on screen display -->
+	<div id="info" style="position: absolute; top: 0px; right: 0px;">
+		<div class="bottom" id="fullscreen" ></div>
+	</div>
+
+    <!-- Library -->
+    <script src="../boilerplate_lib/vendor/extra/headtrackr.min.js"></script>
+    <script src="../boilerplate_lib/vendor/extra/jquery-1.9.1.js"></script>
+    <script src="../boilerplate_lib/vendor/three.js/three.57.min.js"></script>
+    <script src="../boilerplate_lib/vendor/three.js/Detector.js"></script>
+    <script src="../boilerplate_lib/vendor/three.js/stats.min.js"></script>
+    <script src="../boilerplate_lib/vendor/three.js/Coordinates.js"></script>
+
+    <script src="../boilerplate_lib/vendor/extra/OrbitAndPanControls.js"></script>
+    <script src="../boilerplate_lib/vendor/extra/dat.gui.min.js"></script>
+
+    <script src="../boilerplate_lib/vendor/threex/THREEx.FullScreen.js"></script>
+    <script src="../boilerplate_lib/vendor/threex/THREEx.WindowResize.js"></script>
+    <script src="../boilerplate_lib/vendor/threex.dragpancontrols.js"></script>
+    <!--<script src="../boilerplate_lib/vendor/threex/TrackballControls.js"></script>-->
+
+     <!-- Boilerplate -->
+	<script type="text/javascript" src="js/T3.js"></script>
+	<script type="text/javascript" src="js/AssetLoader.js"></script>
+	<script type="text/javascript" src="js/ObjectManager.js"></script>
+
+    <script type="text/javascript" src="js/model/Object3D.js"></script>
+    <script type="text/javascript" src="js/model/Coordinates.js"></script>
+	<script type="text/javascript" src="js/model/Camera.js"></script>
+	<script type="text/javascript" src="js/model/Mesh.js"></script>
+
+    <!-- Car -->
+	<script type="text/javascript" src="js/model/Body.js"></script>
+	<script type="text/javascript" src="js/model/Exhaust.js"></script>
+	<script type="text/javascript" src="js/model/Interior.js"></script>
+	<script type="text/javascript" src="js/model/LightsFront.js"></script>
+	<script type="text/javascript" src="js/model/LightsBack.js"></script>
+	<script type="text/javascript" src="js/model/Window.js"></script>
+
+    <script type="text/javascript" src="js/model/Tire.js"></script>
+	<script type="text/javascript" src="js/model/Rim.js"></script>
+	<script type="text/javascript" src="js/model/Wheel.js"></script>
+
+    <script type="text/javascript" src="js/model/Car.js"></script>
+
+    <!-- Rain -->
+    <script type="text/javascript" src="js/model/RainSystem.js"></script>
+
+    <!-- City -->
+    <script type="text/javascript" src="js/model/Building.js"></script>
+    <script type="text/javascript" src="js/model/building/Box.js"></script>
+    <script type="text/javascript" src="js/model/building/Block.js"></script>
+    <script type="text/javascript" src="js/model/building/Classic.js"></script>
+
+    <!-- Controllers -->
+    <script type="text/javascript" src="js/controller/Keyboard.js"></script>
+    <script type="text/javascript" src="js/controller/World.js"></script>
+
+	<script type="text/javascript" src="js/Application.js"></script>
+
+    <!--Motion detection-->
+    <!-- toggle between these imports to unable my motion detection system or -->
+    <!-- headtrackr motion detection system -->
+
+    <script src="js/MotionDetection.js"></script>
+    <script src="js/MotionDetectionHeadtrackr.js"></script>
+
 </body>
 </html>
