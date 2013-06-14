@@ -41,23 +41,38 @@
 <p>The project consists of two folders, all the common files are in the folder <code>boilerplate</code> and the application is in <code>T3</code>.</p>
 
 <h2>
+<a name="screenshots" class="anchor" href="#screenshots"><span class="octicon octicon-link"></span></a>Screenshots</h2>
+
+<p><img src="http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/1.jpg" alt="1"><img src="http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/2.jpg" alt="2"><img src="http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/3.jpg" alt="3"><img src="http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/4.jpg" alt="4"></p>
+
+<h2>
 <a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
-<li>You can drive the car using the WASD keys (hack the code in the file <code>T3/model/Car</code>)</li>
+<li>You can drive the car using the WASD keys</li>
 <li>Some properties of the material of the car can be updated in runtime using the panel on the top right corner </li>
-<li>The city is generated randomically using a simple grid</li>
+<li>The city is generated at random using a simple grid and some boxes with textures</li>
+<li>The city has the following: <code>roads</code> (boxes using 2 textures and some UV modifications), <code>lamps</code> (3 boxes and a common particle system with a texture that simulates a light), <code>buildings</code> (there are two types of buildings: <code>Blocks</code> and <code>Classic</code>, the <em>classic</em> ones are like skyscrappers)</li>
 <li>
-<em>Rain</em> can be enabled using the panel on the top right corner of the document</li>
-<li>There are two <em>motion detection</em> systems that allow you to drive the car only with your movements, one uses <a href="https://github.com/auduno/headtrackr/">headtrackr</a> and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left</li>
-<li>The texture of the body of the car can be updated in runtime using a <em>cubemap texture</em> (*cough* dropping the fps)</li>
-<li>If you clone the repo, you can see the development process step by step using git's tag system, i.e. <code>git checkout r3</code>, 'git checkout r4', etc.</li>
+<em>Rain</em> can be enabled using the panel on the top right corner of the document (raindrops have a random initial velocity and follow the car at all times, each time a raindrop's y coordinate is below 0 it goes to the top to avoid creating more particles during runtime)</li>
+<li>There are two <em>motion detection</em> systems that allow you to drive the car only with your movements, one uses <a href="https://github.com/auduno/headtrackr/">headtrackr</a> and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left. (I learned this from: <a href="http://www.adobe.com/devnet/html5/articles/javascript-motion-detection.html">http://www.adobe.com/devnet/html5/articles/javascript-motion-detection.html</a>). NOTE: this feature only works in Chrome</li>
+<li>The texture of the body of the car can be updated in runtime to be a <em>cubemap texture</em> (*cough* dropping the fps but allowing reflections)</li>
+<li>There's a <code>THREE.DirectionalLight</code> whose position is far infinitely away but it's direction is exactly crossing the sun in the cubemap and the origin of the world, this makes the shadows created by the building look more realistic</li>
 </ul><h2>
+<a name="browser-support" class="anchor" href="#browser-support"><span class="octicon octicon-link"></span></a>Browser support</h2>
+
+<p>I've tested this project in Google Chrome (v 27.0.1453.110), Google Chrome Canary (v 29.0.1521.0) and Firefox (v 19.0.2), it's important to note that Google's browser is way faster rendering [30 ~ 60] frames per second, firefox renders about [7 ~ 12] fps, also the motion detection system only runs in Chrome.</p>
+
+<h2>
+<a name="cloning-the-repo" class="anchor" href="#cloning-the-repo"><span class="octicon octicon-link"></span></a>Cloning the repo</h2>
+
+<p>If you clone the repo, you can see the development process step by step using git's tag system, i.e. <code>git checkout r3</code>, <code>git checkout r4</code>, etc.</p>
+
+<h2>
 <a name="how-to-launch-the-project" class="anchor" href="#how-to-launch-the-project"><span class="octicon octicon-link"></span></a>How to launch the project</h2>
 
 <ul>
-<li>Set up a web server in the root path of this project and goto <code>/T3/index.html</code>
-</li>
+<li>Set up a web server in the root of this project and goto <code>/T3/index.html</code> in you browser</li>
 </ul><p>Car model by: <em>sepel</em> (<a href="http://www.blendswap.com/blends/view/67462">http://www.blendswap.com/blends/view/67462</a>)</p>
 
 <p>Textures downloaded from: <a href="http://www.cgtextures.com/">http://www.cgtextures.com/</a> and <a href="http://www.humus.name/index.php?page=Textures">http://www.humus.name/index.php?page=Textures</a></p>
