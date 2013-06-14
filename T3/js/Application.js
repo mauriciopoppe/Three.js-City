@@ -203,6 +203,7 @@ T3.Application = {
 
     /************** LAUNCHER *************/
     launch: function () {
+
         // init the world
         this.createRender()
             .createScene()
@@ -212,6 +213,9 @@ T3.Application = {
 
         // inits the world controller
         this.initController();
+
+        $('#mask').fadeOut(5000);
+        $('#spinner').fadeOut(3000);
 
         // animate the world and the scene
         this.animate();
