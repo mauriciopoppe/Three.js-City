@@ -195,6 +195,20 @@
         });
         me.wheelFrontRight.position.set(-7, me.wheelFrontRight.radius, 13.5);
         me.wheelFrontRight.real.rotation.z += Math.PI;
+
+        // poor man shadow
+        var geometry = new THREE.PlaneGeometry(15, 28);
+        geometry.applyMatrix(new THREE.Matrix4().makeRotationX(- Math.PI / 2));
+        var material = new THREE.MeshBasicMaterial({
+            color: 0x333333,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.7
+        });
+        me.shadow = new THREE.Mesh(geometry, material);
+        scene.add(me.shadow);
+        me.shadow.position.y = 0.2;
+
         return this;
     };
 
@@ -250,6 +264,12 @@
         me.position.z += Math.cos(me.carOrientation) * forwardDelta;
         // steering
         me.rotation.y = me.carOrientation;
+
+        // poor man shadow
+        me.shadow.position = me.position;
+        me.shadow.position.y = 0.2;
+        me.shadow.rotation.y = me.carOrientation;
+
         me.speed = newSpeed;
     };
 

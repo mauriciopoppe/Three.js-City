@@ -91,16 +91,12 @@ T3.Application = {
         light = new THREE.AmbientLight( 0x101010 );
         T3.ObjectManager.add('ambient-light', light);
 
-        light = new THREE.DirectionalLight( 0xffffff, 1 );
-        light.position.set(200, 400, 500);
-//        light.castShadow = true;
-//        light.shadowCameraVisible = true;
-        T3.ObjectManager.add('directional-light-1', light);
+//        light = new THREE.DirectionalLight( 0xffffff, 1 );
+//        light.position.set(200, 400, 500);
+//        T3.ObjectManager.add('directional-light-1', light);
 
         light = new THREE.DirectionalLight( 0xffffff, 1 );
         light.position.set(-500, 250, -200);
-//        light.castShadow = true;
-//        light.shadowCameraVisible = true;
         T3.ObjectManager.add('directional-light-2', light);
 
         // directional light to simulate sun light
@@ -109,12 +105,18 @@ T3.Application = {
         d = 1000;
         light = new THREE.DirectionalLight( 0xffd6aa, 3 );
         light.position.set(1000 * k, 100 * k, -200 * k);
+        light.initDatGui = function (gui) {
+            var folder = gui.addFolder('World');
+            folder
+                .add(light, 'shadowCameraVisible')
+                .name('Shadow camera');
+        };
         T3.ObjectManager.add('directional-light-3', light);
         light.castShadow = true;
         light.shadowCameraNear = 1000;
         light.shadowCameraFar= 5000;
 
-        light.shadowCameraVisible = true;
+        light.shadowCameraVisible = false;
         light.shadowCameraLeft = -d * 4;
         light.shadowCameraRight = 0;
         light.shadowCameraTop = d;

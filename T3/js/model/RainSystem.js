@@ -94,8 +94,8 @@
 
         me.add(me.real);
 
-        me.visible = false;
-        me.real.visible = false;
+//        me.visible = false;
+//        me.real.visible = false;
 
     };
 
@@ -108,7 +108,7 @@
         var me = this,
             folder = gui.addFolder('Rain System');
 
-        me.visible = false;
+//        me.visible = false;
         folder
             .add(me, 'visible')
             .name('Visible')
