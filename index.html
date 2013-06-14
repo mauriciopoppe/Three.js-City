@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Three.js-city : A 3D city built with Three.js and an experimental framework called T3" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Three.js-city</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/maurizzzio/Three.js-City">View on GitHub</a>
+
+          <h1 id="project_title">Three.js-city</h1>
+          <h2 id="project_tagline">A 3D city built with Three.js and an experimental framework called T3</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/maurizzzio/Three.js-City/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/maurizzzio/Three.js-City/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="threejs-city" class="anchor" href="#threejs-city"><span class="octicon octicon-link"></span></a>Three.js City</h1>
+
+<p>Hi there, this is my first attempt to create an interactive 3D world using Three.js, during the prototyping phase I ended up coding an experimental framework that runs on top of Three.js called <code>T3</code> (the code is partially documented).</p>
+
+<p>The project consists of two folders, all the common files are in the folder <code>boilerplate</code> and the application is in <code>T3</code>.</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>You can drive the car using the WASD keys (hack the code in the file <code>T3/model/Car</code>)</li>
+<li>Some properties of the material of the car can be updated in runtime using the panel on the top right corner </li>
+<li>The city is generated randomically using a simple grid</li>
+<li>
+<em>Rain</em> can be enabled using the panel on the top right corner of the document</li>
+<li>There are two <em>motion detection</em> systems that allow you to drive the car only with your movements, one uses <a href="https://github.com/auduno/headtrackr/">headtrackr</a> and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left</li>
+<li>The texture of the body of the car can be updated in runtime using a <em>cubemap texture</em> (*cough* dropping the fps)</li>
+<li>If you clone the repo, you can see the development process step by step using git's tag system, i.e. <code>git checkout r3</code>, 'git checkout r4', etc.</li>
+</ul><h2>
+<a name="how-to-launch-the-project" class="anchor" href="#how-to-launch-the-project"><span class="octicon octicon-link"></span></a>How to launch the project</h2>
+
+<ul>
+<li>Set up a web server in the root path of this project and goto <code>/T3/index.html</code>
+</li>
+</ul><p>Car model by: <em>sepel</em> (<a href="http://www.blendswap.com/blends/view/67462">http://www.blendswap.com/blends/view/67462</a>)</p>
+
+<p>Textures downloaded from: <a href="http://www.cgtextures.com/">http://www.cgtextures.com/</a> and <a href="http://www.humus.name/index.php?page=Textures">http://www.humus.name/index.php?page=Textures</a></p>
+
+<p>Have fun!</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Three.js-city maintained by <a href="https://github.com/maurizzzio">maurizzzio</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
