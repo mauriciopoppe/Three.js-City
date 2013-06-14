@@ -3,19 +3,34 @@ Three.js City
 
 Hi there, this is my first attempt to create an interactive 3D world using Three.js, during the prototyping phase I ended up coding an experimental framework that runs on top of Three.js called `T3` (the code is partially documented).
 
+Want to see the demo? Check it out!   --   [Demo](T3/index.html)
+
 The project consists of two folders, all the common files are in the folder `boilerplate` and the application is in `T3`.
 
+## Screenshots
+!(images/screenshots/1.jpg)
+!(images/screenshots/2.jpg)
+!(images/screenshots/3.jpg)
+!(images/screenshots/4.jpg)
+
 ## Features
-- You can drive the car using the WASD keys (hack the code in the file `T3/model/Car`)
+- You can drive the car using the WASD keys
 - Some properties of the material of the car can be updated in runtime using the panel on the top right corner 
-- The city is generated randomically using a simple grid
-- *Rain* can be enabled using the panel on the top right corner of the document
-- There are two *motion detection* systems that allow you to drive the car only with your movements, one uses [headtrackr](https://github.com/auduno/headtrackr/) and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left
-- The texture of the body of the car can be updated in runtime using a *cubemap texture* (*cough* dropping the fps)
-- If you clone the repo, you can see the development process step by step using git's tag system, i.e. `git checkout r3`, `git checkout r4`, etc.
+- The city is generated at random using a simple grid and some boxes with textures
+- The city has the following: `roads` (boxes using 2 textures and some UV modifications), `lamps` (3 boxes and a common particle system with a texture that simulates a light), `buildings` (there are two types of buildings: `Blocks` and `Classic`, the *classic* ones are like skyscrappers)
+- *Rain* can be enabled using the panel on the top right corner of the document (raindrops have a random initial velocity and follow the car at all times, each time a raindrop's y coordinate is below 0 it goes to the top to avoid creating more particles during runtime)
+- There are two *motion detection* systems that allow you to drive the car only with your movements, one uses [headtrackr](https://github.com/auduno/headtrackr/) and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left. (I learned this from: http://www.adobe.com/devnet/html5/articles/javascript-motion-detection.html). NOTE: this feature only works in Chrome
+- The texture of the body of the car can be updated in runtime to be a *cubemap texture* (*cough* dropping the fps but allowing reflections)
+- There's a `THREE.DirectionalLight` whose position is far infinitely away but it's direction is exactly crossing the sun in the cubemap and the origin of the world, this makes the shadows created by the building look more realistic
+
+## Browser support
+I've tested this project in Google Chrome (v 27.0.1453.110), Google Chrome Canary (v 29.0.1521.0) and Firefox (v 19.0.2), it's important to note that Google's browser is way faster rendering [30 ~ 60] frames per second, firefox renders about [7 ~ 12] fps, also the motion detection system only runs in Chrome.
+
+## Cloning the repo
+If you clone the repo, you can see the development process step by step using git's tag system, i.e. `git checkout r3`, `git checkout r4`, etc.
 
 ## How to launch the project
-- Set up a web server in the root path of this project and goto `/T3/index.html`
+- Set up a web server in the root of this project and goto `/T3/index.html` in you browser
 
 Car model by: *sepel* (http://www.blendswap.com/blends/view/67462)
 
