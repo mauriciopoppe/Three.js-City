@@ -54,6 +54,7 @@
             freeSpace = me.createBuildingBlocks(gridSize);
             me.createRoads(freeSpace);
             me.createLampParticles();
+//            me.createLampWires();
             // car
             me.createCar();
             // rain!
@@ -309,6 +310,74 @@
             T3.ObjectManager.add('lensflare', particleSystem);
         },
 
+        createLampWires: function () {
+            var i,
+                j,
+                geometry,
+                last,
+                nPoints = 20,
+                point,
+                points,
+                mesh,
+                lamps = T3.model.Block.prototype.lamps,
+                spline,
+                positions = [];
+            for(i = 0; i < lamps.length; i += 1) {
+                positions.push(lamps[i].position.clone());
+            }
+
+            // wires in z pos
+            positions.sort(function (a, b) {
+                if (a.x != b.x) return a.x < b.x ? -1 : 1;
+                return a.z < b.z ? -1 : 1;
+            });
+            last = positions[0];
+            for (i = 1; i < positions.length; i += 1) {
+                if (last.x == positions[i].x) {
+                    points = [];
+                    points.push(last);
+                    points.push(new THREE.Vector3(
+                        (last.x + positions[i].x) / 4,
+                        (last.y + positions[i].y) / 4 - 10,
+                        (last.z + positions[i].z) / 4
+                    ));
+                    points.push(new THREE.Vector3(
+                        (last.x + positions[i].x) * 3 / 4,
+                        (last.y + positions[i].y) * 3 / 4 - 10,
+                        (last.z + positions[i].z) * 3 / 4
+                    ));
+                    points.push(positions[i]);
+
+                    // wire
+                    geometry = [];
+                    spline = new THREE.Spline(points);
+                    for (j = 0; j < nPoints; j += 1) {
+                        point = spline.getPoint(j / nPoints);
+                        geometry.push(new THREE.Vector3(point.x, point.y, point.z));
+                    }
+
+                    mesh = new THREE.Mesh(
+                        new THREE.ExtrudeGeometry(
+                            new THREE.Shape(geometry), {
+                                size: 2,
+                                height: 2,
+                                curveSegments: 3,
+                                bevelThickness: 1,
+                                bevelSize: 2,
+                                bevelEnabled: false,
+                                material: 0,
+                                extrudeMaterial: 1
+                            }
+                        ),
+                        new THREE.MeshBasicMaterial( { color: 0xffff00 } )
+                    );
+                    mesh.position.set(100, 100, 100);
+                    scene.add(mesh);
+                }
+                last = positions[i];
+            }
+        },
+
         /**
          * The world is responsible of updating its children
          * @param delta
@@ -389,7 +458,7 @@
                 name: 'camera-main',
                 cameraPan: true,
                 renderer: World.renderer,
-                position: new THREE.Vector3(-100, 30, -100)
+                position: new THREE.Vector3(0, 30, -150)
             });
 
             // car camera back
