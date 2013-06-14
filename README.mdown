@@ -8,10 +8,10 @@ Want to see the demo? Check it out!   --   [Demo](T3/index.html)
 The project consists of two folders, all the common files are in the folder `boilerplate` and the application is in `T3`.
 
 ## Screenshots
-!(images/screenshots/1.jpg)
-!(images/screenshots/2.jpg)
-!(images/screenshots/3.jpg)
-!(images/screenshots/4.jpg)
+![1](http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/1.jpg)
+![2](http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/2.jpg)
+![3](http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/3.jpg)
+![4](http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/4.jpg)
 
 ## Features
 - You can drive the car using the WASD keys
