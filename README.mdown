@@ -19,6 +19,6 @@ The project consists of two folders, all the common files are in the folder `boi
 
 Car model by: *sepel* (http://www.blendswap.com/blends/view/67462)
 
-Textures downloaded from: http://www.cgtextures.com/
+Textures downloaded from: http://www.cgtextures.com/ and http://www.humus.name/index.php?page=Textures
 
 Have fun!

@@ -183,7 +183,6 @@
                 width = 10,
                 depth = 10,
                 mesh,
-                lastCol = freeSpace.cols[freeSpace.cols.length - 1],
                 lastRow = freeSpace.rows[freeSpace.rows.length - 1],
                 texture,
                 boxWidth,
@@ -319,7 +318,7 @@
             activeCamera.update(delta);
 
             // ROTATING LIGHT
-            manager.get('sphere-light-point').update(delta);
+//            manager.get('sphere-light-point').update(delta);
 
             // CAR MOVEMENT
             me.car.update(delta);

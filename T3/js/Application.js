@@ -89,29 +89,38 @@ T3.Application = {
         light.position.set(-500, 250, -200);
         T3.ObjectManager.add('directional-light-2', light);
 
+        // directional light to simulate sun light
+        // 100W Tungsten like color: http://planetpixelemporium.com/tutorialpages/light.html
+        light = new THREE.DirectionalLight( 0xffd6aa, 3 );
+        light.position.set(100, 10, -20);
+        T3.ObjectManager.add('directional-light-3', light);
+        var mesh = new THREE.Mesh(new THREE.CubeGeometry(10, 10, 10), new THREE.MeshNormalMaterial());
+        mesh.position.set(100, 10, -20);
+        scene.add(mesh);
+
         //****** sphere + point light ******
-        var colorLight = 0xffffff;
-
-        light = new THREE.PointLight( 0xffffff, 1 );
-        T3.ObjectManager.add('point-light', light);
-
-        // light representation (little sphere)
-        var sphereMesh, sphere;
-        sphereMesh = new THREE.Mesh(
-            new THREE.SphereGeometry( 100, 16, 8, 1 ),
-            new THREE.MeshBasicMaterial( {color: colorLight} )
-        );
-        sphere = new T3.model.Object3D({
-            name: 'sphere-light-point',
-            real: sphereMesh,
-            update: function () {
-                typeof this.r !== "undefined" ? (this.r += 0.01) : (this.r = 0);
-                this.real.position.x = 100 * Math.cos( this.r );
-                this.real.position.z = 100 * Math.sin( this.r );
-            }
-        });
-        sphere.real.scale.set(0.05, 0.05, 0.05);
-        sphere.real.position = light.position;
+//        var colorLight = 0xffffff;
+//
+//        light = new THREE.PointLight( 0xffffff, 1 );
+//        T3.ObjectManager.add('point-light', light);
+//
+//        // light representation (little sphere)
+//        var sphereMesh, sphere;
+//        sphereMesh = new THREE.Mesh(
+//            new THREE.SphereGeometry( 100, 16, 8, 1 ),
+//            new THREE.MeshBasicMaterial( {color: colorLight} )
+//        );
+//        sphere = new T3.model.Object3D({
+//            name: 'sphere-light-point',
+//            real: sphereMesh,
+//            update: function () {
+//                typeof this.r !== "undefined" ? (this.r += 0.01) : (this.r = 0);
+//                this.real.position.x = 100 * Math.cos( this.r );
+//                this.real.position.z = 100 * Math.sin( this.r );
+//            }
+//        });
+//        sphere.real.scale.set(0.05, 0.05, 0.05);
+//        sphere.real.position = light.position;
 
         return this;
     },
