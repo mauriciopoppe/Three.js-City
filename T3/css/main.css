@@ -24,3 +24,48 @@
 .on {
     background-color: #00ff00;
 }
+
+#spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -100px 0 0 -100px;
+    height: 200px;
+    width: 200px;
+    text-indent: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+
+    -webkit-mask-image: url(../images/spinner.png);
+    background-color: #000;
+    -webkit-animation-name: spinnerRotate;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+
+    z-index: 2;
+}
+
+@-webkit-keyframes spinnerRotate {
+    from {
+        -webkit-transform:rotate(0deg);
+    }
+    to {
+        -webkit-transform:rotate(360deg);
+    }
+}
+
+#mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    background-color: white;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(white), to(#2e2e2e));
+    background-image: -webkit-linear-gradient(top, white, #2e2e2e);
+    background-image:    -moz-linear-gradient(top, white, #2e2e2e);
+    background-image:      -o-linear-gradient(top, white, #2e2e2e);
+    background-image:         linear-gradient(to bottom, white, #2e2e2e);
+
+    z-index: 1;
+}
