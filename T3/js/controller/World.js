@@ -40,7 +40,7 @@
     World.prototype = {
         init: function () {
             var me = this,
-                gridSize = 7,
+                gridSize = 6,
                 freeSpace;
             // put the scene in a huge cube
             me.initSkyBox();
@@ -85,9 +85,6 @@
 
             // attach cameras to the car
             me.car.add(T3.ObjectManager.get('camera-main').real);
-            me.car.add(T3.ObjectManager.get('camera-car-back-1').real);
-            me.car.add(T3.ObjectManager.get('camera-car-back-2').real);
-            me.car.add(T3.ObjectManager.get('camera-car-driver').real);
         },
 
         /**
@@ -396,10 +393,10 @@
 //            manager.get('sphere-light-point').update(delta);
 
             // CAR MOVEMENT
-            me.car.update(delta);
+            me.car && me.car.update(delta);
 
             // RAIN SYSTEM
-            me.rainSystem.update(delta);
+            me.rainSystem && me.rainSystem.update(delta);
         },
 
         render: function () {
@@ -442,7 +439,18 @@
          * Initializes the cameras used in the world
          */
         initCameras: function () {
-            var camera;
+            var camera,
+                positions = [
+                    {x: 0, y: 30, z: -150},
+                    {x: 0, y: 15, z: -100},
+//                    {x: 4, y: 11, z: -5},
+                    {x: 0, y: 10, z: 0}
+                ],
+                lookAt = [
+                    new THREE.Vector3(0, 10, 10),
+                    new THREE.Vector3(0, 10, 10),
+                    new THREE.Vector3(0, 10, 10)
+                ];
 
             // cube camera (used to reflect what the camera is targeting)
             camera = new THREE.CubeCamera(
@@ -462,52 +470,60 @@
             });
 
             // car camera back
-            camera = new T3.model.Camera({
-                name: 'camera-car-back-1',
-                position: new THREE.Vector3(0, 15, -100),
-                renderer: World.renderer
-            });
-            camera.real.lookAt(new THREE.Vector3(0, 0, 0));
+//            camera = new T3.model.Camera({
+//                name: 'camera-car-back-1',
+//                position: new THREE.Vector3(0, 15, -100),
+//                renderer: World.renderer
+//            });
+//
+//            // car camera back
+//            camera = new T3.model.Camera({
+//                name: 'camera-car-back-2',
+//                position: new THREE.Vector3(0, 30, -150),
+//                renderer: World.renderer
+//            });
+//            camera.real.lookAt(new THREE.Vector3(0, 0, 0));
+//
+//            // car camera in
+//            camera = new T3.model.Camera({
+//                name: 'camera-car-driver',
+//                position: new THREE.Vector3(4, 11, -5),
+//                renderer: World.renderer
+//            });
+//            camera.real.lookAt(new THREE.Vector3(-5, 0, 50));
 
-            // car camera back
-            camera = new T3.model.Camera({
-                name: 'camera-car-back-2',
-                position: new THREE.Vector3(0, 30, -150),
-                renderer: World.renderer
-            });
-            camera.real.lookAt(new THREE.Vector3(0, 0, 0));
-
-            // car camera in
-            camera = new T3.model.Camera({
-                name: 'camera-car-driver',
-                position: new THREE.Vector3(4, 11, -5),
-                renderer: World.renderer
-            });
-            camera.real.lookAt(new THREE.Vector3(-5, 0, 50));
-
-            // ******* ACTIVE CAMERA *******
-            // active camera is the world camera
+            // active camera is the world's current camera
             activeCamera = T3.ObjectManager.get('camera-main');
 
             // listen to camera switches
-            var cameras = ['camera-main', 'camera-car-back-1', 'camera-car-back-2', 'camera-car-driver'],
-                current = cameras.indexOf(activeCamera.name);
+            var current = 0;
             $('#switch').on('click', function () {
-                var next = (current + 1) % cameras.length;
-                activeCamera = T3.ObjectManager.get(cameras[next]);
+                var next = (current + 1) % positions.length,
+                    tween;
+                tween = new TWEEN.Tween(activeCamera.real.position)
+                    .to(positions[next], 2000)
+                    .easing(TWEEN.Easing.Quartic.InOut)
+                    .onUpdate(function() {
+                        activeCamera.lookAt(lookAt[next]);
+                    })
+                    .onComplete(function() {
+                        activeCamera.lookAt(lookAt[next]);
+                    });
+                tween.start();
                 current = next;
+//                activeCamera.lookAt(lookAt[next]);
             });
         },
 
         /**
          * Makes the car auto accelerate and activates one of the motion detection
-         * systems, the pixel diff between frames or the Headtrackr library
+         * systems, the pixel diff between frames or the HeadTrackr library
          */
         initCarAutoAcceleration: function () {
             var $buttons = $('.motion'),
                 i,
                 motionDetectionSystems =
-                    ['MotionDetection', 'MotionDetectionHeadtrackr'],
+                    ['MotionDetection', 'MotionDetectionHeadTrackr'],
                 status = false,
                 activeController;
 

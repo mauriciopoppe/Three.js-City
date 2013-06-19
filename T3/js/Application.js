@@ -195,8 +195,11 @@ T3.Application = {
         // - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
         requestAnimationFrame( T3.Application.animate );
 
-        // TODO: MOVE THIS TO THE CONTROLLER
+        // update Stats helper
         T3.Application.stats.update();
+
+        // update TWEEN engine
+        TWEEN.update();
 
         // do the render
         T3.Application.world.update(delta);
@@ -216,7 +219,7 @@ T3.Application = {
         // inits the world controller
         this.initController();
 
-        $('#mask').fadeOut(5000);
+        $('#mask').fadeOut(3000);
         $('#spinner').fadeOut(3000);
 
         // animate the world and the scene

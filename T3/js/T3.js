@@ -70,4 +70,10 @@ T3.traverse = function (object, callback) {
             }
         }
     }
-}
+};
+
+T3.assert = function (condition) {
+    if (!condition) {
+        throw new Error('Assertion failed');
+    }
+};
