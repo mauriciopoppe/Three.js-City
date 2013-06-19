@@ -53,7 +53,8 @@
         this.tire = new T3.model.Tire({
             name: 'car-tire-' + me.suffix,
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-tire-geometry') }
+            geometryConfig: { initialized: T3.AssetLoader.get('car-tire-geometry') },
+            materialConfig: { options: {side: THREE.DoubleSide} }
         });
 
         this.rim = new T3.model.Rim({

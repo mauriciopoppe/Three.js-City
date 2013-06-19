@@ -124,7 +124,8 @@
             name: 'car-body',
             folder: 'Car body',
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-body-geometry') }
+            geometryConfig: { initialized: T3.AssetLoader.get('car-body-geometry') },
+            materialConfig: { options: {side: THREE.DoubleSide} }
         });
 
         var exhaust = new T3.model.Exhaust({
@@ -362,7 +363,7 @@
             backRight = me.wheelBackRight,
             radius = frontLeft.radius;
 
-        angularSpeedRatio = speed / (radius * 50);     // magic number xD
+        angularSpeedRatio = speed / (radius * 60);     // magic number xD
 
         frontLeft.tire.rotation.x += angularSpeedRatio;
         frontLeft.rim.rotation.x += angularSpeedRatio;

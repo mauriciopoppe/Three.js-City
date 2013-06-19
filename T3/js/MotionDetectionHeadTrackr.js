@@ -5,7 +5,7 @@
  * Time: 11:54 AM
  * To change this template use File | Settings | File Templates.
  */
-T3.controller.MotionDetectionHeadtrackr = (function () {
+T3.controller.MotionDetectionHeadTrackr = (function () {
 
     var videoInput = document.getElementById('inputVideo'),
         canvasInput = document.getElementById('inputCanvas'),

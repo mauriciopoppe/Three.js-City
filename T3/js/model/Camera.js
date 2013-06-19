@@ -63,13 +63,25 @@
             this.cameraControls = new THREE.OrbitAndPanControls(camera, defaults.renderer.domElement);
             // avoid panning to see the bottom face
             this.cameraControls.maxPolarAngle = Math.PI / 2 * 0.99;
-            this.cameraControls.target.set(0, 0, 0);
+            this.cameraControls.target.set(0, 10, 10);
         }
         return this;
     };
 
     Camera.prototype.update = function (delta) {
         this.cameraControls && this.cameraControls.update(delta);
+    };
+
+    Camera.prototype.lookAt = function (vector) {
+        var me = this;
+        if (me.cameraControls) {
+            // instance of OrbitAndPanControls
+            me.cameraControls.target.set(vector.x, vector.y, vector.z);
+        } else {
+            scene.add(me.real);
+            me.real.lookAt(vector);
+            me.add(me.real);
+        }
     };
 
     T3.model.Camera = Camera;
