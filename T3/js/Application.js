@@ -57,6 +57,11 @@ T3.Application = {
         me.renderer.shadowMapDarkness = 0.5;
         me.renderer.shadowMapWidth = 2048;
         me.renderer.shadowMapHeight = 2048;
+
+        me.renderer.gammaInput = true;
+        me.renderer.gammaOutput = true;
+        me.renderer.physicallyBasedShading = true;
+
         me.renderer.setClearColorHex( 0xAAAAAA, 1 );
         me.renderer.setSize( window.innerWidth, window.innerHeight );
         document.getElementById('webgl-container').appendChild(me.renderer.domElement);
@@ -86,24 +91,26 @@ T3.Application = {
      */
     createSceneLights: function () {
         var light,
+            // http://planetpixelemporium.com/tutorialpages/light.html
+//            color = 0xffd6aa,       // 100W Tungsten like color
+            color = 0xfff1e0,       // Halogen like color
             k, d;
 
-        light = new THREE.AmbientLight( 0x101010 );
-        T3.ObjectManager.add('ambient-light', light);
+        light = new THREE.AmbientLight(0x111111);
+        T3.ObjectManager.add('ambient-light-1', light);
 
-//        light = new THREE.DirectionalLight( 0xffffff, 1 );
-//        light.position.set(200, 400, 500);
+//        light = new THREE.DirectionalLight(0xffffff, 1);
+//        light.position.set(-100, 0, 100);
 //        T3.ObjectManager.add('directional-light-1', light);
 
-        light = new THREE.DirectionalLight( 0xffffff, 1 );
-        light.position.set(-500, 250, -200);
+        light = new THREE.DirectionalLight(color, 0.8);
+        light.position.set(-1000, 1000, 1000);
         T3.ObjectManager.add('directional-light-2', light);
 
         // directional light to simulate sun light
-        // 100W Tungsten like color: http://planetpixelemporium.com/tutorialpages/light.html
-        k = 4;
+        k = 3;
         d = 1000;
-        light = new THREE.DirectionalLight( 0xffd6aa, 3 );
+        light = new THREE.DirectionalLight(color, 1.5);
         light.position.set(1000 * k, 100 * k, -200 * k);
         light.initDatGui = function (gui) {
             var folder = gui.addFolder('World');
@@ -113,14 +120,21 @@ T3.Application = {
         };
         T3.ObjectManager.add('directional-light-3', light);
         light.castShadow = true;
-        light.shadowCameraNear = 1000;
-        light.shadowCameraFar= 5000;
+
+        var shadowMapMultiplier = 12;
+        light.shadowMapWidth = 1 << shadowMapMultiplier;
+        light.shadowMapHeight = 1 << shadowMapMultiplier;
+        light.shadowCameraNear = 1;
+        light.shadowCameraFar= 4000;
 
         light.shadowCameraVisible = false;
-        light.shadowCameraLeft = -d * 4;
-        light.shadowCameraRight = 0;
+        light.shadowCameraLeft = -d * 2;
+        light.shadowCameraRight = d;
         light.shadowCameraTop = d;
         light.shadowCameraBottom = -d;
+//        light.shadowBias = 0.00001;
+        light.shadowBias = -0.001;
+//        light.shadowDarkness = 0.35;
 //        var mesh = new THREE.Mesh(new THREE.CubeGeometry(10, 10, 10), new THREE.MeshNormalMaterial());
 //        mesh.position.set(100, 10, -20);
 //        scene.add(mesh);
@@ -236,7 +250,7 @@ T3.Application = {
         .registerAsset('texture-office', THREE.ImageUtils.loadTexture('images/textures/offices.jpg'))
         .registerAsset('texture-road-x', THREE.ImageUtils.loadTexture('images/textures/roadposx.png'))
         .registerAsset('texture-road-z', THREE.ImageUtils.loadTexture('images/textures/roadposz.png'))
-        .registerAsset('texture-sidewalk', THREE.ImageUtils.loadTexture('images/textures/sidewalk.jpg'))
+        .registerAsset('texture-sidewalk', THREE.ImageUtils.loadTexture('images/textures/sidewalk_shadow.jpg'))
         .registerAsset('texture-residential', THREE.ImageUtils.loadTexture('images/textures/residential.jpg'))
         .registerAsset('lensflare-0', THREE.ImageUtils.loadTexture('images/lensflare0_alpha.png'));
     T3.AssetLoader
@@ -248,5 +262,14 @@ T3.Application = {
         .addToLoadQueue('obj/Skyline.tire.js', 'car-tire-geometry')
         .addToLoadQueue('obj/Skyline.rim.js', 'car-rim-geometry')
         .addToLoadQueue('obj/Skyline.interior.js', 'car-interior-geometry');
-    T3.AssetLoader.load(T3.Application.launch, T3.Application);
+
+    T3.SoundLoader.debug();
+    T3.SoundLoader
+        .addToLoadQueue('sounds/engine.wav', 'sound-engine-1')
+        .addToLoadQueue('sounds/engine_2.wav', 'sound-engine-2')
+        .addToLoadQueue('sounds/engine_3.mp3', 'sound-engine-3')
+        .addToLoadQueue('sounds/alternator_whine.wav', 'sound-engine-4');
+    T3.AssetLoader.load(function () {
+        T3.SoundLoader.load(T3.Application.launch, T3.Application);
+    }, T3.Application);
 })();

@@ -40,7 +40,7 @@
     World.prototype = {
         init: function () {
             var me = this,
-                gridSize = 6,
+                gridSize = 5,
                 freeSpace;
             // put the scene in a huge cube
             me.initSkyBox();
@@ -443,8 +443,7 @@
                 positions = [
                     {x: 0, y: 30, z: -150},
                     {x: 0, y: 15, z: -100},
-//                    {x: 4, y: 11, z: -5},
-                    {x: 0, y: 10, z: 0}
+                    {x: 3, y: 10, z: 0}
                 ],
                 lookAt = [
                     new THREE.Vector3(0, 10, 10),
@@ -468,29 +467,6 @@
                 renderer: World.renderer,
                 position: new THREE.Vector3(0, 30, -150)
             });
-
-            // car camera back
-//            camera = new T3.model.Camera({
-//                name: 'camera-car-back-1',
-//                position: new THREE.Vector3(0, 15, -100),
-//                renderer: World.renderer
-//            });
-//
-//            // car camera back
-//            camera = new T3.model.Camera({
-//                name: 'camera-car-back-2',
-//                position: new THREE.Vector3(0, 30, -150),
-//                renderer: World.renderer
-//            });
-//            camera.real.lookAt(new THREE.Vector3(0, 0, 0));
-//
-//            // car camera in
-//            camera = new T3.model.Camera({
-//                name: 'camera-car-driver',
-//                position: new THREE.Vector3(4, 11, -5),
-//                renderer: World.renderer
-//            });
-//            camera.real.lookAt(new THREE.Vector3(-5, 0, 50));
 
             // active camera is the world's current camera
             activeCamera = T3.ObjectManager.get('camera-main');

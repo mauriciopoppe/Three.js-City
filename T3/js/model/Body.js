@@ -76,7 +76,7 @@
             })
         ];
         me.real.receiveShadow = true;
-        me.real.castShadow = true;
+//        me.real.castShadow = true;
         return this;
     };
 

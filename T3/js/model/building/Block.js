@@ -76,13 +76,13 @@
     Block.prototype.createBlocks = function () {
         var me = this,
             height = [1, 0.8, 0.5],
-            textures = ['texture-glass', 'texture-glass_2', 'texture-residential'],
+//            height = [1],
             total = height.length,
             i,
             box;
 
         // create boxes that make the block
-        var blockFaceMaterial = me.generateFaceMaterials(textures);
+        var blockFaceMaterial = me.generateBlockMaterials();
         for (i = 0; i < total; i += 1) {
             box = new T3.model.Box({
                 originalParent: me,
@@ -118,12 +118,7 @@
             height: 0.2,
             depth: me.depth,
             materialConfig: {
-                initialized: new THREE.MeshFaceMaterial(
-                    me.generateFaceMaterials(
-                        T3.AssetLoader.get('texture-sidewalk'),
-                        []
-                    )
-                )
+                initialized: me.generateSidewalkMaterials()
             }
         });
         box.real.receiveShadow = true;
@@ -136,30 +131,64 @@
      * of materials used in each side (basic materials with textures), also
      * each value of the `avoid` array doesn't have a texture (the avoid array
      * is an array of avoided faces e.g. [2, 3] for the top and bottom faces)
-     * @param textures
-     * @param [avoid]
-     * @returns {Array}
      */
-    Block.prototype.generateFaceMaterials = function (textures, avoid) {
+    Block.prototype.generateBlockMaterials = function () {
         var i,
+            avoid = [2, 3],
             texture,
-            faceMaterials = [];
+            textures = [
+                'texture-glass',
+                'texture-glass_2',
+                'texture-residential'
+            ],
+            textureOptions = [{
+                bumpScale: 0.1,
+                shininess: 100
+            }, {
+
+            }, {
+                bumpScale: 3,
+                shininess: 30
+            }],
+            faceMaterials = [],
+            index;
+
+        index = ~~(Math.random() * textures.length);
+//        index = 2;
         avoid = avoid || [2, 3];
 
-        if (textures instanceof THREE.Texture) {
-            texture = textures;
-        } else {
-            // must be an array
-            texture = T3.AssetLoader.get(textures[~~(Math.random() * textures.length)]);
-        }
+        texture = T3.AssetLoader.get(textures[index]);
+        texture.anisotropy = 16;
         for (i = 0; i < 6; i += 1) {
             if (avoid.indexOf(i) > -1) {     // top and bottom faces
                 faceMaterials.push(new THREE.MeshBasicMaterial());
             } else {
-                faceMaterials.push(new THREE.MeshBasicMaterial({map: texture}));
+                faceMaterials.push(new THREE.MeshPhongMaterial($.extend({
+                    map: texture,
+                    bumpMap: texture,
+                    bumpScale: 1,
+                    shininess: 10,
+                    shading: THREE.SmoothShading
+                }, textureOptions[index])));
             }
         }
         return faceMaterials;
+    };
+
+    Block.prototype.generateSidewalkMaterials = function () {
+        var texture = T3.AssetLoader.get('texture-sidewalk');
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(5, 5);
+        texture.anisotropy = 16;
+        return new THREE.MeshPhongMaterial({
+            map: texture,
+            bumpMap: texture,
+            specular: 0xffffff,
+            color: 0xffffff,
+            bumpScale: 5,
+            shininess: 1,
+            shading: THREE.SmoothShading
+        });
     };
 
     /**
@@ -210,7 +239,7 @@
             depth: 0.2,
             height: 7
         });
-//        base.real.castShadow = true;
+        base.real.castShadow = true;
         base.real.receiveShadow = true;
         base.position.y = base.height * T3.scale / 2;
         lightContainer.base = base;
