@@ -137,8 +137,8 @@
             avoid = [2, 3],
             texture,
             textures = [
-                'texture-glass',
-                'texture-glass_2',
+                'texture-glass-1',
+                'texture-glass-2',
                 'texture-residential'
             ],
             textureOptions = [{
@@ -176,7 +176,7 @@
     };
 
     Block.prototype.generateSidewalkMaterials = function () {
-        var texture = T3.AssetLoader.get('texture-sidewalk');
+        var texture = T3.AssetLoader.get('texture-sidewalk-2');
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(5, 5);
         texture.anisotropy = 16;

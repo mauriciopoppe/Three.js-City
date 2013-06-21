@@ -100,6 +100,11 @@
          */
         this.speed = 0;
         /**
+         * The tilt is the rotation in the z axis multiplied by some scale factor
+         * @type {number}
+         */
+        this.tiltAmount = 0;
+        /**
          * BufferSource created by the AudioContext instance
          * @type {Object}
          */
@@ -218,7 +223,8 @@
             soundOptions = {
                 engineSound: false,
                 pitch: 1,
-                volume: 0.05
+                volume: 0.05,
+                engineTypes: 1
             },
             camera = T3.ObjectManager.get('camera-cube'),
             folder = gui.addFolder('Car Mesh');
@@ -239,7 +245,7 @@
             .name('Engine sound')
             .onFinishChange(function (value) {
                 if (value) {
-                    me.engineSound = T3.SoundLoader.playSound('sound-engine-4', {
+                    me.engineSound = T3.SoundLoader.playSound('sound-engine-3', {
                         loop: true,
                         volume: soundOptions.volume
                     });
@@ -248,6 +254,25 @@
                     me.engineSound = null;
                 }
             });
+        folder
+            .add(soundOptions, 'engineTypes', {
+                'Engine type 1': 1,
+                'Engine type 2': 2,
+                'Engine type 3': 3,
+                'Engine type 4': 4,
+            })
+            .name('Engine types')
+            .onChange(function (value) {
+                var newEngine = 'sound-engine-' + value;
+                if (me.engineSound) {
+                    me.engineSound.source.stop(0);
+                }
+                me.engineSound = T3.SoundLoader.playSound(newEngine, {
+                    loop: true,
+                    volume: soundOptions.volume
+                });
+            });
+
         folder
             .add(soundOptions, 'volume', 0, 0.3)
             .name('Volume')
@@ -284,7 +309,7 @@
 
         // vf = vo + at
         // vf^2 = vo^2 + 2 * a * t
-        newSpeed = this.computeSpeed(direction, oldSpeed, delta);
+        newSpeed = this.computeSpeed(direction, oldSpeed, delta, Math.abs(me.tiltAmount) * 30);
         forwardDelta = (oldSpeed + newSpeed) * 0.5 * delta;
         me.carOrientation += (forwardDelta * me.steeringRadiusRatio) * wheelOrientation;
         // displacement
@@ -309,7 +334,7 @@
      * @param delta
      * @returns {*}
      */
-    Car.prototype.computeSpeed = function (direction, oldSpeed, delta) {
+    Car.prototype.computeSpeed = function (direction, oldSpeed, delta, tilt) {
         var me = this,
             eps = 0.1,
             newSpeed;
@@ -317,17 +342,17 @@
         // vf = vo + at
         // vf^2 = vo^2 + 2 * a * t
         if (direction === 'forward') {
-            newSpeed = Math.min(me.maxSpeed, oldSpeed + me.acceleration * delta);
+            newSpeed = Math.min(me.maxSpeed, oldSpeed + me.acceleration * delta - tilt);
         } else if (direction === 'backward') {
-            newSpeed = Math.max(me.minSpeed, oldSpeed - me.acceleration * delta);
+            newSpeed = Math.max(me.minSpeed, oldSpeed - me.acceleration * delta - tilt);
         } else {
             // decay
             if (Math.abs(oldSpeed) <= eps) {
                 return 0;
             } else if (oldSpeed > eps) {
-                newSpeed = oldSpeed - me.acceleration * delta;
+                newSpeed = oldSpeed - me.acceleration * delta - tilt;
             } else if (oldSpeed < -eps) {
-                newSpeed = oldSpeed + me.acceleration * delta;
+                newSpeed = oldSpeed + me.acceleration * delta - tilt;
             }
         }
         return newSpeed;
@@ -342,6 +367,8 @@
     Car.prototype.update = function (delta) {
         var me = this,
             source;
+
+        // LEFT AND RIGHT TURN
         if (T3.Keyboard.query('A')) {
             me.wheelFrontLeft.rotate('left');
             me.wheelFrontRight.rotate('left');
@@ -350,6 +377,11 @@
             me.wheelFrontLeft.rotate('right');
             me.wheelFrontRight.rotate('right');
         }
+
+        // TILT (calculates the current tilt factor)
+        me.tilt();
+
+        // MOVE FORWARD AND BACKWARD
         if (T3.Keyboard.query('W')) {
             me.move('forward', delta);
             // update the rotation of the wheels based on the speed of the car
@@ -367,9 +399,6 @@
             me.wheelFrontRight.decay();
         }
 
-        // TILT
-        me.tilt();
-
         // CAR BACK LIGHTS
         me.lightsBack.update(delta, T3.Keyboard.query('S'));
 
@@ -379,11 +408,14 @@
         // UPDATE CUBE CAMERA POSITION
         me.enableCubeMap && me.updateCubeCamera();
 
+        // UPDATE SHADERS THAT DEPEND ON THIS SPEED
+        me.updateShaders();
+
         // SOUND PITCH
         if (me.engineSound) {
             source = me.engineSound.source;
             source.playbackRate.value = Math.max(
-                Math.abs(me.speed * (1.5 / me.maxSpeed)),    // compute pitch based on the speed
+                Math.abs(me.speed * (4 / me.maxSpeed)),    // compute pitch based on the speed
                 1
             );
         }
@@ -447,7 +479,22 @@
         me.interior.rotation.z = tilt;
         me.exhaust.rotation.z = tilt;
         me.windows.rotation.z = tilt;
+
+        me.tiltAmount = tilt;
     }
 
+    /**
+     * Updates the shaders' uniform variables that depend on some
+     * aspects of this car.
+     * e.g.
+     *      RadialBlur is affected by the speed of this car
+     */
+    Car.prototype.updateShaders = function () {
+        // update radialBlur shader
+        var me = this,
+            world = T3.World,
+            radialShader = world.radialShader;
+        radialShader.uniforms.sampleDist.value = Math.pow(Math.abs(me.speed) / me.maxSpeed, 5.0) * 1.0;
+    }
     T3.model.Car = Car;
 })();

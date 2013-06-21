@@ -24,6 +24,15 @@
          */
         World.renderer = config.renderer;
 
+        /**
+         * Composer (event manager to handle shaders)
+         * @type {Object}
+         */
+        World.composer = new THREE.EffectComposer(World.renderer);
+        World.composer.setSize(
+            window.innerWidth * T3.devicePixelRatio,
+            window.innerHeight * T3.devicePixelRatio
+        );
 
         /**
          * The number of calls to the update method % 1000000007
@@ -42,6 +51,7 @@
             var me = this,
                 gridSize = 5,
                 freeSpace;
+
             // put the scene in a huge cube
             me.initSkyBox();
 
@@ -62,6 +72,10 @@
 
             // car auto acceleration (for the motion detection system)
             me.initCarAutoAcceleration();
+
+            // postprocessing
+            me.initPostprocessing();
+
         },
 
         /**
@@ -190,8 +204,19 @@
             // cols (x)
             texture = T3.AssetLoader.get('texture-road-z');
             texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-            texture.repeat = new THREE.Vector2(1, -3);
-            material = new THREE.MeshBasicMaterial({ map: texture });
+            texture.repeat = new THREE.Vector2(1, -5);
+            texture.anisotropy = 16;
+
+            material = new THREE.MeshPhongMaterial({
+                map: texture,
+                bumpMap: texture,
+                ambient: 0x353535,
+                specular: 0x333333,
+                color: 0xffffff,
+                bumpScale: 1,
+                shininess: 1,
+                shading: THREE.SmoothShading
+            });
 
             for (i = 0; i < freeSpace.cols.length; i += 1) {
                 mesh = new T3.model.Mesh({
@@ -220,7 +245,17 @@
             texture = T3.AssetLoader.get('texture-road-x');
             texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
             texture.repeat = new THREE.Vector2(1, -1);
-            material = new THREE.MeshBasicMaterial({ map: texture });
+            texture.anisotropy = 16;
+            material = new THREE.MeshPhongMaterial({
+                map: texture,
+                bumpMap: texture,
+                ambient: 0x353535,
+                specular: 0x333333,
+                color: 0xffffff,
+                bumpScale: 3,
+                shininess: 1,
+                shading: THREE.SmoothShading
+            });
 
             for (i = 0; i < freeSpace.rows.length; i += 1) {
                 for (j = 0; j < freeSpace.cols.length - 1; j += 1) {
@@ -400,7 +435,73 @@
         },
 
         render: function () {
-            World.renderer.render(scene, activeCamera.real);
+//            World.renderer.render(scene, activeCamera.real);
+//            World.renderer.clear();
+            World.composer.render();
+        },
+
+        /**
+         * Add postprocessing shaders to the scene
+         */
+        initPostprocessing: function () {
+            var me = this,
+                renderModel;
+            renderModel = new THREE.RenderPass(scene, activeCamera.real);
+            World.composer.addPass(renderModel);
+
+//            var copyShader = new THREE.ShaderPass(THREE.CopyShader);
+//            copyShader.renderToScreen = true;
+//            World.composer.addPass(copyShader);
+
+            var effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
+            effectFXAA.uniforms.resolution.value.set(
+                1 / (window.innerWidth * T3.devicePixelRatio),
+                1 / (window.innerHeight * T3.devicePixelRatio)
+            );
+            effectFXAA.renderToScreen = true;
+            World.composer.addPass(effectFXAA);
+
+            var radialShader = new THREE.ShaderPass(THREE.RadialBlurShader);
+            radialShader.renderToScreen = true;
+            World.radialShader = radialShader;
+            World.composer.addPass(radialShader);
+
+            // resize callback to fix the retina issue
+            // http://uihacker.blogspot.com/2013/03/javascript-antialias-post-processing.html
+            window.addEventListener('resize', function () {
+                effectFXAA.uniforms.resolution.value.set(
+                    1 / (window.innerWidth * T3.devicePixelRatio),
+                    1 / (window.innerHeight * T3.devicePixelRatio)
+                );
+                World.composer.setSize(
+                    window.innerWidth * T3.devicePixelRatio,
+                    window.innerHeight * T3.devicePixelRatio
+                );
+            }, false);
+
+            // dat.gui
+            function initDatGui(gui) {
+                var me = this,
+                    out = gui.addFolder('Postprocessing');
+
+                //<debug>
+                // copy shader
+                var radialShaderFolder = out.addFolder('RadialShader');
+                radialShaderFolder
+                    .add(radialShader, 'enabled')
+                    .name('Enabled');
+
+                radialShaderFolder
+                    .add(radialShader.uniforms.sampleDist, 'value', 0.0, 1.0)
+                    .name('Distance')
+                    .listen();
+//
+//                radialShaderFolder
+//                    .add(radialShader.uniforms.sampleStrength, 'value', 0.0, 5.0)
+//                    .name('Strength');
+                //</debug>
+            }
+            initDatGui(T3.Application.datGUI);
         },
 
         /**

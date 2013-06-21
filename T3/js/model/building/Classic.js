@@ -104,7 +104,10 @@
             originalParent: me,
             width: me.width,
             height: 0.2,
-            depth: me.depth
+            depth: me.depth,
+            materialConfig: {
+                initialized: me.generateSidewalkMaterials()
+            }
         });
         box.position.set(
             // x
@@ -153,6 +156,22 @@
             }
         }
         return faceMaterials;
+    };
+
+    Classic.prototype.generateSidewalkMaterials = function () {
+        var texture = T3.AssetLoader.get('texture-sidewalk-2');
+        texture.wrapS = texture.wrapT = THREE.MirroredRepeatWrapping;
+        texture.repeat.set(5, 5);
+        texture.anisotropy = 16;
+        return new THREE.MeshPhongMaterial({
+            map: texture,
+            bumpMap: texture,
+            specular: 0xffffff,
+            color: 0xffffff,
+            bumpScale: 3,
+            shininess: 1,
+            shading: THREE.SmoothShading
+        });
     };
 
     Classic.prototype.initDatGui = function () {
