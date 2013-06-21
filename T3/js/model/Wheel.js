@@ -34,8 +34,8 @@
 
         this.radius = null;
         this.rotationSpeed = 0.01;
-        this.rotationMin = -Math.PI / 4;
-        this.rotationMax = Math.PI / 4;
+        this.rotationMin = -Math.PI / 6;
+        this.rotationMax = Math.PI / 6;
 
         Wheel.prototype.init.call(this, config);
     };

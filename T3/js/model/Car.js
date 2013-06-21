@@ -80,30 +80,30 @@
          */
         this.steeringRadiusRatio = 0.02;
         /**
+         * Max speed of the car
+         * @type {number}
+         */
+        this.maxSpeed = 150;
+        /**
+         * Min speed of the car
+         * @type {number}
+         */
+        this.minSpeed = -50;
+        /**
          * Car acceleration factor
          * @type {number}
          */
-        this.acceleration = 50;
-        /**
-         * Car deceleration factor
-         * @type {number}
-         */
-        this.deceleration = -50;
+        this.acceleration = this.maxSpeed / 5;
         /**
          * Current speed of the car
          * @type {number}
          */
         this.speed = 0;
         /**
-         * Max speed of the car
-         * @type {number}
+         * BufferSource created by the AudioContext instance
+         * @type {Object}
          */
-        this.maxSpeed = 100;
-        /**
-         * Min speed of the car
-         * @type {number}
-         */
-        this.minSpeed = -50;
+        this.engineSound = null;
 
         Car.prototype.init.call(this, config);
     };
@@ -128,35 +128,35 @@
             materialConfig: { options: {side: THREE.DoubleSide} }
         });
 
-        var exhaust = new T3.model.Exhaust({
+        me.exhaust = new T3.model.Exhaust({
             name: 'car-exhaust',
             folder: 'Car exhaust and dummy front',
             originalParent: me,
             geometryConfig: { initialized: T3.AssetLoader.get('car-exhaust-geometry') }
         });
 
-        var windows = new T3.model.Window({
+        me.windows = new T3.model.Window({
             name: 'car-windows',
             folder: 'Car windows',
             originalParent: me,
             geometryConfig: { initialized: T3.AssetLoader.get('car-windows-geometry') }
         });
 
-        var interior = new T3.model.Interior({
+        me.interior = new T3.model.Interior({
             name: 'car-interior',
             folder: 'Car interior',
             originalParent: me,
             geometryConfig: { initialized: T3.AssetLoader.get('car-interior-geometry') }
         });
 
-        new T3.model.LightsFront({
+        me.lightsFront = new T3.model.LightsFront({
             name: 'car-lights-front',
             folder: 'Car lights - front',
             originalParent: me,
             geometryConfig: { initialized: T3.AssetLoader.get('car-lights-front-geometry') }
         });
 
-        me.ligthsBack = new T3.model.LightsBack({
+        me.lightsBack = new T3.model.LightsBack({
             name: 'car-lights-back',
             folder: 'Car lights - back',
             originalParent: me,
@@ -215,6 +215,11 @@
 
     Car.prototype.initDatGui = function (gui) {
         var me = this,
+            soundOptions = {
+                engineSound: false,
+                pitch: 1,
+                volume: 0.05
+            },
             camera = T3.ObjectManager.get('camera-cube'),
             folder = gui.addFolder('Car Mesh');
         folder
@@ -228,6 +233,28 @@
             .name('Enable cube map')
             .onFinishChange(function (value) {
                 me.body.updateMaterial(value);
+            });
+        folder
+            .add(soundOptions, 'engineSound')
+            .name('Engine sound')
+            .onFinishChange(function (value) {
+                if (value) {
+                    me.engineSound = T3.SoundLoader.playSound('sound-engine-4', {
+                        loop: true,
+                        volume: soundOptions.volume
+                    });
+                } else {
+                    me.engineSound.source.stop(0);
+                    me.engineSound = null;
+                }
+            });
+        folder
+            .add(soundOptions, 'volume', 0, 0.3)
+            .name('Volume')
+            .onChange(function (value) {
+                if (me.engineSound) {
+                    me.engineSound.gainNode.gain.value = value;
+                }
             });
     };
 
@@ -292,13 +319,13 @@
         if (direction === 'forward') {
             newSpeed = Math.min(me.maxSpeed, oldSpeed + me.acceleration * delta);
         } else if (direction === 'backward') {
-            newSpeed = Math.max(me.minSpeed, oldSpeed + me.deceleration * delta);
+            newSpeed = Math.max(me.minSpeed, oldSpeed - me.acceleration * delta);
         } else {
             // decay
             if (Math.abs(oldSpeed) <= eps) {
                 return 0;
             } else if (oldSpeed > eps) {
-                newSpeed = oldSpeed + me.deceleration * delta;
+                newSpeed = oldSpeed - me.acceleration * delta;
             } else if (oldSpeed < -eps) {
                 newSpeed = oldSpeed + me.acceleration * delta;
             }
@@ -313,7 +340,8 @@
      * @param {Number} delta
      */
     Car.prototype.update = function (delta) {
-        var me = this;
+        var me = this,
+            source;
         if (T3.Keyboard.query('A')) {
             me.wheelFrontLeft.rotate('left');
             me.wheelFrontRight.rotate('left');
@@ -339,14 +367,26 @@
             me.wheelFrontRight.decay();
         }
 
+        // TILT
+        me.tilt();
+
         // CAR BACK LIGHTS
-        me.ligthsBack.update(delta, T3.Keyboard.query('S'));
+        me.lightsBack.update(delta, T3.Keyboard.query('S'));
 
         // CAR WHEELS ROTATION
         me.updateWheelsRotation(me.speed);
 
         // UPDATE CUBE CAMERA POSITION
         me.enableCubeMap && me.updateCubeCamera();
+
+        // SOUND PITCH
+        if (me.engineSound) {
+            source = me.engineSound.source;
+            source.playbackRate.value = Math.max(
+                Math.abs(me.speed * (1.5 / me.maxSpeed)),    // compute pitch based on the speed
+                1
+            );
+        }
     };
 
     /**
@@ -390,5 +430,24 @@
             me.setVisible(true);
         }
     };
+
+    /**
+     * Tilts the car, the tilt amount is determined with the current speed
+     * and the rotation of any front wheel
+     */
+    Car.prototype.tilt = function () {
+        var me = this,
+            speed = me.speed,
+            rotation = me.wheelFrontRight.rotation.y,
+            tilt = speed * rotation * 0.0005;
+
+        me.body.rotation.z = tilt;
+        me.lightsFront.rotation.z = tilt;
+        me.lightsBack.rotation.z = tilt;
+        me.interior.rotation.z = tilt;
+        me.exhaust.rotation.z = tilt;
+        me.windows.rotation.z = tilt;
+    }
+
     T3.model.Car = Car;
 })();

@@ -24,6 +24,12 @@
          */
         this.lightRight = null;
 
+        /**
+         * Light intensity in idle mode
+         * @type {number}
+         */
+        this.intensity = 3;
+
         LightsBack.prototype.init.call(this, config);
     };
 
@@ -46,12 +52,12 @@
         var me = this,
             lightLeft,
             lightRight;
-        me.lightLeft = lightLeft = new THREE.PointLight(0xff0000, 1, 5);
+        me.lightLeft = lightLeft = new THREE.PointLight(0xff0000, me.intensity, 5);
         T3.ObjectManager.add('car-light-left', lightLeft);
         lightLeft.position.set(6, 9, -25);
         me.add(lightLeft);
 
-        me.lightRight = lightRight= new THREE.PointLight(0xff0000, 1, 5);
+        me.lightRight = lightRight= new THREE.PointLight(0xff0000, me.intensity, 5);
         T3.ObjectManager.add('car-light-right', lightRight);
         lightRight.position.set(-6, 9, -25);
         me.add(lightRight);
@@ -62,11 +68,11 @@
     LightsBack.prototype.update = function (delta, brakes) {
         var me = this;
         if (brakes) {
-            me.lightLeft.intensity = 10;
-            me.lightRight.intensity = 10;
-        } else {
             me.lightLeft.intensity = 5;
             me.lightRight.intensity = 5;
+        } else {
+            me.lightLeft.intensity = me.intensity;
+            me.lightRight.intensity = me.intensity;
         }
     };
 

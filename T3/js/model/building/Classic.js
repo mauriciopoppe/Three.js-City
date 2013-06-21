@@ -23,7 +23,8 @@
          * Height of the Box
          * @type {number}
          */
-        this.height = config.height || 20 + (Math.random() * 30);
+//        this.height = config.height || 20 + (Math.random() * 30);
+        this.height = config.height || 10 + (Math.random() * 30);
 
         /**
          * Depth of the Box
@@ -45,34 +46,26 @@
     Classic.prototype.init = function () {
         var me = this,
             color = '#555',
-            proportion = [0.8, 0.7, 0.5, 0.3],
             height = [0.6, 0.8, 0.9, 1],
+            proportion = [0.8, 0.7, 0.5, 0.3],
             total = proportion.length,
             i,
-            j,
             box,
-            tetrahedron,
-            textures = ['texture-office'],
-            texture = T3.AssetLoader.get(textures[~~(Math.random() * textures.length)]),
-            faceMaterials;
+            tetrahedron;
+
 
         // create boxes that make the Classic
+        var classicMaterialArray = me.generateClassicMaterials();
         for (i = 0; i < total; i += 1) {
-            faceMaterials= [];
-            for (j = 0; j < 6; j += 1) {
-                if (j == 2 || j == 3) {     // top and bottom faces
-                    faceMaterials.push(new THREE.MeshBasicMaterial());
-                } else {
-                    faceMaterials.push(new THREE.MeshBasicMaterial({map: texture}));
-                }
-            }
             box = new T3.model.Box({
                 originalParent: me,
                 width: me.width * proportion[i],
                 height: me.height * height[i],
                 depth: me.depth * proportion[i],
                 materialConfig: {
-                    initialized: new THREE.MeshFaceMaterial(faceMaterials)
+                    initialized: new THREE.MeshFaceMaterial(
+                        classicMaterialArray
+                    )
                 }
             });
             box.position.set(
@@ -102,6 +95,8 @@
                 })
             }
         });
+        tetrahedron.real.castShadow = true;
+        tetrahedron.real.receiveShadow = true;
         tetrahedron.position.set(box.width, me.height * T3.scale, box.depth);
 
         // base
@@ -122,6 +117,42 @@
         box.real.receiveShadow = true;
 
         return this;
+    };
+
+    Classic.prototype.generateClassicMaterials = function () {
+        var i,
+            avoid = [2, 3],
+            texture,
+            textures = [
+                'texture-office'
+            ],
+            textureOptions = [{
+                bumpScale: 0.1,
+                shininess: 100
+            }],
+            faceMaterials = [],
+            index;
+
+        index = ~~(Math.random() * textures.length);
+//        index = 2;
+        avoid = avoid || [2, 3];
+
+        texture = T3.AssetLoader.get(textures[index]);
+        texture.anisotropy = 16;
+        for (i = 0; i < 6; i += 1) {
+            if (avoid.indexOf(i) > -1) {     // top and bottom faces
+                faceMaterials.push(new THREE.MeshBasicMaterial());
+            } else {
+                faceMaterials.push(new THREE.MeshPhongMaterial($.extend({
+                    map: texture,
+                    bumpMap: texture,
+                    bumpScale: 1,
+                    shininess: 10,
+                    shading: THREE.SmoothShading
+                }, textureOptions[index])));
+            }
+        }
+        return faceMaterials;
     };
 
     Classic.prototype.initDatGui = function () {

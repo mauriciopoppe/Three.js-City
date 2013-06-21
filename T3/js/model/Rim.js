@@ -31,6 +31,7 @@
      * @chainable
      */
     Rim.prototype.init = function (config) {
+//        this.real.castShadow = true;
         return this;
     };
 

@@ -36,4 +36,6 @@ Car model by: *sepel* (http://www.blendswap.com/blends/view/67462)
 
 Textures downloaded from: http://www.cgtextures.com/ and http://www.humus.name/index.php?page=Textures
 
+Engine sound downloaded from: http://www.findsounds.com/
+
 Have fun!

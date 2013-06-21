@@ -65,7 +65,7 @@ T3.AssetLoader = (function () {
             return this;
         },
         /**
-         * Loads all the assets registered using `T3.AssetLoader.register`, each asset
+         * Loads all the assets registered using `T3.AssetLoader.addToLoadQueue`, each asset
          * is loaded in the same order as they were registered, when all the assets finished
          * loading then `callback` will be called with a scope equal to `scope`
          * @param {Function} callback Function to be executed when all the assets finished loading
