@@ -58,4 +58,6 @@ Clone the project to see the development process step by step using git's tag sy
 - Textures downloaded from: http://www.cgtextures.com/ and http://www.humus.name/index.php?page=Textures
 - Engine sounds downloaded from: http://www.findsounds.com/
 
+Engine sound downloaded from: http://www.findsounds.com/
+
 Have fun!
