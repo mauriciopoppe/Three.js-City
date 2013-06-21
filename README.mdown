@@ -38,4 +38,10 @@ Textures downloaded from: http://www.cgtextures.com/ and http://www.humus.name/i
 
 Engine sound downloaded from: http://www.findsounds.com/
 
+Additional information about shaders:
+http://www.gamerendering.com/2008/12/20/radial-blur-filter/
+http://uihacker.blogspot.com/2013/03/javascript-antialias-post-processing.html
+http://threejs.org/examples/webgl_postprocessing.html
+http://joshondesign.com/p/books/canvasdeepdive/chapter10.html
+
 Have fun!

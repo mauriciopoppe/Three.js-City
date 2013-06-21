@@ -21,6 +21,12 @@ var scene,
  */
 T3.scale = 10;
 
+/**
+ * Retina displays have twice the pixel ratio
+ * @type {Function}
+ */
+T3.devicePixelRatio = window.devicePixelRatio || 1;
+
 T3.inheritFrom = function (subClass, superClass) {
     var prototype;
 
