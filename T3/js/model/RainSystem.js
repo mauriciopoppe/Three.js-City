@@ -38,6 +38,12 @@
         this.particleCount = 7000;
 
         /**
+         * Dat.gui rain speed multiplier
+         * @type {number}
+         */
+        this.speed = 1.0;
+
+        /**
          * A copy of the total number of particles to be created (is used
          * by the dat.GUI instance to limit the totalNumber)
          * @private
@@ -106,7 +112,7 @@
      */
     RainSystem.prototype.initDatGui = function (gui) {
         var me = this,
-            folder = gui.addFolder('Rain System');
+            folder = gui.addFolder('Rain');
 
 //        me.visible = false;
         folder
@@ -119,6 +125,10 @@
         folder
             .add(me, 'particleCount', 0, me.maxParticleCount)
             .name('Raindrops');
+
+        folder
+            .add(me, 'speed', 0, 3)
+            .name('Speed');
     };
 
     /**
@@ -140,13 +150,13 @@
             particle = particles.vertices[length];
             if (particle.y <= 0) {
                 particle.y = me.yLimit;
-                particle.velocity.y = -Math.random() * 10;  // random speed factor
+                particle.velocity.y = -Math.random() * 30;  // random speed factor
             }
 
             // equation of free fall
             // vf = vo - gt
             particle.velocity.y = particle.velocity.y - T3.World.GRAVITY * delta;
-            particle.y += particle.velocity.y * delta;
+            particle.y += particle.velocity.y * me.speed * delta;
         }
         for (length = ~~me.particleCount; length < particles.vertices.length; length += 1) {
             particle = particles.vertices[length];

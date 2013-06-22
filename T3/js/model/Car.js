@@ -250,7 +250,7 @@
                         volume: soundOptions.volume
                     });
                 } else {
-                    me.engineSound.source.stop(0);
+                    me.engineSound.stop();
                     me.engineSound = null;
                 }
             });
@@ -265,7 +265,7 @@
             .onChange(function (value) {
                 var newEngine = 'sound-engine-' + value;
                 if (me.engineSound) {
-                    me.engineSound.source.stop(0);
+                    me.engineSound.stop();
                 }
                 me.engineSound = T3.SoundLoader.playSound(newEngine, {
                     loop: true,
@@ -278,7 +278,7 @@
             .name('Volume')
             .onChange(function (value) {
                 if (me.engineSound) {
-                    me.engineSound.gainNode.gain.value = value;
+                    me.engineSound.node.gain.value = value;
                 }
             });
     };
@@ -413,8 +413,7 @@
 
         // SOUND PITCH
         if (me.engineSound) {
-            source = me.engineSound.source;
-            source.playbackRate.value = Math.max(
+            me.engineSound.node.playbackRate.value = Math.max(
                 Math.abs(me.speed * (4 / me.maxSpeed)),    // compute pitch based on the speed
                 1
             );

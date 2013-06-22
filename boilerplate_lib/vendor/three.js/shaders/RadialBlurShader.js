@@ -7,7 +7,7 @@ THREE.RadialBlurShader = {
 
 	uniforms: {
         "sampleDist": { type: "f", value: 1.0 },
-        "sampleStrength": { type: "f", value: 2.2 }
+        "sampleStrength": { type: "f", value: 1.5 }
 	},
 
 	vertexShader: [

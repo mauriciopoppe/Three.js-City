@@ -7,8 +7,7 @@
  */
 (function () {
     
-    var Classic,
-        id = 0;
+    var Classic;
 
     Classic = function (config) {
         config = config || {};

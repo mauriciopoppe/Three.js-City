@@ -12,8 +12,8 @@
  * @singleton
  */
 T3.SoundLoader = (function () {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext(),
+
+    var webAudio = new WebAudio(),
         queue = [],
         sounds = {},
         endCallback,
@@ -29,20 +29,12 @@ T3.SoundLoader = (function () {
             showDebug && console.log('T3.SoundLoader finished in: ' + (debug.end - debug.start) + 'ms');
             endCallback.call(endCallbackScope);
         } else {
-            var request = new XMLHttpRequest();
-            request.open('GET', queue[index].url, true);
-            request.responseType = 'arraybuffer';
-
-            // simple bind
-            request.onload = function () {
-                context.decodeAudioData(request.response, function (buffer) {
-                    sounds[queue[index].name] = buffer;
+            webAudio
+                .createSound()
+                .load(queue[index].url, function (sound) {
+                    sounds[queue[index].name] = sound;
                     execute(index + 1);
-                }, function () {
-                    console.log('Error decoding the sound %s :(', queue[index].name);
                 });
-            };
-            request.send();
         }
     };
 
@@ -82,32 +74,14 @@ T3.SoundLoader = (function () {
          * @param [options]
          */
         playSound: function (name, options) {
-            var source = context.createBufferSource(),
-                gainNode;
+            var sound = sounds[name],
+                source;
             options = options || {};
-            if (!sounds[name]) {
-                throw new Error('Sound not found');
-            }
-            source.buffer = sounds[name];
+            options.loop && sound.loop(options.loop);
+            source = sound.play(options.time || 0);
+            options.volume && (source.node.gain.value = options.volume);
 
-            // loop
-            options.loop && (source.loop = true);
-
-            // volume
-            if(options.volume) {
-                gainNode = context.createGain();
-                source.connect(gainNode);
-                gainNode.connect(context.destination);
-                options.volume = Math.min(options.volume, 1);
-                gainNode.gain.value = options.volume;
-            } else {
-                source.connect(context.destination);
-            }
-            source.start(0);
-            return {
-                source: source,
-                gainNode: gainNode
-            };
+            return source;
         },
         /**
          * Call this method to show debug info during the asset loading
