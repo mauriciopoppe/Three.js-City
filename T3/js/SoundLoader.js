@@ -84,6 +84,13 @@ T3.SoundLoader = (function () {
             return source;
         },
         /**
+         * Getter for the web audio instance
+         * @param name
+         */
+        get: function (name) {
+            return sounds[name];
+        },
+        /**
          * Call this method to show debug info during the asset loading
          * @chainable
          */

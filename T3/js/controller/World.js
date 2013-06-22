@@ -100,6 +100,7 @@
                     volume: 1
                 },
                 music = T3.SoundLoader.playSound('music-1', {
+                    loop: options.loop,
                     volume: options.volume
                 });
             if (!options.enabled) {
