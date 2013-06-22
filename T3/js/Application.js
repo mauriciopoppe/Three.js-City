@@ -271,7 +271,8 @@ T3.Application = {
         .addToLoadQueue('sounds/engine.wav', 'sound-engine-1')
         .addToLoadQueue('sounds/engine_2.wav', 'sound-engine-2')
         .addToLoadQueue('sounds/engine_3.mp3', 'sound-engine-3')
-        .addToLoadQueue('sounds/alternator_whine.wav', 'sound-engine-4');
+        .addToLoadQueue('sounds/alternator_whine.wav', 'sound-engine-4')
+        .addToLoadQueue('sounds/bg_menu.ogg', 'music-1');
     T3.AssetLoader.load(function () {
         T3.SoundLoader.load(T3.Application.launch, T3.Application);
     }, T3.Application);

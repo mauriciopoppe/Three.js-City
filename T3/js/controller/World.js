@@ -52,6 +52,8 @@
                 gridSize = 5,
                 freeSpace;
 
+            // some good music O:
+            me.initMusic();
             // put the scene in a huge cube
             me.initSkyBox();
 
@@ -86,6 +88,50 @@
                 ground: true
 //                gridX: true
             });
+        },
+
+        /**
+         * Plays some background music
+         */
+        initMusic: function () {
+            var options = {
+                    enabled: true,
+                    loop: true,
+                    volume: 1
+                },
+                music = T3.SoundLoader.playSound('music-1', {
+                    volume: options.volume
+                });
+            if (!options.enabled) {
+                music.stop();
+            }
+
+            function initDatGui(gui) {
+                var folder = gui.addFolder('Music');
+                folder
+                    .add(options, 'enabled')
+                    .name('Enabled')
+                    .onFinishChange(function (value) {
+                        if (value) {
+                            music = T3.SoundLoader.playSound('music-1');
+                        } else {
+                            music.stop();
+                        }
+                    });
+                folder
+                    .add(options, 'loop')
+                    .name('Loop')
+                    .onChange(function (value) {
+                        music.node.loop = value;
+                    });
+                folder
+                    .add(options, 'volume', 0, 1)
+                    .name('Volume')
+                    .onChange(function (value) {
+                        music.node.gain.value = value;
+                    });
+            }
+            initDatGui(T3.Application.datGUI);
         },
 
         /**
@@ -237,6 +283,8 @@
                     depth * (lastRow + 1) * T3.scale / 2
                 );
 
+                mesh.real.matrixAutoUpdate = false;
+                mesh.real.updateMatrix();
                 mesh.real.receiveShadow = true;
 
             }
@@ -282,9 +330,9 @@
                         -1,
                         freeSpace.rows[i] * depth * T3.scale + depth * T3.scale / 2
                     );
-
+                    mesh.real.matrixAutoUpdate = false;
+                    mesh.real.updateMatrix();
                     mesh.real.receiveShadow = true;
-
                 }
             }
         },
@@ -371,13 +419,14 @@
                             new THREE.TubeGeometry(
                                 new THREE.SplineCurve3(points), // spline
                                 100,                            // extrusion segments
-                                0.3,                              //
-                                4,                              // segments (> 4 is better)
+                                0.3,                            // radius
+                                16,                             // segments (> 4 is better)
                                 false,                          // closed
                                 true                            // debug
                             ),
                             new THREE.MeshBasicMaterial({
-                                color: 0xffffff
+                                color: 0x222222,
+                                side: THREE.DoubleSide
                             })
                         );
                         mesh.castShadow = true;
@@ -398,7 +447,7 @@
                     .name('Visible')
                     .onChange(function (value) {
                         var len = wires.length;
-                        while (--len) {
+                        while (len--) {
                             wires[len].visible = value;
                         }
                     });
@@ -471,6 +520,7 @@
                 1 / (window.innerWidth * T3.devicePixelRatio),
                 1 / (window.innerHeight * T3.devicePixelRatio)
             );
+            effectFXAA.renderToScreen = true;
 
             // Radial blur shader :)
             var radialShader = new THREE.ShaderPass(THREE.RadialBlurShader);
@@ -500,7 +550,7 @@
 
                 //<debug>
                 // copy shader
-                var radialShaderFolder = out.addFolder('RadialShader');
+                var radialShaderFolder = out.addFolder('Radial Blur');
                 radialShaderFolder
                     .add(radialShader, 'enabled')
                     .name('Enabled');
@@ -550,6 +600,8 @@
                 new THREE.CubeGeometry(dimension, dimension, dimension),
                 material
             );
+            mesh.matrixAutoUpdate = false;
+            mesh.updateMatrix();
 //            mesh.position.y = dimension * 0.47;
             T3.ObjectManager.add('skybox', mesh);
         },

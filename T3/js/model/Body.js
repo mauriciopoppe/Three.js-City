@@ -11,7 +11,7 @@
 
     Body = function (config) {
         config = config || {};
-    
+
         T3.model.Mesh.call(this, config);
     
         Body.prototype.init.call(this, config);
@@ -20,22 +20,22 @@
     T3.inheritFrom(Body, T3.model.Mesh);
     
     // ALTERNATIVE: BLUE
-    Body.prototype.materialOptions = {
-        ambient: '#ffffff',     // ambient
-        color: '#016b93',       // diffuse
-        specular: '#408de3',    // specular
-        shininess: 0.4 * 128,   // shininess
-        wireframe: false
-    };
-    
-    // ALTERNATIVE: SILVER
 //    Body.prototype.materialOptions = {
-//        ambient: '#313131',     // ambient
-//        color: '#818181',       // diffuse
-//        specular: '#818181',    // specular
+//        ambient: '#ffffff',     // ambient
+//        color: '#016b93',       // diffuse
+//        specular: '#408de3',    // specular
 //        shininess: 0.4 * 128,   // shininess
 //        wireframe: false
 //    };
+    
+    // ALTERNATIVE: SILVER
+    Body.prototype.materialOptions = {
+        ambient: '#313131',     // ambient
+        color: '#818181',       // diffuse
+        specular: '#818181',    // specular
+        shininess: 0.4 * 128,   // shininess
+        wireframe: false
+    };
 
     // ALTERNATIVE: RED
     //Body.prototype.materialOptions = {
@@ -72,6 +72,7 @@
                 color: '#525252',
                 specular: '#000000',
                 envMap: cube && cube.renderTarget,
+                reflectivity: 0.1,
                 shininess: 0
             })
         ];
