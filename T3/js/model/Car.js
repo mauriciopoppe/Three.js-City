@@ -495,6 +495,14 @@
             radialShader = world.radialShader;
         radialShader.uniforms.sampleDist.value =
             Math.pow(Math.abs(me.speed) / me.maxSpeed, 6.0) * 1.0;
+
+        var music = T3.SoundLoader.get('music-1'),
+            histogram;
+        if (music && radialShader.uniforms.sampleDist.value >= 0.3) {
+            histogram = music.makeHistogram(10);
+            radialShader.uniforms.sampleStrength.value =
+                1.5 + (histogram[7] / 95 >= 1 ? (histogram[7] / 95 - 1) * 10 : 0)
+        }
     }
     T3.model.Car = Car;
 })();
