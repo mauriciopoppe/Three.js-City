@@ -126,8 +126,16 @@
         var i,
             avoid = [2, 3],
             texture,
+            specularMap,
+            bumpMap,
             textures = [
                 'texture-office'
+            ],
+            specularMaps = [
+                'texture-office-specular'
+            ],
+            bumpMaps = [
+                'texture-office-bumpmap'
             ],
             textureOptions = [{
                 bumpScale: 0.1,
@@ -142,14 +150,20 @@
 
         texture = T3.AssetLoader.get(textures[index]);
         texture.anisotropy = 16;
+        specularMap = T3.AssetLoader.get(specularMaps[index]);
+        specularMap.anisotropy = 16;
+        bumpMap = T3.AssetLoader.get(bumpMaps[index]);
+        bumpMap.anisotropy = 16;
+
         for (i = 0; i < 6; i += 1) {
             if (avoid.indexOf(i) > -1) {     // top and bottom faces
                 faceMaterials.push(new THREE.MeshBasicMaterial());
             } else {
                 faceMaterials.push(new THREE.MeshPhongMaterial($.extend({
                     map: texture,
-                    bumpMap: texture,
-                    bumpScale: 1,
+                    bumpMap: bumpMap,
+                    specularMap: specularMap,
+                    bumpScale: 4,
                     shininess: 10,
                     shading: THREE.SmoothShading
                 }, textureOptions[index])));

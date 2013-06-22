@@ -64,7 +64,7 @@
             freeSpace = me.createBuildingBlocks(gridSize);
             me.createRoads(freeSpace);
             me.createLampParticles();
-//            me.createLampWires();
+            me.createLampWires();
             // car
             me.createCar();
             // rain!
@@ -344,70 +344,86 @@
 
         createLampWires: function () {
             var i,
-                j,
-                geometry,
-                last,
-                nPoints = 20,
-                point,
                 points,
                 mesh,
                 lamps = T3.model.Block.prototype.lamps,
-                spline,
-                positions = [];
+                height = lamps[0] && lamps[0].base.height * T3.scale,
+                positions = [],
+                wires = [];
+
+            function createWiresInAxis(positions, axis) {
+                var i,
+                    last;
+                last = positions[0];
+                for (i = 1; i < positions.length; i += 1) {
+                    if (last[axis] === positions[i][axis]) {
+                        points = [];
+                        points.push(last);
+                        points.push(new THREE.Vector3(
+                            (last.x + positions[i].x) / 2,
+                            (last.y + positions[i].y) / 2 - 10,
+                            (last.z + positions[i].z) / 2
+                        ));
+                        points.push(positions[i]);
+
+                        // wire
+                        mesh = new THREE.Mesh(
+                            new THREE.TubeGeometry(
+                                new THREE.SplineCurve3(points), // spline
+                                100,                            // extrusion segments
+                                0.3,                              //
+                                4,                              // segments (> 4 is better)
+                                false,                          // closed
+                                true                            // debug
+                            ),
+                            new THREE.MeshBasicMaterial({
+                                color: 0xffffff
+                            })
+                        );
+                        mesh.castShadow = true;
+                        mesh.receiveShadow = true;
+                        mesh.position.set(0, height, 0);
+                        scene.add(mesh);
+                        wires.push(mesh);
+                    }
+                    last = positions[i];
+                }
+            }
+
+            function initDatGui(gui) {
+                var folder = gui.addFolder('Wires');
+
+                folder
+                    .add({visible: true}, 'visible')
+                    .name('Visible')
+                    .onChange(function (value) {
+                        var len = wires.length;
+                        while (--len) {
+                            wires[len].visible = value;
+                        }
+                    });
+            }
+
+            // gather all lamp positions
             for(i = 0; i < lamps.length; i += 1) {
                 positions.push(lamps[i].position.clone());
             }
 
-            // wires in z pos
+            // sort wires with an equal x coordinate
             positions.sort(function (a, b) {
-                if (a.x != b.x) return a.x < b.x ? -1 : 1;
+                if (a.x !== b.x) { return a.x < b.x ? -1 : 1; }
                 return a.z < b.z ? -1 : 1;
             });
-            last = positions[0];
-            for (i = 1; i < positions.length; i += 1) {
-                if (last.x == positions[i].x) {
-                    points = [];
-                    points.push(last);
-                    points.push(new THREE.Vector3(
-                        (last.x + positions[i].x) / 4,
-                        (last.y + positions[i].y) / 4 - 10,
-                        (last.z + positions[i].z) / 4
-                    ));
-                    points.push(new THREE.Vector3(
-                        (last.x + positions[i].x) * 3 / 4,
-                        (last.y + positions[i].y) * 3 / 4 - 10,
-                        (last.z + positions[i].z) * 3 / 4
-                    ));
-                    points.push(positions[i]);
+            createWiresInAxis(positions, 'x');
 
-                    // wire
-                    geometry = [];
-                    spline = new THREE.Spline(points);
-                    for (j = 0; j < nPoints; j += 1) {
-                        point = spline.getPoint(j / nPoints);
-                        geometry.push(new THREE.Vector3(point.x, point.y, point.z));
-                    }
+            // sort wires with an equal z coordinate
+            positions.sort(function (a, b) {
+                if (a.z !== b.z) { return a.z < b.z ? -1 : 1; }
+                return a.x < b.x ? -1 : 1;
+            });
+            createWiresInAxis(positions, 'z');
 
-                    mesh = new THREE.Mesh(
-                        new THREE.ExtrudeGeometry(
-                            new THREE.Shape(geometry), {
-                                size: 2,
-                                height: 2,
-                                curveSegments: 3,
-                                bevelThickness: 1,
-                                bevelSize: 2,
-                                bevelEnabled: false,
-                                material: 0,
-                                extrudeMaterial: 1
-                            }
-                        ),
-                        new THREE.MeshBasicMaterial( { color: 0xffff00 } )
-                    );
-                    mesh.position.set(100, 100, 100);
-                    scene.add(mesh);
-                }
-                last = positions[i];
-            }
+            initDatGui(T3.Application.datGUI);
         },
 
         /**
@@ -447,23 +463,22 @@
             var me = this,
                 renderModel;
             renderModel = new THREE.RenderPass(scene, activeCamera.real);
-            World.composer.addPass(renderModel);
 
-//            var copyShader = new THREE.ShaderPass(THREE.CopyShader);
-//            copyShader.renderToScreen = true;
-//            World.composer.addPass(copyShader);
-
+            // The resolution on new displays can be supported
+            // through this shader
             var effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
             effectFXAA.uniforms.resolution.value.set(
                 1 / (window.innerWidth * T3.devicePixelRatio),
                 1 / (window.innerHeight * T3.devicePixelRatio)
             );
-            effectFXAA.renderToScreen = true;
-            World.composer.addPass(effectFXAA);
 
+            // Radial blur shader :)
             var radialShader = new THREE.ShaderPass(THREE.RadialBlurShader);
             radialShader.renderToScreen = true;
             World.radialShader = radialShader;
+
+            World.composer.addPass(renderModel);
+            World.composer.addPass(effectFXAA);
             World.composer.addPass(radialShader);
 
             // resize callback to fix the retina issue
@@ -481,8 +496,7 @@
 
             // dat.gui
             function initDatGui(gui) {
-                var me = this,
-                    out = gui.addFolder('Postprocessing');
+                var out = gui.addFolder('Postprocessing');
 
                 //<debug>
                 // copy shader
@@ -495,6 +509,10 @@
                     .add(radialShader.uniforms.sampleDist, 'value', 0.0, 1.0)
                     .name('Distance')
                     .listen();
+
+                radialShaderFolder
+                    .add(radialShader.uniforms.sampleStrength, 'value', 0.0, 5)
+                    .name('Strength');
 //
 //                radialShaderFolder
 //                    .add(radialShader.uniforms.sampleStrength, 'value', 0.0, 5.0)
