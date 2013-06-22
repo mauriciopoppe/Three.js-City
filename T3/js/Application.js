@@ -248,6 +248,8 @@ T3.Application = {
         .registerAsset('texture-glass-1', THREE.ImageUtils.loadTexture('images/textures/glass.jpg'))
         .registerAsset('texture-glass-2', THREE.ImageUtils.loadTexture('images/textures/glass_2.jpg'))
         .registerAsset('texture-office', THREE.ImageUtils.loadTexture('images/textures/offices.jpg'))
+        .registerAsset('texture-office-specular', THREE.ImageUtils.loadTexture('images/textures/offices_specular.jpg'))
+        .registerAsset('texture-office-bumpmap', THREE.ImageUtils.loadTexture('images/textures/offices_bumpmap.jpg'))
         .registerAsset('texture-road-x', THREE.ImageUtils.loadTexture('images/textures/roadposx.png'))
         .registerAsset('texture-road-z', THREE.ImageUtils.loadTexture('images/textures/roadposz.jpg'))
         .registerAsset('texture-sidewalk-1', THREE.ImageUtils.loadTexture('images/textures/sidewalk_shadow.jpg'))

@@ -494,7 +494,8 @@
         var me = this,
             world = T3.World,
             radialShader = world.radialShader;
-        radialShader.uniforms.sampleDist.value = Math.pow(Math.abs(me.speed) / me.maxSpeed, 5.0) * 1.0;
+        radialShader.uniforms.sampleDist.value =
+            Math.pow(Math.abs(me.speed) / me.maxSpeed, 6.0) * 1.0;
     }
     T3.model.Car = Car;
 })();

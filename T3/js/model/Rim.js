@@ -21,7 +21,7 @@
         ambient: '#ffffff',     // ambient
         color: '#464646',       // diffuse
         specular: '#f0f0f0',    // specular
-        shininess: 51,          // shininess
+        shininess: 128,         // shininess
         wireframe: false
     };
 
@@ -37,7 +37,6 @@
 
     Rim.prototype.initDatGui = function () {
     };
-
 
     T3.model.Rim = Rim;
 })();

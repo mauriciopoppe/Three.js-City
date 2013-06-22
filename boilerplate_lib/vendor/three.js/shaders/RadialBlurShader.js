@@ -8,7 +8,6 @@ THREE.RadialBlurShader = {
 	uniforms: {
         "sampleDist": { type: "f", value: 1.0 },
         "sampleStrength": { type: "f", value: 2.2 }
-//        "sampleStrength": { type: "f", value: 3 }
 	},
 
 	vertexShader: [
@@ -18,7 +17,6 @@ THREE.RadialBlurShader = {
             "vUv = uv;",
             "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
             "gl_Position = sign( gl_Position );",
-//            "vUv = (vec2( gl_Position.x, - gl_Position.y ) + vec2( 1.0 ) ) / vec2( 2.0 );",
         "}"
     ].join("\n"),
 
@@ -50,15 +48,15 @@ THREE.RadialBlurShader = {
             "samples[9] = 0.08;",
 
             "// 0.5,0.5 is the center of the screen",
-            "// so substracting uv from it will result in",
+            "// so subtracting uv from it will result in",
             "// a vector pointing to the middle of the screen",
             "vec2 dir = 0.5 - vUv;",
 
             "// calculate the distance to the center of the screen",
-            "float dist = sqrt(dir.x*dir.x + dir.y*dir.y);",
+            "float dist = sqrt(dir.x * dir.x + dir.y * dir.y);",
 
             "// normalize the direction (reuse the distance)",
-            "dir = dir/dist;",
+            "dir = dir / dist;",
 
             "// this is the original colour of this fragment",
             "// using only this would result in a nonblurred version",
@@ -73,7 +71,7 @@ THREE.RadialBlurShader = {
             "}",
 
             "// we have taken eleven samples",
-            "sum *= 1.0/11.0;",
+            "sum *= 1.0 / 11.0;",
 
             "// weighten the blur effect with the distance to the",
             "// center of the screen ( further out is blurred more)",
