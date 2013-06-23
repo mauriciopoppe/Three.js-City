@@ -40,6 +40,7 @@
                 bumpScale: 1,
                 transparent: true,
                 opacity: 1,
+                ambient: 0x000000,
                 side: THREE.DoubleSide
             })
         );

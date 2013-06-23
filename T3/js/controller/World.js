@@ -77,7 +77,6 @@
 
             // postprocessing
             me.initPostprocessing();
-
         },
 
         /**
@@ -501,14 +500,13 @@
             // CAMERA
             activeCamera.update(delta);
 
-            // ROTATING LIGHT
-//            manager.get('sphere-light-point').update(delta);
-
             // CAR MOVEMENT
             me.car && me.car.update(delta);
 
             // RAIN SYSTEM
             me.rainSystem && me.rainSystem.update(delta);
+
+            World.fountain && World.fountain.update(delta);
         },
 
         render: function () {
@@ -596,8 +594,8 @@
                     path + 'posz' + extension, path + 'negz' + extension],
                 textureCube = THREE.ImageUtils.loadTextureCube(urls);
 
-            var shader = THREE.ShaderLib[ "cube" ];
-            shader.uniforms[ "tCube" ].value = textureCube;
+            var shader = THREE.ShaderLib['cube'];
+            shader.uniforms['tCube'].value = textureCube;
 
             var material = new THREE.ShaderMaterial( {
                 fragmentShader: shader.fragmentShader,
@@ -698,7 +696,7 @@
                 // only one controller might be available at any time,
                 // so in the case where the user wants to activate the old controller
                 //
-                if (status && controller != activeController) {
+                if (status && controller !== activeController) {
                     return;
                 }
                 activeController = controller;
