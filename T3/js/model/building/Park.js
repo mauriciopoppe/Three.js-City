@@ -65,18 +65,20 @@
             ],
             base;
 
+        // sidewalk
         base = new T3.model.Box({
             originalParent: me,
             width: me.width,
             height: 0.2,
             depth: me.depth,
             materialConfig: {
-                initialized: me.generateSidewalkMaterials('texture-sidewalk-2')
+                initialized: me.generateSidewalkMaterials('texture-sidewalk-1')
             }
         });
         base.position.set(0, base.height * T3.scale / 2, 0);
         base.real.receiveShadow = true;
 
+        // trees & grass
         for (i = 0; i < 4; i += 1) {
             base = new THREE.Mesh(
                 new THREE.PlaneGeometry(width - margin * 2, depth - margin * 2),
@@ -105,6 +107,11 @@
             tree.rotation.y = Math.random() * 2 * Math.PI;
             me.add(tree);
         }
+
+        // fountain
+        T3.World.fountain = new T3.model.Fountain({
+            originalParent: me
+        });
     };
 
     Park.prototype.generateSidewalkMaterials = function (textureName, options) {

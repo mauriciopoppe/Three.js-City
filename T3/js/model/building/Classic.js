@@ -172,7 +172,7 @@
     };
 
     Classic.prototype.generateSidewalkMaterials = function () {
-        var texture = T3.AssetLoader.get('texture-sidewalk-2');
+        var texture = T3.AssetLoader.get('texture-sidewalk-1');
         texture.wrapS = texture.wrapT = THREE.MirroredRepeatWrapping;
         texture.repeat.set(5, 5);
         texture.anisotropy = 16;

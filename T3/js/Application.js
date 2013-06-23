@@ -244,8 +244,10 @@ T3.Application = {
 (function () {
     T3.AssetLoader.debug();
     T3.AssetLoader
+        .registerAsset('texture-marble', THREE.ImageUtils.loadTexture('images/textures/marble.jpg'))
+        .registerAsset('texture-water', THREE.ImageUtils.loadTexture('images/textures/water.jpg'))
+        .registerAsset('texture-world', THREE.ImageUtils.loadTexture('images/textures/world.jpg'))
         .registerAsset('texture-snow-1', THREE.ImageUtils.loadTexture('images/textures/snow_1.jpg'))
-        .registerAsset('texture-snow-2', THREE.ImageUtils.loadTexture('images/textures/snow_2.jpg'))
         .registerAsset('texture-glass-1', THREE.ImageUtils.loadTexture('images/textures/glass.jpg'))
         .registerAsset('texture-glass-2', THREE.ImageUtils.loadTexture('images/textures/glass_2.jpg'))
         .registerAsset('texture-office', THREE.ImageUtils.loadTexture('images/textures/offices.jpg'))
@@ -253,8 +255,7 @@ T3.Application = {
         .registerAsset('texture-office-bumpmap', THREE.ImageUtils.loadTexture('images/textures/offices_bumpmap.jpg'))
         .registerAsset('texture-road-x', THREE.ImageUtils.loadTexture('images/textures/roadposx.png'))
         .registerAsset('texture-road-z', THREE.ImageUtils.loadTexture('images/textures/roadposz.jpg'))
-        .registerAsset('texture-sidewalk-1', THREE.ImageUtils.loadTexture('images/textures/sidewalk_shadow.jpg'))
-        .registerAsset('texture-sidewalk-2', THREE.ImageUtils.loadTexture('images/textures/sidewalk_2.jpg'))
+        .registerAsset('texture-sidewalk-1', THREE.ImageUtils.loadTexture('images/textures/sidewalk_1.jpg'))
         .registerAsset('texture-residential', THREE.ImageUtils.loadTexture('images/textures/residential.jpg'))
         .registerAsset('texture-grass', THREE.ImageUtils.loadTexture('images/textures/grass.jpg'))
         .registerAsset('lensflare-0', THREE.ImageUtils.loadTexture('images/lensflare0_alpha.png'))

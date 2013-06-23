@@ -9,7 +9,7 @@ var Coordinates = {
 		var grid = new THREE.Mesh(
 			new THREE.PlaneGeometry(size, size, size * scale, size * scale),
 			new THREE.MeshBasicMaterial({ color: color, wireframe: true })
-			);
+        );
 		if (orientation === "x") {
 			grid.rotation.x = - Math.PI / 2;
 		} else if (orientation === "y") {
@@ -26,6 +26,7 @@ var Coordinates = {
 		var size = params.size !== undefined ? params.size:100;
 		var color = params.color !== undefined ? params.color:0x000000;
 		var offset = params.offset !== undefined ? params.offset:-0.2;
+        var textureEnabled = true;
         var texture = T3.AssetLoader.get('texture-snow-1');
         texture.anisotropy = 16;
         texture.repeat.set(1, 1);
@@ -33,12 +34,14 @@ var Coordinates = {
 		var ground = new THREE.Mesh(
 			new THREE.PlaneGeometry(size, size),
 			new THREE.MeshPhongMaterial({
-                map: texture,
-                bumpMap: texture,
-                bumpScale: 5,
+                map: textureEnabled && texture,
+                bumpMap: textureEnabled && texture,
+                bumpScale: textureEnabled && 5,
+                color: !textureEnabled && color,
                 shininess: 0.2
             })
         );
+        textureEnabled && (ground.receiveShadow = true);
 		ground.rotation.x = - Math.PI / 2;
 		ground.position.y = offset;
 		scene.add(ground);
