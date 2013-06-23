@@ -44,23 +44,22 @@
 
     /**
      * Init this object
-     * @param {Object} config
      * @chainable
      */
-    Wheel.prototype.init = function (config) {
+    Wheel.prototype.init = function () {
         var me = this;
 
         this.tire = new T3.model.Tire({
             name: 'car-tire-' + me.suffix,
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-tire-geometry') },
+            geometryConfig: { initialized: T3.AssetLoader.get('car-tire-geometry').geometry },
             materialConfig: { options: {side: THREE.DoubleSide} }
         });
 
         this.rim = new T3.model.Rim({
             name: 'car-rim-' + me.suffix,
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-rim-geometry') }
+            geometryConfig: { initialized: T3.AssetLoader.get('car-rim-geometry').geometry }
         });
 
         me.radius = 3 * me.tire.scale.y;

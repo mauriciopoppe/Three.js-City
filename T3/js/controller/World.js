@@ -169,9 +169,14 @@
             var me = this,
                 rows = [],
                 cols = [],
+                selected,
+                models = ['Block', 'Classic', 'Park'],
+                probability = [0, 0.8, 0.9, 1],
+                max = [Infinity, Infinity, 1],
+                current = [0, 0, 0],
+                random,
                 total,
-                i,
-                j;
+                i, j, k;
 
             // grid generation
             total = 0;
@@ -184,9 +189,25 @@
             }
             for (i = 0; i < gridSize - 1; i += 1) {
                 for (j = 0; j < gridSize - 1; j += 1) {
+                    // chose a model (restrict the number of models of the selected
+                    // type using `max`)
+                    do {
+                        random = Math.random();
+                        for (k = 0; k < probability.length - 1; k += 1) {
+                            if (random >= probability[k] && random <= probability[k + 1]) {
+                                selected = k;
+                                break;
+                            }
+                        }
+                    } while(current[selected] === max[selected]);
+
+                    // update current
+                    current[selected] += 1;
+
                     me.createBuildings(
                         cols[i] + 1, rows[j] + 1,
-                        cols[i + 1] - 1, rows[j + 1] - 1
+                        cols[i + 1] - 1, rows[j + 1] - 1,
+                        models[selected]
                     );
                 }
             }
@@ -201,23 +222,14 @@
          * @param z1
          * @param x2
          * @param z2
+         * @param model
          */
-        createBuildings: function (x1, z1, x2, z2) {
+        createBuildings: function (x1, z1, x2, z2, model) {
             var object,
-                models = ['Block', 'Classic'],
-                probability = [0, 0.9, 1],
-                random,
                 width = 10,
                 depth = 10;
 
-            random = Math.random();
-            for (var i = 0; i < probability.length - 1; i += 1) {
-                if (random >= probability[i] && random <= probability[i + 1]) {
-                    random = i;
-                    break;
-                }
-            }
-            object = new T3.model[models[random]]({
+            object = new T3.model[model]({
                 width: width * (x2 - x1 + 1),
                 depth: depth * (z2 - z1 + 1)
             });
@@ -481,8 +493,7 @@
          * @param delta
          */
         update: function (delta) {
-            var me = this,
-                manager = T3.ObjectManager;
+            var me = this;
 
             World.ticks = (World.ticks + 1) % 1000000007;
 
@@ -510,8 +521,7 @@
          * Add postprocessing shaders to the scene
          */
         initPostprocessing: function () {
-            var me = this,
-                renderModel;
+            var renderModel;
             renderModel = new THREE.RenderPass(scene, activeCamera.real);
 
             // The resolution on new displays can be supported

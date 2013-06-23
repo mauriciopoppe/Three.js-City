@@ -201,8 +201,7 @@ T3.Application = {
      * Animation loop (calls Application.render)
      */
     animate: function () {
-        var me = this,
-            delta = T3.Application.clock.getDelta();
+        var delta = T3.Application.clock.getDelta();
 
         // loop on request animation loop
         // - it has to be at the beggining of the function
@@ -255,8 +254,13 @@ T3.Application = {
         .registerAsset('texture-sidewalk-1', THREE.ImageUtils.loadTexture('images/textures/sidewalk_shadow.jpg'))
         .registerAsset('texture-sidewalk-2', THREE.ImageUtils.loadTexture('images/textures/sidewalk_2.jpg'))
         .registerAsset('texture-residential', THREE.ImageUtils.loadTexture('images/textures/residential.jpg'))
-        .registerAsset('lensflare-0', THREE.ImageUtils.loadTexture('images/lensflare0_alpha.png'));
+        .registerAsset('texture-grass', THREE.ImageUtils.loadTexture('images/textures/grass.jpg'))
+        .registerAsset('lensflare-0', THREE.ImageUtils.loadTexture('images/lensflare0_alpha.png'))
+        .registerAsset('texture-tree-leaves', THREE.ImageUtils.loadTexture('obj/textures/tree_leaves.png'))
+        .registerAsset('texture-tree-trunk', THREE.ImageUtils.loadTexture('obj/textures/tree_trunk.jpg'));
     T3.AssetLoader
+        .addToLoadQueue('obj/tree-trunk.js', 'tree-trunk')
+        .addToLoadQueue('obj/tree-leaves.js', 'tree-leaves')
         .addToLoadQueue('obj/Skyline.body.js', 'car-body-geometry')
         .addToLoadQueue('obj/Skyline.exhaust.js', 'car-exhaust-geometry')
         .addToLoadQueue('obj/Skyline.windows.js', 'car-windows-geometry')
