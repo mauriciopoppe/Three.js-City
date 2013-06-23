@@ -244,6 +244,8 @@ T3.Application = {
 (function () {
     T3.AssetLoader.debug();
     T3.AssetLoader
+        .registerAsset('texture-snow-1', THREE.ImageUtils.loadTexture('images/textures/snow_1.jpg'))
+        .registerAsset('texture-snow-2', THREE.ImageUtils.loadTexture('images/textures/snow_2.jpg'))
         .registerAsset('texture-glass-1', THREE.ImageUtils.loadTexture('images/textures/glass.jpg'))
         .registerAsset('texture-glass-2', THREE.ImageUtils.loadTexture('images/textures/glass_2.jpg'))
         .registerAsset('texture-office', THREE.ImageUtils.loadTexture('images/textures/offices.jpg'))
