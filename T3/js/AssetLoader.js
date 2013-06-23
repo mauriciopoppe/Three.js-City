@@ -25,8 +25,12 @@ T3.AssetLoader = (function () {
         };
 
     execute = function (index) {
-        loader.load(queue[index].url, function (geometry) {
-            assets[queue[index].name] = geometry;
+        loader.load(queue[index].url, function (geometry, materials) {
+            assets[queue[index].name] = {
+                geometry: geometry,
+                materials: materials
+            };
+
             if (index + 1 < queue.length) {
                 // load the asset at index `index + 1`
                 execute(index + 1);

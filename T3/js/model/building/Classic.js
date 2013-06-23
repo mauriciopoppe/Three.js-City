@@ -22,8 +22,8 @@
          * Height of the Box
          * @type {number}
          */
-//        this.height = config.height || 20 + (Math.random() * 30);
-        this.height = config.height || 10 + (Math.random() * 30);
+        this.height = config.height || 20 + (Math.random() * 30);
+//        this.height = config.height || 10 + (Math.random() * 30);
 
         /**
          * Depth of the Box
@@ -96,7 +96,7 @@
         });
         tetrahedron.real.castShadow = true;
         tetrahedron.real.receiveShadow = true;
-        tetrahedron.position.set(box.width, me.height * T3.scale, box.depth);
+        tetrahedron.position.set(box.width + 2, me.height * T3.scale, box.depth + 2);
 
         // base
         box = new T3.model.Box({

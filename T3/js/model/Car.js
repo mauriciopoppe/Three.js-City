@@ -110,6 +110,25 @@
          */
         this.engineSound = null;
 
+        /**
+         * During each render, the music is analized represented as an histogram
+         * @type {Array}
+         */
+        this.histogram = null;
+
+        /**
+         * If the music is playing, the car will display an histogram
+         * in the place where most radios are xD
+         * @type {Object}
+         */
+        this.musicHistogram = new T3.model.Object3D();
+
+        /**
+         * Size of the histogram
+         * @type {number}
+         */
+        this.histogramSize = 10;
+
         Car.prototype.init.call(this, config);
     };
 
@@ -129,7 +148,7 @@
             name: 'car-body',
             folder: 'Car body',
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-body-geometry') },
+            geometryConfig: { initialized: T3.AssetLoader.get('car-body-geometry').geometry },
             materialConfig: { options: {side: THREE.DoubleSide} }
         });
 
@@ -137,35 +156,35 @@
             name: 'car-exhaust',
             folder: 'Car exhaust and dummy front',
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-exhaust-geometry') }
+            geometryConfig: { initialized: T3.AssetLoader.get('car-exhaust-geometry').geometry }
         });
 
         me.windows = new T3.model.Window({
             name: 'car-windows',
             folder: 'Car windows',
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-windows-geometry') }
+            geometryConfig: { initialized: T3.AssetLoader.get('car-windows-geometry').geometry }
         });
 
         me.interior = new T3.model.Interior({
             name: 'car-interior',
             folder: 'Car interior',
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-interior-geometry') }
+            geometryConfig: { initialized: T3.AssetLoader.get('car-interior-geometry').geometry }
         });
 
         me.lightsFront = new T3.model.LightsFront({
             name: 'car-lights-front',
             folder: 'Car lights - front',
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-lights-front-geometry') }
+            geometryConfig: { initialized: T3.AssetLoader.get('car-lights-front-geometry').geometry }
         });
 
         me.lightsBack = new T3.model.LightsBack({
             name: 'car-lights-back',
             folder: 'Car lights - back',
             originalParent: me,
-            geometryConfig: { initialized: T3.AssetLoader.get('car-lights-back-geometry') }
+            geometryConfig: { initialized: T3.AssetLoader.get('car-lights-back-geometry').geometry }
         });
 
         suffix = 'back-left';
@@ -214,6 +233,9 @@
         me.shadow = new THREE.Mesh(geometry, material);
         scene.add(me.shadow);
         me.shadow.position.y = 0.2;
+
+        // histogram
+        me.createHistogram();
 
         return this;
     };
@@ -293,6 +315,37 @@
         T3.traverse(me, function (object) {
             object.visible = value;
         });
+    };
+
+    /**
+     * Creates an histogram and places in the position of the radio
+     * (sort of an equalizer)
+     */
+    Car.prototype.createHistogram = function () {
+        var me = this,
+            width = 0.2,
+            height = 0.5,
+            depth = 0.1,
+            mesh,
+            i;
+        for (i = me.histogramSize - 2; i >= 0 ; i -= 1) {
+            mesh = new THREE.Mesh(
+                new THREE.CubeGeometry(width, height, depth),
+                new THREE.MeshBasicMaterial()
+            )
+            mesh.position.set(me.musicHistogram.children.length * width, 0, 0);
+            me.musicHistogram.add(mesh);
+        }
+        for (i = 1; i < me.histogramSize - 1; i += 1) {
+            mesh = new THREE.Mesh(
+                new THREE.CubeGeometry(width, height, depth),
+                new THREE.MeshBasicMaterial()
+            )
+            mesh.position.set(me.musicHistogram.children.length * width, 0, 0);
+            me.musicHistogram.add(mesh);
+        }
+        me.musicHistogram.position.set(-2, 9, 5);
+        me.add(me.musicHistogram);
     };
 
     /**
@@ -411,6 +464,9 @@
         // UPDATE SHADERS THAT DEPEND ON THIS SPEED
         me.updateShaders();
 
+        // UPDATE THE Y-SCALE OF THE HISTOGRAM
+        me.updateHistogram();
+
         // SOUND PITCH
         if (me.engineSound) {
             me.engineSound.node.playbackRate.value = Math.max(
@@ -478,9 +534,10 @@
         me.interior.rotation.z = tilt;
         me.exhaust.rotation.z = tilt;
         me.windows.rotation.z = tilt;
+        me.musicHistogram.rotation.z = tilt;
 
         me.tiltAmount = tilt;
-    }
+    };
 
     /**
      * Updates the shaders' uniform variables that depend on some
@@ -493,16 +550,44 @@
         var me = this,
             world = T3.World,
             radialShader = world.radialShader;
+
+        if (!radialShader) {
+            return;
+        }
         radialShader.uniforms.sampleDist.value =
             Math.pow(Math.abs(me.speed) / me.maxSpeed, 6.0) * 1.0;
 
-        var music = T3.SoundLoader.get('music-1'),
-            histogram;
-        if (music && radialShader.uniforms.sampleDist.value >= 0.3) {
-            histogram = music.makeHistogram(10);
+        var music = T3.SoundLoader.get('music-1');
+        if (music) {
+            me.histogram = music.makeHistogram(me.histogramSize);
             radialShader.uniforms.sampleStrength.value =
-                1.5 + (histogram[7] / 95 >= 1 ? (histogram[7] / 95 - 1) * 10 : 0)
+                1.5 + (me.histogram[7] / 95 >= 1 ?
+                    (me.histogram[7] / 95 - 1) * 10 : 0)
         }
-    }
+    };
+
+    /**
+     * Uodates the histogram y scale
+     */
+    Car.prototype.updateHistogram = function () {
+        var me = this,
+            mesh,
+            i,
+            j,
+            len = me.musicHistogram.children.length;
+        if (!me.histogram) {
+            return;
+        }
+        for (j = 0, i = me.histogramSize - 2; i >= 0 ; i -= 1, j += 1) {
+            mesh = this.musicHistogram.children[j];
+            me.histogram[i] && (mesh.scale.y = me.histogram[i] / 100);
+            mesh.material.color.setHSL(0.3 + me.histogram[i] / 200 * 0.7, 1, 0.5);
+
+            mesh = this.musicHistogram.children[len - 1 - j];
+            me.histogram[i] && (mesh.scale.y = me.histogram[i] / 100);
+            mesh.material.color.setHSL(0.3 + me.histogram[i] / 200 * 0.7, 1, 0.5);
+        }
+    };
+
     T3.model.Car = Car;
 })();
