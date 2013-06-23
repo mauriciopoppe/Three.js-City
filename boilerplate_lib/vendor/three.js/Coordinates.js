@@ -26,10 +26,19 @@ var Coordinates = {
 		var size = params.size !== undefined ? params.size:100;
 		var color = params.color !== undefined ? params.color:0x000000;
 		var offset = params.offset !== undefined ? params.offset:-0.2;
+        var texture = T3.AssetLoader.get('texture-snow-1');
+        texture.anisotropy = 16;
+        texture.repeat.set(1, 1);
+
 		var ground = new THREE.Mesh(
 			new THREE.PlaneGeometry(size, size),
-			new THREE.MeshLambertMaterial({ color: color})
-			);
+			new THREE.MeshPhongMaterial({
+                map: texture,
+                bumpMap: texture,
+                bumpScale: 5,
+                shininess: 0.2
+            })
+        );
 		ground.rotation.x = - Math.PI / 2;
 		ground.position.y = offset;
 		scene.add(ground);

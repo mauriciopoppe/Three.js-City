@@ -43,8 +43,8 @@
                 side: THREE.DoubleSide
             })
         );
-//        leaves.castShadow = true;
-//        leaves.receiveShadow = true;
+        leaves.castShadow = true;
+        leaves.receiveShadow = true;
 //        leaves.matrixAutoUpdate = false;
 //        leaves.updateMatrix();
         leaves.scale.set(T3.scale, T3.scale, T3.scale);
@@ -59,8 +59,8 @@
                 side: THREE.DoubleSide
             })
         );
-//        trunk.castShadow = true;
-//        trunk.receiveShadow = true;
+        trunk.castShadow = true;
+        trunk.receiveShadow = true;
 //        trunk.matrixAutoUpdate = false;
 //        trunk.updateMatrix();
         trunk.scale.set(T3.scale, T3.scale, T3.scale);
