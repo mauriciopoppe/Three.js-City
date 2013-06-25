@@ -60,7 +60,7 @@ THREE.RadialBlurShader = {
 
             "// this is the original colour of this fragment",
             "// using only this would result in a nonblurred version",
-            "vec4 color = texture2D(tex,vUv);",
+            "vec4 color = texture2D(tex, vUv);",
 
             "vec4 sum = color;",
 

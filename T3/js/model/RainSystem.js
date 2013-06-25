@@ -41,7 +41,7 @@
          * Dat.gui rain speed multiplier
          * @type {number}
          */
-        this.speed = 1.0;
+        this.speed = 1.5;
 
         /**
          * A copy of the total number of particles to be created (is used
@@ -65,12 +65,34 @@
     RainSystem.prototype.init = function () {
         var me = this,
             i,
+            mesh,
             particleCount = me.particleCount,
             sprite = THREE.ImageUtils.loadTexture('images/raindrop.png'),
             geometry = new THREE.Geometry(),
             material,
             particles;
 
+        // create splash meshes
+        me.splashTexture = THREE.ImageUtils.loadTexture('images/splash.png');
+        me.splashGroup = [];
+        me.currentSplash = 0;
+        for (i = 0; i < 1000; i += 1) {
+            mesh = new THREE.Mesh(
+                new THREE.CircleGeometry(1, 32, 0, Math.PI * 2),
+                new THREE.MeshBasicMaterial({
+                    transparent: true,
+                    opacity: 0.2,
+                    map: me.splashTexture,
+                    side: THREE.DoubleSide
+                })
+            );
+            mesh.rotation.x = -Math.PI / 2;
+            me.splashGroup.push(mesh);
+            scene.add(mesh);
+        }
+
+
+        // create particle system
         me.maxParticleCount = me.particleCount;
 
         for (i = 0; i < particleCount; i += 1) {
@@ -167,8 +189,57 @@
         car = T3.ObjectManager.get('car');
         me.real.position.x = car.position.x;
         me.real.position.z = car.position.z;
+
+        // cast rays
+        me.castRays();
     };
 
+    RainSystem.prototype.castRays = function () {
+        var me = this;
+//        var origin,
+//            ray, results;
+        for (var i = 0; i < 5; i += 1) {
+            // ALTERNATIVE: RAYCASTING
+//            origin = new THREE.Vector3(
+//                me.real.position.x + me.xLimit - Math.random() * me.xLimit * 2,
+//                me.yLimit,
+//                me.real.position.z + me.xLimit - Math.random() * me.xLimit * 2
+//            ),
+//        // origin, vector, near, far
+//            ray = new THREE.Raycaster(origin, new THREE.Vector3(0, -1, 0)),
+//            results = ray.intersectObjects(T3.intersectable);
+//
+//            if (!results[0]) return; me.createSplash(results[0].point);
+            me.createSplash(new THREE.Vector3(
+                me.real.position.x + me.xLimit - Math.random() * me.xLimit * 2,
+                3,
+                me.real.position.z + me.xLimit - Math.random() * me.xLimit * 2
+            ));
+        }
+    };
+
+    RainSystem.prototype.createSplash = function (point) {
+        var me = this,
+            mesh = me.splashGroup[me.currentSplash++ % me.splashGroup.length],
+            options = {
+                x: 1,
+                y: 1,
+                opacity: 0.2
+            };
+        mesh.position = point;
+        var scale = new TWEEN.Tween(options)
+            .to({
+                x: 3 + ~~(Math.random() * 5),
+                y: 3 + ~~(Math.random() * 5),
+                opacity: 0
+            }, 2000)
+            .onUpdate(function () {
+                mesh.scale.x = options.x;
+                mesh.scale.y = options.y;
+                mesh.material.opacity = options.opacity;
+            });
+        scale.start();
+    };
     T3.model.RainSystem = RainSystem;
 
 })();

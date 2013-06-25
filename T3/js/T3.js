@@ -27,6 +27,12 @@ T3.scale = 10;
  */
 T3.devicePixelRatio = window.devicePixelRatio || 1;
 
+/**
+ * List of intersectable meshes
+ * @type {Array}
+ */
+T3.intersectable = [];
+
 T3.inheritFrom = function (subClass, superClass) {
     var prototype;
 
