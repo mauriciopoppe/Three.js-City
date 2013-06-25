@@ -32,6 +32,12 @@
          */
         this.suffix = config.suffix;
 
+        /**
+         * Width of the tire (used to span random splashes)
+         * @type {number}
+         */
+        this.tireWidth = 3;
+
         this.radius = null;
         this.rotationSpeed = 0.01;
         this.rotationMin = -Math.PI / 6;
