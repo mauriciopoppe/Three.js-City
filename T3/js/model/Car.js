@@ -257,6 +257,17 @@
                 me.setVisible(value);
             });
         folder
+            .add({shadow: false}, 'shadow')
+            .name('Show shadows')
+            .onFinishChange(function (value) {
+                me.body.real.castShadow = value;
+                me.windows.real.castShadow = value;
+                me.wheelBackLeft.real.castShadow = value;
+                me.wheelBackRight.real.castShadow = value;
+                me.wheelFrontLeft.real.castShadow = value;
+                me.wheelFrontRight.real.castShadow = value;
+            });
+        folder
             .add(me, 'enableCubeMap')
             .name('Enable cube map')
             .onFinishChange(function (value) {
@@ -474,6 +485,9 @@
                 1
             );
         }
+
+        // UPDATE MATRIX FOR SOME TRANSFORMATIONS REQUIRED IN THE RAIN
+//        me.updateMatrixWorld();
     };
 
     /**

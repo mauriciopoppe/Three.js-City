@@ -24,7 +24,7 @@ The project consists of two folders, all the common files are in the folder `boi
 - There's some electronic ambient music (hope you like it!, it's the song used in the game GRITS: http://gritsgame.appspot.com/) that changes the strength of the radial blur in runtime :) (make sure you go fast to watch it in action)
 
 ## Browser support
-I've tested this project in Google Chrome (v 27.0.1453.110), Google Chrome Canary (v 29.0.1521.0) and Firefox (v 19.0.2), it's important to note that Google's browser is way faster rendering [30 ~ 45] fps, firefox renders about [7 ~ 12] fps, also the motion detection system only runs in Chrome.
+I've tested this project in Google Chrome (v 27.0.1453.110), Google Chrome Canary (v 29.0.1521.0) and Firefox (v 19.0.2), it's important to note that Google's browser is way faster rendering [20 ~ 45] fps, firefox renders about [7 ~ 12] fps, also the motion detection system only runs in Chrome.
 
 ## Development process
 Clone the project to see the development process step by step using git's tag system, i.e. `git checkout r3`, `git checkout r4`, etc.

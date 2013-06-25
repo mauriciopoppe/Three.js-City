@@ -21,7 +21,7 @@
         ambient: '#000000',     // ambient
         color: '#111111',       // diffuse
         specular: '#0f0f0f',    // specular
-        shininess: 0.4 * 128,   // shininess
+        shininess: 16,          // shininess
         wireframe: false
     };
 
