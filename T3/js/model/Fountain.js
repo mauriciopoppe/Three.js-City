@@ -92,7 +92,7 @@
             level.rotation.x = Math.PI / 2;
 
             disk = new THREE.Mesh(
-                // radius, tubeRadius, radialSegments, tubularSegments
+                // radius, segment, start angle, end angle
                 new THREE.CircleGeometry(
                     me.bottomLevel.radius / (1 << i), 32, 0, Math.PI * 2
                 ),

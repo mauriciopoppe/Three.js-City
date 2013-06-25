@@ -63,6 +63,9 @@
     Body.prototype.init = function (config) {
         var me = this,
             cube = T3.ObjectManager.get('camera-cube');
+
+        T3.intersectable.push(me.real);
+
         me.real.geometry.dynamic = true;
         // materials (to enable dynamic material change)
         me.materials = [

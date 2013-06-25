@@ -81,7 +81,7 @@ T3.Application = {
     createScene: function () {
         // instantiate the scene (global)
         scene = new THREE.Scene();
-        scene.fog = new THREE.Fog( 0x808080, 2000, 4000 );
+//        scene.fog = new THREE.Fog( 0x808080, 4000, 4000 );
         return this;
     },
 
@@ -98,10 +98,6 @@ T3.Application = {
 
         light = new THREE.AmbientLight(0x111111);
         T3.ObjectManager.add('ambient-light-1', light);
-
-//        light = new THREE.DirectionalLight(0xffffff, 1);
-//        light.position.set(-100, 0, 100);
-//        T3.ObjectManager.add('directional-light-1', light);
 
         light = new THREE.DirectionalLight(color, 0.8);
         light.position.set(-1000, 1000, 1000);
@@ -124,19 +120,19 @@ T3.Application = {
         var shadowMapMultiplier = 12;
         light.shadowMapWidth = 1 << shadowMapMultiplier;
         light.shadowMapHeight = 1 << shadowMapMultiplier;
-        light.shadowCameraNear = 1;
+        light.shadowCameraNear = 1500;
         light.shadowCameraFar= 4000;
 
         light.shadowCameraVisible = false;
         light.shadowCameraLeft = -d * 2;
-        light.shadowCameraRight = d;
+        light.shadowCameraRight = 0;
         light.shadowCameraTop = d;
         light.shadowCameraBottom = -d;
 //        light.shadowBias = 0.00001;
         light.shadowBias = -0.001;
 //        light.shadowDarkness = 0.35;
 //        var mesh = new THREE.Mesh(new THREE.CubeGeometry(10, 10, 10), new THREE.MeshNormalMaterial());
-//        mesh.position.set(100, 10, -20);
+//        mesh.position.set(100, 10, -20);`
 //        scene.add(mesh);
 
         //****** sphere + point light ******
@@ -204,7 +200,7 @@ T3.Application = {
         var delta = T3.Application.clock.getDelta();
 
         // loop on request animation loop
-        // - it has to be at the beggining of the function
+        // - it has to be at the beginning of the function
         // - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
         requestAnimationFrame( T3.Application.animate );
 

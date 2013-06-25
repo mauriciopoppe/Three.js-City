@@ -55,7 +55,7 @@ var Coordinates = {
 		var axisTess = params.axisTess !== undefined ? params.axisTess:48;
 		var axisOrientation = params.axisOrientation !== undefined ? params.axisOrientation:"x";
 
-        var wrap = new THREE.Object3D()
+        var wrap = new THREE.Object3D();
 		var axisMaterial = new THREE.MeshLambertMaterial({ color: 0x000000, side: THREE.DoubleSide });
 		var axis = new THREE.Mesh(
 			new THREE.CylinderGeometry(axisRadius, axisRadius, axisLength, axisTess, 1, true), 

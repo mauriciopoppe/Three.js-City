@@ -32,18 +32,19 @@ Clone the project to see the development process step by step using git's tag sy
 ## How to launch the project
 - Set up a web server in the root of this project and goto `/T3/index.html` in you browser
 
-Car model by: *sepel* (http://www.blendswap.com/blends/view/67462)
-Tree by: *xuroiux* (http://www.blendswap.com/blends/view/54458)
+## Frameworks and libraries used in this project
+- ThreeJS - http://threejs.org/
+- WebAudio.js - http://jeromeetienne.github.io/webaudio.js/
+- Headtrackr - https://github.com/auduno/headtrackr/
+- jQuery - http://jquery.com/
+- dat.gui - http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
+- tween.js - https://github.com/sole/tween.js/
 
-Textures downloaded from: http://www.cgtextures.com/ and http://www.humus.name/index.php?page=Textures
+## Additional Resources
 
-Engine sound downloaded from: http://www.findsounds.com/
-
-Additional learning resources used in this project:
-
-http://threejs.org/examples/webgl_postprocessing.html
-http://www.gamerendering.com/2008/12/20/radial-blur-filter/
-http://uihacker.blogspot.com/2013/03/javascript-antialias-post-processing.html
-http://joshondesign.com/p/books/canvasdeepdive/chapter10.html
+- Car model by: *sepel* (http://www.blendswap.com/blends/view/67462)
+- Tree model by: *xuroiux* (http://www.blendswap.com/blends/view/54458)
+- Textures downloaded from: http://www.cgtextures.com/ and http://www.humus.name/index.php?page=Textures
+- Engine sound downloaded from: http://www.findsounds.com/
 
 Have fun!

@@ -257,7 +257,15 @@
                 texture,
                 boxWidth,
                 geometry,
-                material;
+                material,
+                commonOptions = {
+                    ambient: 0x353535,
+                    specular: 0x333333,
+                    color: 0xffffff,
+                    bumpScale: 1,
+                    shininess: 10,
+                    shading: THREE.SmoothShading
+                };
 
             // cols (x)
             texture = T3.AssetLoader.get('texture-road-z');
@@ -265,16 +273,10 @@
             texture.repeat = new THREE.Vector2(1, -5);
             texture.anisotropy = 16;
 
-            material = new THREE.MeshPhongMaterial({
+            material = new THREE.MeshPhongMaterial($.extend({
                 map: texture,
-                bumpMap: texture,
-                ambient: 0x353535,
-                specular: 0x333333,
-                color: 0xffffff,
-                bumpScale: 1,
-                shininess: 1,
-                shading: THREE.SmoothShading
-            });
+                bumpMap: texture
+            }, commonOptions));
 
             for (i = 0; i < freeSpace.cols.length; i += 1) {
                 mesh = new T3.model.Mesh({
@@ -285,6 +287,7 @@
                         initialized: material
                     }
                 });
+                T3.intersectable.push(mesh.real);
 
                 // since each object is added with its center at the center of the parent
                 // lets move the object such that its bottom x,y,z corner is at the center
@@ -306,16 +309,10 @@
             texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
             texture.repeat = new THREE.Vector2(1, -1);
             texture.anisotropy = 16;
-            material = new THREE.MeshPhongMaterial({
+            material = new THREE.MeshPhongMaterial($.extend({
                 map: texture,
-                bumpMap: texture,
-                ambient: 0x353535,
-                specular: 0x333333,
-                color: 0xffffff,
-                bumpScale: 3,
-                shininess: 1,
-                shading: THREE.SmoothShading
-            });
+                bumpMap: texture
+            }, commonOptions));
 
             for (i = 0; i < freeSpace.rows.length; i += 1) {
                 for (j = 0; j < freeSpace.cols.length - 1; j += 1) {
@@ -333,6 +330,7 @@
                             initialized: material
                         }
                     });
+                    T3.intersectable.push(mesh.real);
 
                     // since each object is added with its center at the center of the parent
                     // lets move the object such that its bottom x,y,z corner is at the center
@@ -519,7 +517,8 @@
          * Add postprocessing shaders to the scene
          */
         initPostprocessing: function () {
-            var renderModel;
+            var me = this,
+                renderModel;
             renderModel = new THREE.RenderPass(scene, activeCamera.real);
 
             // The resolution on new displays can be supported
@@ -536,9 +535,16 @@
             radialShader.renderToScreen = true;
             World.radialShader = radialShader;
 
+            //<debug>
+            // depth map
+            var depthShader = new THREE.ShaderPass(THREE.DepthMapShader);
+            depthShader.renderToScreen = true;
+            //</debug>
+
             World.composer.addPass(renderModel);
             World.composer.addPass(effectFXAA);
             World.composer.addPass(radialShader);
+//            World.composer.addPass(depthShader);
 
             // resize callback to fix the retina issue
             // http://uihacker.blogspot.com/2013/03/javascript-antialias-post-processing.html
