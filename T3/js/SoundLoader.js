@@ -13,8 +13,14 @@
  */
 T3.SoundLoader = (function () {
 
-    var webAudio = new WebAudio(),
-        queue = [],
+    try {
+        var webAudio = new WebAudio();
+        console.log(webAudio);
+    } catch (e) {
+        console.log(e);
+    }
+
+    var queue = [],
         sounds = {},
         endCallback,
         endCallbackScope,
@@ -24,6 +30,10 @@ T3.SoundLoader = (function () {
         debug = {};
 
     execute = function (index) {
+        if(!webAudio) {
+            endCallback.call(endCallbackScope);
+            return;
+        }
         if (index === queue.length) {
             debug.end = new Date();
             showDebug && console.log('T3.SoundLoader finished in: ' + (debug.end - debug.start) + 'ms');
@@ -76,11 +86,12 @@ T3.SoundLoader = (function () {
         playSound: function (name, options) {
             var sound = sounds[name],
                 source;
-            options = options || {};
-            options.loop && sound.loop(options.loop);
-            source = sound.play(options.time || 0);
-            options.volume && (source.node.gain.value = options.volume);
-
+            if (sound) {
+                options = options || {};
+                options.loop && sound.loop(options.loop);
+                source = sound.play(options.time || 0);
+                options.volume && (source.node.gain.value = options.volume);
+            }
             return source;
         },
         /**
@@ -97,6 +108,12 @@ T3.SoundLoader = (function () {
         debug: function () {
             showDebug = true;
             return this;
+        },
+        /**
+         * Web Audio instance used to verify if it was correctly initialized
+         */
+        getWebAudioInstance: function () {
+            return webAudio;
         }
     };
 })();

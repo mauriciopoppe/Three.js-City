@@ -253,6 +253,8 @@ T3.Application = {
         .registerAsset('texture-road-z', THREE.ImageUtils.loadTexture('images/textures/roadposz.jpg'))
         .registerAsset('texture-sidewalk-1', THREE.ImageUtils.loadTexture('images/textures/sidewalk_1.jpg'))
         .registerAsset('texture-residential', THREE.ImageUtils.loadTexture('images/textures/residential.jpg'))
+        .registerAsset('texture-residential-specular', THREE.ImageUtils.loadTexture('images/textures/residential_specular_2.jpg'))
+        .registerAsset('texture-residential-bumpmap', THREE.ImageUtils.loadTexture('images/textures/residential_bumpmap.jpg'))
         .registerAsset('texture-grass', THREE.ImageUtils.loadTexture('images/textures/grass.jpg'))
         .registerAsset('lensflare-0', THREE.ImageUtils.loadTexture('images/lensflare0_alpha.png'))
         .registerAsset('texture-tree-leaves', THREE.ImageUtils.loadTexture('obj/textures/tree_leaves.png'))

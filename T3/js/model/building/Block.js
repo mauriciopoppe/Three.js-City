@@ -147,7 +147,9 @@
             }, {
 
             }, {
-                bumpScale: 3,
+                bumpMap: T3.AssetLoader.get('texture-residential-bumpmap'),
+                specularMap: T3.AssetLoader.get('texture-residential-specular'),
+                bumpScale: 2,
                 shininess: 30
             }],
             faceMaterials = [],

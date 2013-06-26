@@ -93,6 +93,10 @@
          * Plays some background music
          */
         initMusic: function () {
+            if (!T3.SoundLoader.getWebAudioInstance()) {
+                return;
+            }
+
             var options = {
                     enabled: false,
                     loop: true,
