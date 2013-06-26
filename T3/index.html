@@ -1,13 +1,13 @@
 <!doctype html>
-<html>
+<html ng-app="angularT3">
 	<head>
 		<title>T3 Car</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
         <link href="../boilerplate_lib/css/reset.css" rel="stylesheet"/>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet"/>
-
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -20,27 +20,44 @@
         </script>
 
 	</head>
-<body>
+<body ng-controller="Main">
 
     <p id="mask"></p>
     <p id="spinner">
         Loading.
     </p>
 
-
-	<!-- three.js container -->
+    <!-- three.js container -->
     <div id="webgl-container"></div>
 
-    <div style="position: absolute; top: 0; right: 40%;">
-        <button id="switch">Change Camera</button>
-        <button data-motion="MotionDetection" class="motion off">
-            Motion detection using pixel diff between frames
-        </button>
-        <button data-motion="MotionDetectionHeadTrackr" class="motion off">
-            Motion detection using headtrackr
-        </button>
+    <!-- NAVIGATION -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <a href="#" class="brand">City drive</a>
+
+            <!-- cameras -->
+            <ul class="cameras nav">
+                <li ng-repeat="camera in positions">
+                    <button class="btn btn-inverse">
+                        {{camera.x + ' ' + camera.y + ' ' + camera.z}}
+                    </button>
+                </li>
+            </ul>
+            <button class="btn btn-primary" ng-click="nextCamera()">
+                Change camera
+            </button>
+
+            <!-- motion detection -->
+            <button data-motion="MotionDetection" class="btn btn-warning motion">
+                Motion detection using pixel diff
+            </button>
+            <button data-motion="MotionDetectionHeadTrackr" class="btn btn-warning motion">
+                Motion detection using headtrackr
+            </button>
+        </div>
     </div>
 
+<!---->
     <!-- MOTION DETECTION VARS -->
     <!-- own face detection system -->
     <video id="video" width="240" height="160"></video>
@@ -50,10 +67,10 @@
     <canvas id="inputCanvas" width="320" height="240"></canvas>
     <video id="inputVideo" autoplay loop style="display: none"></video>
 
-	<!-- info on screen display -->
-	<div id="info" style="position: absolute; top: 0; right: 0;">
-		<div class="bottom" id="fullscreen" ></div>
-	</div>
+    <!-- info on screen display -->
+    <div id="info" style="position: absolute; top: 0; right: 0;">
+        <div class="bottom" id="fullscreen" ></div>
+    </div>
 
     <!-- Library -->
     <script src="../boilerplate_lib/vendor/three.js/three.js"></script>
@@ -87,7 +104,11 @@
     <script src="../boilerplate_lib/vendor/threex.dragpancontrols.js"></script>
     <!--<script src="../boilerplate_lib/vendor/threex/TrackballControls.js"></script>-->
 
-     <!-- Boilerplate -->
+    <!-- Angular -->
+    <script src="components/angular/angular.min.js"></script>
+    <script src="js/angularT3/app.js"></script>
+
+    <!-- Boilerplate -->
 	<script type="text/javascript" src="js/T3.js"></script>
 	<script type="text/javascript" src="js/AssetLoader.js"></script>
 	<script type="text/javascript" src="js/SoundLoader.js"></script>

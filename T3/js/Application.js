@@ -63,7 +63,7 @@ T3.Application = {
         me.renderer.physicallyBasedShading = true;
 
         me.renderer.setClearColorHex( 0xAAAAAA, 1 );
-        me.renderer.setSize( window.innerWidth, window.innerHeight );
+        me.renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('webgl-container').appendChild(me.renderer.domElement);
 
         // allow 'f' to go fullscreen where this feature is supported
@@ -188,7 +188,7 @@ T3.Application = {
         // add Stats.js - https://github.com/mrdoob/stats.js
         me.stats = new Stats();
         me.stats.domElement.style.position	= 'absolute';
-        me.stats.domElement.style.top	= '0px';
+        me.stats.domElement.style.bottom	= '0px';
         document.body.appendChild( me.stats.domElement );
         return this;
     },
@@ -224,6 +224,8 @@ T3.Application = {
             .createSceneLights();
 
         this.initHelpers();
+
+        this.datGUI.close();
 
         // inits the world controller
         this.initController();

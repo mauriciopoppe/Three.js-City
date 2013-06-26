@@ -14,6 +14,7 @@ var scene,
         view: {}
     };
 
+
 /**
  * An object in this world has a dimension equal to its
  * real size times T3.scale
