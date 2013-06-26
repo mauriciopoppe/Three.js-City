@@ -15,16 +15,24 @@ The project consists of two folders, all the common files are in the folder `boi
 
 ## Features
 - You can drive the car using the WASD keys
-- Some properties of the material of the car can be updated in runtime using the panel on the top right corner 
+- Some properties world and its content can be updated in runtime using the panel on the top right corner (thanks to dat.gui)
 - The city is generated at random using a simple grid and some boxes with textures
 - *Rain* can be enabled using the panel on the top right corner of the document (raindrops have a random initial velocity and follow the car at all times, each time a raindrop's y coordinate is below 0 it goes to the top to avoid creating more particles during runtime)
-- There are two *motion detection* systems that allow you to drive the car only with your movements, one uses [headtrackr](https://github.com/auduno/headtrackr/) and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left. (I learned this from: http://www.adobe.com/devnet/html5/articles/javascript-motion-detection.html). NOTE: this feature only works in Chrome
+- (Chrome only) There are two *motion detection* systems that allow you to drive the car only with your movements, one uses [headtrackr](https://github.com/auduno/headtrackr/) and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left. (I learned this from: http://www.adobe.com/devnet/html5/articles/javascript-motion-detection.html). NOTE: this feature only works in Chrome
 - The texture of the body of the car can be updated in runtime to be a *cubemap texture* (*cough* dropping the fps but allowing reflections)
 - A Radial blur shader is applied as a postprocessing filter when the car speed is very high
-- There's some electronic ambient music (hope you like it!, it's the song used in the game GRITS: http://gritsgame.appspot.com/) that changes the strength of the radial blur in runtime :) (make sure you go fast to watch it in action)
+- (Chrome only) There's some electronic ambient music (hope you like it!, it's the song used in the game GRITS: http://gritsgame.appspot.com/) that changes the strength of the radial blur in runtime :), just make sure the car is going fast to watch it in action. (NOTE: Since this feature analizes the song loaded in runtime you can change it! Add your favorite song to: `/T3/sounds` and change its reference in the file `/T3/js/Application.js`)
+
+
+[`/T3/js/Application.js`]
+
+    T3.SoundLoader
+            ...
+        .addToLoadQueue('sounds/[name of your song here]', 'music-1');
 
 ## Browser support
-I've tested this project in Google Chrome (v 27.0.1453.110), Google Chrome Canary (v 29.0.1521.0) and Firefox (v 19.0.2), it's important to note that Google's browser is way faster rendering [20 ~ 45] fps, firefox renders about [7 ~ 12] fps, also the motion detection system only runs in Chrome.
+
+I've tested this project in Google Chrome (v 27.0.1453.116) rendering [35 ~ 45] fps, Google Chrome Canary (v 29.0.1521.0) rendering [30 ~ 36] fps and Firefox (v 19.0.2) rendering [20 ~ 30] fps, all the test were done in a Retina MacBook Pro with the following gpu: `NVIDIA GeForce GT 650M 1GB`
 
 ## Development process
 Clone the project to see the development process step by step using git's tag system, i.e. `git checkout r3`, `git checkout r4`, etc.
