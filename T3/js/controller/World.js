@@ -16,7 +16,7 @@
          * the active camera that's being used right now
          * @type {T3.model.Camera}
          */
-        activeCamera = config.activeCamera;
+        World.activeCamera = activeCamera = config.activeCamera;
 
         /**
          * THREE Renderer
@@ -641,6 +641,15 @@
                     new THREE.Vector3(0, 10, 10)
                 ];
 
+            // modify angular vars
+            var scope = angular.element($('body')).scope();
+            scope.$apply(function () {
+                for(var i = 0; i < positions.length; i += 1) {
+                    scope.positions.push(positions[i]);
+                    scope.lookAt.push(lookAt[i]);
+                }
+            });
+
             // cube camera (used to reflect what the camera is targeting)
             camera = new THREE.CubeCamera(
                 0.1,        // near
@@ -659,26 +668,8 @@
             });
 
             // active camera is the world's current camera
-            activeCamera = T3.ObjectManager.get('camera-main');
-
-            // listen to camera switches
-            var current = 0;
-            $('#switch').on('click', function () {
-                var next = (current + 1) % positions.length,
-                    tween;
-                tween = new TWEEN.Tween(activeCamera.real.position)
-                    .to(positions[next], 2000)
-                    .easing(TWEEN.Easing.Quartic.InOut)
-                    .onUpdate(function() {
-                        activeCamera.lookAt(lookAt[next]);
-                    })
-                    .onComplete(function() {
-                        activeCamera.lookAt(lookAt[next]);
-                    });
-                tween.start();
-                current = next;
-//                activeCamera.lookAt(lookAt[next]);
-            });
+            activeCamera = T3.World.activeCamera =
+                T3.ObjectManager.get('camera-main');
         },
 
         /**

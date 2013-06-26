@@ -15,7 +15,6 @@ T3.SoundLoader = (function () {
 
     try {
         var webAudio = new WebAudio();
-        console.log(webAudio);
     } catch (e) {
         console.log(e);
     }
