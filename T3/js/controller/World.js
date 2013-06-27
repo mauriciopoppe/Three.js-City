@@ -72,8 +72,8 @@
             // rain!
             me.createRain();
 
-            // car auto acceleration (for the motion detection system)
-            me.initCarAutoAcceleration();
+            // init motion detection
+            me.initMotion();
 
             // postprocessing
             me.initPostprocessing();
@@ -630,24 +630,35 @@
          */
         initCameras: function () {
             var camera,
-                positions = [
-                    {x: 0, y: 30, z: -150},
-                    {x: 0, y: 15, z: -100},
-                    {x: 3, y: 10, z: 0}
-                ],
-                lookAt = [
-                    new THREE.Vector3(0, 10, 10),
-                    new THREE.Vector3(0, 10, 10),
-                    new THREE.Vector3(0, 10, 10)
-                ];
+                active = 0,
+                config = [{
+                    position: new THREE.Vector3(0, 30, -150),
+                    lookAt: new THREE.Vector3(0, 10, 10)
+                }, {
+                    position: new THREE.Vector3(0, 15, -100),
+                    lookAt: new THREE.Vector3(0, 10, 10)
+                }, {
+                    position: new THREE.Vector3(3, 10, 0),
+                    lookAt: new THREE.Vector3(0, 10, 10)
+                }, {
+                    position: new THREE.Vector3(0, 480, -10),
+                    lookAt: new THREE.Vector3(0, 10, 10)
+                }];
 
             // modify angular vars
             var scope = angular.element($('body')).scope();
             scope.$apply(function () {
-                for(var i = 0; i < positions.length; i += 1) {
-                    scope.positions.push(positions[i]);
-                    scope.lookAt.push(lookAt[i]);
+                var localStorageCameras = JSON.parse(localStorage.getItem('cameras')) || [],
+                    i;
+
+                for(i = 0; i < config.length; i += 1) {
+                    scope.cameras.push(config[i]);
                 }
+                for (i = 0; i < localStorageCameras.length; i += 1) {
+                    scope.cameras.push(localStorageCameras[i]);
+                }
+                scope.activeIndex = active;
+                scope.cameras[active].active = true;
             });
 
             // cube camera (used to reflect what the camera is targeting)
@@ -664,7 +675,7 @@
                 name: 'camera-main',
                 cameraPan: true,
                 renderer: World.renderer,
-                position: new THREE.Vector3(0, 30, -150)
+                position: config[active].position.clone()
             });
 
             // active camera is the world's current camera
@@ -676,45 +687,12 @@
          * Makes the car auto accelerate and activates one of the motion detection
          * systems, the pixel diff between frames or the HeadTrackr library
          */
-        initCarAutoAcceleration: function () {
-            var $buttons = $('.motion'),
-                i,
-                motionDetectionSystems =
-                    ['MotionDetection', 'MotionDetectionHeadTrackr'],
-                status = false,
-                activeController;
-
-            for (i = 0; i < motionDetectionSystems.length; i += 1) {
-                T3.controller[motionDetectionSystems[i]].initialize();
-            }
-
-            $buttons.on('click', function () {
-                var $me = $(this),
-                    motion = $me.data('motion'),
-                    controller = T3.controller[motion],
-                    $canvas = $(controller.canvas);
-
-                // only one controller might be available at any time,
-                // so in the case where the user wants to activate the old controller
-                //
-                if (status && controller !== activeController) {
-                    return;
+        initMotion: function () {
+            var scope = angular.element($('body')).scope();
+            scope.$apply(function () {
+                for (var i = 0; i < scope.motions.length; i += 1) {
+                    T3.controller[scope.motions[i].data].initialize();
                 }
-                activeController = controller;
-                if (status) {
-                    T3.Keyboard.set('W', false);
-                    controller.stop();
-                    $canvas.fadeOut();
-                    $me.addClass('off');
-                    $me.removeClass('on');
-                } else {
-                    T3.Keyboard.set('W', true);
-                    controller.start();
-                    $canvas.fadeIn();
-                    $me.addClass('on');
-                    $me.removeClass('off');
-                }
-                status = !status;
             });
         }
     };

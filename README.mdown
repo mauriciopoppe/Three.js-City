@@ -45,6 +45,8 @@ Clone the project to see the development process step by step using git's tag sy
 - WebAudio.js - http://jeromeetienne.github.io/webaudio.js/
 - Headtrackr - https://github.com/auduno/headtrackr/
 - jQuery - http://jquery.com/
+- AngularJS - http://angularjs.org/
+- Bootstrap - http://twitter.github.io/bootstrap/index.html
 - dat.gui - http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
 - tween.js - https://github.com/sole/tween.js/
 
