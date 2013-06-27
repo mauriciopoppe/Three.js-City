@@ -5,28 +5,109 @@
  * Time: 10:31 PM
  * To change this template use File | Settings | File Templates.
  */
-var angularT3 = angular.module('angularT3', []);
+var angularT3 = angular.module('angularT3', ['ui.bootstrap']);
 
 angularT3.controller('Main', function ($scope) {
     // cameras
-    $scope.positions = [];
-    $scope.lookAt = [];
+    /**
+     * cameras is an array of objects, each object is in the form
+     *      {
+     *          position: THREE.Vector3
+     *          lookAt: THREE.Vector3,
+     *          active: boolean
+     *      }
+     */
+    $scope.cameras = [];
+    $scope.limit = 12;
     $scope.activeIndex = 0;
 
-    $scope.nextCamera = function () {
-        var next = ($scope.activeIndex + 1) % $scope.positions.length;
-        var activeCamera = T3.World.activeCamera;
-        var tween = new TWEEN.Tween(activeCamera.real.position)
-            .to($scope.positions[next], 2000)
+    // restore from localStorage
+    $scope.nextCamera = function (nextIndex) {
+        nextIndex = typeof nextIndex === 'number' ? nextIndex :
+            ($scope.activeIndex + 1) % $scope.cameras.length;
+        if (nextIndex === $scope.activeIndex) {
+            return;
+        }
+        var activeTHREECamera = T3.World.activeCamera,
+            current = $scope.cameras[$scope.activeIndex],
+            next = $scope.cameras[nextIndex];
+
+        current.active = false;
+        next.active = true;
+
+        var tween = new TWEEN.Tween(activeTHREECamera.real.position)
+            .to({
+                x: next.position.x,
+                y: next.position.y,
+                z: next.position.z
+            }, 2000)
             .easing(TWEEN.Easing.Quartic.InOut)
             .onUpdate(function() {
-                activeCamera.lookAt($scope.lookAt[next]);
+                activeTHREECamera.lookAt(next.lookAt);
             })
             .onComplete(function() {
-                activeCamera.lookAt($scope.lookAt[next]);
+                activeTHREECamera.lookAt(next.lookAt);
             });
         tween.start();
-        $scope.activeIndex = next;
+        $scope.activeIndex = nextIndex;
     };
 
+    $scope.saveCamera = function () {
+        var activeTHREECamera = T3.World.activeCamera,
+            length = $scope.cameras.length,
+            config = {
+                position: activeTHREECamera.real.position.clone(),
+                lookAt: activeTHREECamera.cameraControls.target.clone(),
+                active: false
+            };
+
+        if (length >= $scope.limit) {
+            $scope.cameras.splice(3, 1);
+        }
+        $scope.cameras.push(config);
+
+        // save to localStorage
+        localStorage.setItem('cameras', JSON.stringify($scope.cameras.slice(3)));
+    };
+
+
+    // motion detection
+    $scope.motions = [{
+        data: 'MotionDetection',
+        name: 'PixelDiff'
+    }, {
+        data: 'MotionDetectionHeadTrackr',
+        name: 'Headtrackr'
+    }];
+    $scope.activeMotion = null;
+    $scope.activateMotion = function (motion) {
+        var controller = T3.controller[motion.data];
+
+        // only one controller might be available at any time,
+        // so in the case where the user wants to activate the old controller
+        $scope.deactivateMotion();
+        $scope.activeMotion = motion;
+        $scope.activeMotion.active = true;
+        T3.Keyboard.set('W', true);
+        $(controller.canvas).fadeIn();
+        controller.start();
+    };
+
+    $scope.deactivateMotion = function () {
+        var controller;
+        if ($scope.activeMotion) {
+            controller = T3.controller[$scope.activeMotion.data];
+            T3.Keyboard.set('W', false);
+            $(controller.canvas).fadeOut();
+            controller.stop();
+            $scope.activeMotion.active = false;
+            $scope.activeMotion = null;
+        }
+    };
+
+    // tab
+    $scope.navBarVisible = true;
+    $scope.toggleNavBar = function () {
+        $scope.navBarVisible = !$scope.navBarVisible;
+    };
 });

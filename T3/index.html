@@ -31,29 +31,62 @@
     <div id="webgl-container"></div>
 
     <!-- NAVIGATION -->
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <button class="btn" style="position: absolute"
+            ng-show="!navBarVisible"
+            ng-click="toggleNavBar()">
+        Show bar
+    </button>
+    <div class="navbar navbar-inverse navbar-fixed-top" ng-show="navBarVisible">
         <div class="navbar-inner">
-            <a href="#" class="brand">City drive</a>
+            <div class="container">
 
-            <!-- cameras -->
-            <ul class="cameras nav">
-                <li ng-repeat="camera in positions">
-                    <button class="btn btn-inverse">
-                        {{camera.x + ' ' + camera.y + ' ' + camera.z}}
+                <!-- title -->
+                <a href="#" class="brand">City drive</a>
+
+                <span class="divider-vertical"></span>
+
+                <!-- cameras -->
+                <span class="navbar-text">Cameras</span>
+                <div class="cameras btn-group">
+                    <button ng-repeat="camera in cameras"
+                            ng-class="{active: cameras[$index].active}"
+                            ng-click="nextCamera($index)"
+                            class="btn">
+                        {{ $index + 1 }}
                     </button>
-                </li>
-            </ul>
-            <button class="btn btn-primary" ng-click="nextCamera()">
-                Change camera
-            </button>
+                </div>
 
-            <!-- motion detection -->
-            <button data-motion="MotionDetection" class="btn btn-warning motion">
-                Motion detection using pixel diff
-            </button>
-            <button data-motion="MotionDetectionHeadTrackr" class="btn btn-warning motion">
-                Motion detection using headtrackr
-            </button>
+                <button class="btn btn-primary" ng-click="saveCamera()">
+                    Add camera
+                </button>
+
+                <span class="divider-vertical"></span>
+
+                <!-- motion detection -->
+                <span class="navbar-text">Motion</span>
+                <div class="motion btn-group">
+                    <button class="btn btn-danger"
+                            ng-class="{active: !activeMotion}"
+                            ng-click="deactivateMotion()">
+                        Off
+                    </button>
+                    <button ng-repeat="motion in motions"
+                            ng-class="{
+                                active: motion.active
+                            }"
+                            ng-click="activateMotion(motion)"
+                            class="btn">
+                        {{ motion.name }}
+                    </button>
+                </div>
+                <span class="divider-vertical"></span>
+
+                <!-- hide bar -->
+                <a class="btn btn-inverse" href="#" ng-click="toggleNavBar()">
+                    <i class="icon-remove icon-white"></i>
+                    Hide
+                </a>
+            </div>
         </div>
     </div>
 
@@ -106,6 +139,8 @@
 
     <!-- Angular -->
     <script src="components/angular/angular.min.js"></script>
+    <script src="components/angular/ui-bootstrap-0.4.0.min.js"></script>
+    <script src="components/angular/ui-bootstrap-tpls-0.4.0.min.js"></script>
     <script src="js/angularT3/app.js"></script>
 
     <!-- Boilerplate -->
