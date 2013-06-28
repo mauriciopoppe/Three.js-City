@@ -656,6 +656,7 @@
                     scope.cameras.push(config[i]);
                 }
                 for (i = 0; i < localStorageCameras.length; i += 1) {
+                    localStorageCameras[i].active = false;
                     scope.cameras.push(localStorageCameras[i]);
                 }
                 scope.activeIndex = active;
