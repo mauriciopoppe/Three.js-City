@@ -71,12 +71,11 @@
         me.materials = [
             me.real.material,
             new THREE.MeshPhongMaterial({
-                ambient: '#313131',
-                color: '#525252',
-                specular: '#000000',
+                ambient: '#ffffff',
+                color: '#464646',
+                specular: '#f0f0f0',
                 envMap: cube && cube.renderTarget,
-                reflectivity: 0.1,
-                shininess: 0
+                shininess: 51
             })
         ];
         me.real.receiveShadow = true;

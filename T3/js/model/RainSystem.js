@@ -41,7 +41,7 @@
          * Dat.gui rain speed multiplier
          * @type {number}
          */
-        this.speed = 1.5;
+        this.speed = 3;
 
         /**
          * A copy of the total number of particles to be created (is used
@@ -56,6 +56,12 @@
          * @type {Object}
          */
         this.carSplashParticleSystem = null;
+
+        /**
+         * Name of the texture used for the raindrops
+         * @type {String}
+         */
+        this.textureUsed = null;
 
         /**
          * Raindrops particles (only work when rain is enabled)
@@ -138,7 +144,7 @@
     RainSystem.prototype.createRainParticleSystem = function () {
         var me = this,
             particleCount = me.particleCount,
-            sprite = THREE.ImageUtils.loadTexture('images/raindrop.png'),
+            sprite = THREE.ImageUtils.loadTexture('images/raindrop_backup.png'),
             geometry = new THREE.Geometry(),
             material,
             i;
@@ -195,7 +201,19 @@
             .name('Raindrops');
 
         folder
-            .add(me, 'speed', 0, 3)
+            .add(me, 'textureUsed', {
+                White: 'images/raindrop_backup.png',
+                Dark: 'images/raindrop_2.png'
+            })
+            .name('Raindrop texture')
+            .onFinishChange(function (value) {
+                me.rainParticleSystem.material.map =
+                    THREE.ImageUtils.loadTexture(value);
+                me.rainParticleSystem.material.needsUpdate = true;
+            });
+
+        folder
+            .add(me, 'speed', 2, 5)
             .name('Speed');
     };
 
