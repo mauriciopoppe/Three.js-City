@@ -110,4 +110,9 @@ angularT3.controller('Main', function ($scope) {
     $scope.toggleNavBar = function () {
         $scope.navBarVisible = !$scope.navBarVisible;
     };
+    $scope.cameraTooltip = "Orbit and pan freely with your mouse, if you want to save your " +
+        "current view click on this button";
+
+    // loading
+    $scope.loading = 'Loading Textures';
 });

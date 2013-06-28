@@ -98,7 +98,7 @@
             }
 
             var options = {
-                    enabled: false,
+                    enabled: true,
                     loop: true,
                     volume: 1
                 },
@@ -173,10 +173,11 @@
                 rows = [],
                 cols = [],
                 selected,
-                models = ['Block', 'Classic', 'Park'],
-                probability = [0, 0.8, 0.9, 1],
-                max = [Infinity, Infinity, 1],
-                current = [0, 0, 0],
+                models = ['Block', 'Classic', 'RoundBlock', 'Park'],
+//                probability = [0, 0, 0, 1, 1],
+                probability = [0, 0.7, 0.8, 0.9, 1],
+                max = [Infinity, Infinity, 1, 1],
+                current = [0, 0, 0, 0],
                 random,
                 total,
                 i, j, k;
@@ -578,9 +579,9 @@
                     .add(radialShader.uniforms.sampleDist, 'value', 0.0, 1.0)
                     .name('Distance')
                     .listen();
-
+                radialShader.maxStrength = 1.5;
                 radialShaderFolder
-                    .add(radialShader.uniforms.sampleStrength, 'value', 0.0, 5)
+                    .add(radialShader, 'maxStrength', 0.0, 5)
                     .name('Strength');
 //
 //                radialShaderFolder

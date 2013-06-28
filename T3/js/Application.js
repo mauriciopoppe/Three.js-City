@@ -230,8 +230,7 @@ T3.Application = {
         // inits the world controller
         this.initController();
 
-        $('#mask').fadeOut(3000);
-        $('#spinner').fadeOut(3000);
+        $('#loader').fadeOut(3000);
 
         // animate the world and the scene
         this.animate();
@@ -242,36 +241,41 @@ T3.Application = {
 (function () {
     T3.AssetLoader.debug();
     T3.AssetLoader
-        .registerAsset('texture-marble', THREE.ImageUtils.loadTexture('images/textures/marble.jpg'))
-        .registerAsset('texture-water', THREE.ImageUtils.loadTexture('images/textures/water.jpg'))
-        .registerAsset('texture-world', THREE.ImageUtils.loadTexture('images/textures/world.jpg'))
-        .registerAsset('texture-snow-1', THREE.ImageUtils.loadTexture('images/textures/snow_1.jpg'))
-        .registerAsset('texture-glass-1', THREE.ImageUtils.loadTexture('images/textures/glass.jpg'))
-        .registerAsset('texture-glass-2', THREE.ImageUtils.loadTexture('images/textures/glass_2.jpg'))
-        .registerAsset('texture-office', THREE.ImageUtils.loadTexture('images/textures/offices.jpg'))
-        .registerAsset('texture-office-specular', THREE.ImageUtils.loadTexture('images/textures/offices_specular.jpg'))
-        .registerAsset('texture-office-bumpmap', THREE.ImageUtils.loadTexture('images/textures/offices_bumpmap.jpg'))
-        .registerAsset('texture-road-x', THREE.ImageUtils.loadTexture('images/textures/roadposx.png'))
-        .registerAsset('texture-road-z', THREE.ImageUtils.loadTexture('images/textures/roadposz.jpg'))
-        .registerAsset('texture-sidewalk-1', THREE.ImageUtils.loadTexture('images/textures/sidewalk_1.jpg'))
-        .registerAsset('texture-residential', THREE.ImageUtils.loadTexture('images/textures/residential.jpg'))
-        .registerAsset('texture-residential-specular', THREE.ImageUtils.loadTexture('images/textures/residential_specular_2.jpg'))
-        .registerAsset('texture-residential-bumpmap', THREE.ImageUtils.loadTexture('images/textures/residential_bumpmap.jpg'))
-        .registerAsset('texture-grass', THREE.ImageUtils.loadTexture('images/textures/grass.jpg'))
-        .registerAsset('lensflare-0', THREE.ImageUtils.loadTexture('images/lensflare0_alpha.png'))
-        .registerAsset('texture-tree-leaves', THREE.ImageUtils.loadTexture('obj/textures/tree_leaves.png'))
-        .registerAsset('texture-tree-trunk', THREE.ImageUtils.loadTexture('obj/textures/tree_trunk.jpg'));
-    T3.AssetLoader
-        .addToLoadQueue('obj/tree-trunk.js', 'tree-trunk')
-        .addToLoadQueue('obj/tree-leaves.js', 'tree-leaves')
-        .addToLoadQueue('obj/Skyline.body.js', 'car-body-geometry')
-        .addToLoadQueue('obj/Skyline.exhaust.js', 'car-exhaust-geometry')
-        .addToLoadQueue('obj/Skyline.windows.js', 'car-windows-geometry')
-        .addToLoadQueue('obj/Skyline.lightsBack.js', 'car-lights-back-geometry')
-        .addToLoadQueue('obj/Skyline.lightsFront.js', 'car-lights-front-geometry')
-        .addToLoadQueue('obj/Skyline.tire.js', 'car-tire-geometry')
-        .addToLoadQueue('obj/Skyline.rim.js', 'car-rim-geometry')
-        .addToLoadQueue('obj/Skyline.interior.js', 'car-interior-geometry');
+
+    // texture
+        .addToLoadQueue('texture-marble', 'images/textures/marble.jpg', 'texture')
+        .addToLoadQueue('texture-water', 'images/textures/water.jpg', 'texture')
+        .addToLoadQueue('texture-world', 'images/textures/world.jpg', 'texture')
+        .addToLoadQueue('texture-snow-1', 'images/textures/snow_1.jpg', 'texture')
+        .addToLoadQueue('texture-glass-1', 'images/textures/glass.jpg', 'texture')
+        .addToLoadQueue('texture-glass-2', 'images/textures/glass_2.jpg', 'texture')
+        .addToLoadQueue('texture-glass-3', 'images/textures/glass_3.jpg', 'texture')
+        .addToLoadQueue('texture-glass-3-door', 'images/textures/glass_3_door.jpg', 'texture')
+        .addToLoadQueue('texture-office', 'images/textures/offices.jpg', 'texture')
+        .addToLoadQueue('texture-office-specular', 'images/textures/offices_specular.jpg', 'texture')
+        .addToLoadQueue('texture-office-bumpmap', 'images/textures/offices_bumpmap.jpg', 'texture')
+        .addToLoadQueue('texture-road-x', 'images/textures/roadposx.png', 'texture')
+        .addToLoadQueue('texture-road-z', 'images/textures/roadposz.jpg', 'texture')
+        .addToLoadQueue('texture-sidewalk-1', 'images/textures/sidewalk_1.jpg', 'texture')
+        .addToLoadQueue('texture-residential', 'images/textures/residential.jpg', 'texture')
+        .addToLoadQueue('texture-residential-specular', 'images/textures/residential_specular_2.jpg', 'texture')
+        .addToLoadQueue('texture-residential-bumpmap', 'images/textures/residential_bumpmap.jpg', 'texture')
+        .addToLoadQueue('texture-grass', 'images/textures/grass.jpg', 'texture')
+        .addToLoadQueue('lensflare-0', 'images/lensflare0_alpha.png', 'texture')
+        .addToLoadQueue('texture-tree-leaves', 'obj/textures/tree_leaves.png', 'texture')
+        .addToLoadQueue('texture-tree-trunk', 'obj/textures/tree_trunk.jpg', 'texture')
+
+    // json
+        .addToLoadQueue('tree-trunk', 'obj/tree-trunk.js', 'json')
+        .addToLoadQueue('tree-leaves', 'obj/tree-leaves.js', 'json')
+        .addToLoadQueue('car-body-geometry', 'obj/Skyline.body.js', 'json')
+        .addToLoadQueue('car-exhaust-geometry', 'obj/Skyline.exhaust.js', 'json')
+        .addToLoadQueue('car-windows-geometry', 'obj/Skyline.windows.js', 'json')
+        .addToLoadQueue('car-lights-back-geometry', 'obj/Skyline.lightsBack.js', 'json')
+        .addToLoadQueue('car-lights-front-geometry', 'obj/Skyline.lightsFront.js', 'json')
+        .addToLoadQueue('car-tire-geometry', 'obj/Skyline.tire.js', 'json')
+        .addToLoadQueue('car-rim-geometry', 'obj/Skyline.rim.js', 'json')
+        .addToLoadQueue('car-interior-geometry', 'obj/Skyline.interior.js', 'json');
 
     T3.SoundLoader.debug();
     T3.SoundLoader
@@ -280,7 +284,16 @@ T3.Application = {
         .addToLoadQueue('sounds/engine_3.mp3', 'sound-engine-3')
         .addToLoadQueue('sounds/alternator_whine.wav', 'sound-engine-4')
         .addToLoadQueue('sounds/bg_menu.ogg', 'music-1');
+    var scope = angular.element($('body')).scope();
     T3.AssetLoader.load(function () {
-        T3.SoundLoader.load(T3.Application.launch, T3.Application);
+        scope = angular.element($('body')).scope();
+        scope.$apply(function () { scope.loading = 'Loading Sounds'; });
+        T3.SoundLoader.load(function () {
+            scope = angular.element($('body')).scope();
+            scope.$apply(function () { scope.loading = 'Generating City'; });
+            setTimeout (function () {
+                T3.Application.launch();
+            }, 10);
+        }, T3.Application);
     }, T3.Application);
 })();
