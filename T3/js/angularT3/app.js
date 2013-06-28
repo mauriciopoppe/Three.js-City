@@ -62,12 +62,12 @@ angularT3.controller('Main', function ($scope) {
             };
 
         if (length >= $scope.limit) {
-            $scope.cameras.splice(3, 1);
+            $scope.cameras.splice(4, 1);
         }
         $scope.cameras.push(config);
 
         // save to localStorage
-        localStorage.setItem('cameras', JSON.stringify($scope.cameras.slice(3)));
+        localStorage.setItem('cameras', JSON.stringify($scope.cameras.slice(4)));
     };
 
 
