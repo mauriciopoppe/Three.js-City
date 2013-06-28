@@ -566,7 +566,9 @@
 
             // dat.gui
             function initDatGui(gui) {
-                var out = gui.addFolder('Postprocessing');
+                var out = gui.addFolder('Postprocessing'),
+                    controller,
+                    $dom;
 
                 //<debug>
                 // copy shader
@@ -575,15 +577,20 @@
                     .add(radialShader, 'enabled')
                     .name('Enabled');
 
-                radialShaderFolder
+                controller = radialShaderFolder
                     .add(radialShader.uniforms.sampleDist, 'value', 0.0, 1.0)
-                    .name('Distance')
+                    .name('Distance (Read only)')
                     .listen();
                 radialShader.maxStrength = 1.5;
+                $dom = $(controller.domElement);
+                $dom.find('input').attr('disabled', 'disabled');
+                $dom.find('.slider-fg').css({
+                    background: '#555555'
+                });
+
                 radialShaderFolder
                     .add(radialShader, 'maxStrength', 0.0, 5)
                     .name('Strength');
-//
 //                radialShaderFolder
 //                    .add(radialShader.uniforms.sampleStrength, 'value', 0.0, 5.0)
 //                    .name('Strength');
