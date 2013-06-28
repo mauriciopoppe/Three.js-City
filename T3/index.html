@@ -21,10 +21,14 @@
 	</head>
 <body ng-controller="Main">
 
-    <p id="mask"></p>
-    <p id="spinner">
-        Loading.
-    </p>
+    <div id="loader">
+        <div id="spin-wrap">
+            <p id="spinner"></p>
+            <p id="loading-text" class="lead text-center">
+                {{ loading }}
+            </p>
+        </div>
+    </div>
 
     <!-- three.js container -->
     <div id="webgl-container"></div>
@@ -40,7 +44,7 @@
             <div class="container">
 
                 <!-- title -->
-                <a href="#" class="brand">City drive</a>
+                <a href="#" class="brand">City car driving</a>
 
                 <span class="divider-vertical"></span>
 
@@ -56,7 +60,8 @@
                 </div>
 
                 <button class="btn btn-primary" ng-click="saveCamera()">
-                    Add camera
+                    <span tooltip-placement="bottom"
+                          tooltip="{{ cameraTooltip }}">Add Camera</span>
                 </button>
 
                 <span class="divider-vertical"></span>
@@ -81,10 +86,11 @@
                 <span class="divider-vertical"></span>
 
                 <!-- hide bar -->
-                <a class="btn btn-inverse" href="#" ng-click="toggleNavBar()">
-                    <i class="icon-remove icon-white"></i>
-                    Hide
-                </a>
+                <!--<ul class="nav">-->
+                    <!--<li>-->
+                        <a href="#" class="text-info btn btn-danger btn-mini" ng-click="toggleNavBar()">Hide Toolbar</a>
+                    <!--</li>-->
+                <!--</ul>-->
             </div>
         </div>
     </div>
@@ -173,8 +179,10 @@
 
     <!-- City -->
     <script type="text/javascript" src="js/model/Building.js"></script>
-    <script type="text/javascript" src="js/model/building/Box.js"></script>
+    <script type="text/javascript" src="js/model/building/primitive/Box.js"></script>
+    <script type="text/javascript" src="js/model/building/primitive/Cylinder.js"></script>
     <script type="text/javascript" src="js/model/building/Block.js"></script>
+    <script type="text/javascript" src="js/model/building/RoundBlock.js"></script>
     <script type="text/javascript" src="js/model/building/Classic.js"></script>
     <script type="text/javascript" src="js/model/building/Park.js"></script>
     <script type="text/javascript" src="js/model/Fountain.js"></script>

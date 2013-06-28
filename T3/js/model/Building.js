@@ -20,14 +20,6 @@
     };
     
     T3.inheritFrom(Building, T3.model.Mesh);
-    
-    Building.prototype.materialOptions = {
-        ambient: '#ffffff',     // ambient
-        color: '#016b93',       // diffuse
-        specular: '#016b93',    // specular
-        shininess: 0.4 * 128,   // shininess
-        wireframe: false
-    };
 
     Building.prototype.fixConfig = function (config) {
         return config;

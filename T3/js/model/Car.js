@@ -575,7 +575,7 @@
         if (music) {
             me.histogram = music.makeHistogram(me.histogramSize);
             radialShader.uniforms.sampleStrength.value =
-                1.5 + (me.histogram[7] / 95 >= 1 ?
+                radialShader.maxStrength + (me.histogram[7] / 95 >= 1 ?
                     (me.histogram[7] / 95 - 1) * 10 : 0)
         }
     };

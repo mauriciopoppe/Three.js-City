@@ -21,40 +21,56 @@ T3.AssetLoader = (function () {
         loader = new THREE.JSONLoader();
 
     var showDebug,
-        debug = {
-        };
+        debug = {};
 
+    function onLoad(index) {
+        if (index + 1 < queue.length) {
+            // load the asset at index `index + 1`
+            execute(index + 1);
+        } else {
+            // finished loading so make a call to `callback`
+            debug.end = new Date();
+            showDebug && console.log('T3.AssetLoader finished in: ' + (debug.end - debug.start) + 'ms');
+            endCallback.call(endCallbackScope);
+        }
+    }
+
+    // chain loader
     execute = function (index) {
-        loader.load(queue[index].url, function (geometry, materials) {
-            assets[queue[index].name] = {
-                geometry: geometry,
-                materials: materials
-            };
-
-            if (index + 1 < queue.length) {
-                // load the asset at index `index + 1`
-                execute(index + 1);
-            } else {
-                // finished loading so make a call to `callback`
-                debug.end = new Date();
-                showDebug && console.log('T3.AssetLoader finished in: ' + (debug.end - debug.start) + 'ms');
-                endCallback.call(endCallbackScope);
-            }
-        });
+        switch (queue[index].type) {
+            case 'texture':
+                assets[queue[index].name] = THREE.ImageUtils.loadTexture(queue[index].url, undefined, function () {
+                    onLoad(index);
+                });
+                break;
+            case 'json':
+                loader.load(queue[index].url, function (geometry, materials) {
+                    assets[queue[index].name] = {
+                        geometry: geometry,
+                        materials: materials
+                    };
+                    onLoad(index);
+                });
+                break;
+            default:
+                break;
+        }
     };
 
     return {
         /**
          * Pushes a new asset to be loaded in the asset queue, this asset can
          * be later gathered using the `name` parameter
-         * @param {string} url Location of the asset
          * @param {string} name Name of the asset registered with
+         * @param {string} url Location of the asset
+         * @param {string} type Type of asset to be loaded (json, texture)
          * @chainable
          */
-        addToLoadQueue: function (url, name) {
+        addToLoadQueue: function (name, url, type) {
             queue.push({
                 url: url,
-                name: name
+                name: name,
+                type: type
             });
             return this;
         },

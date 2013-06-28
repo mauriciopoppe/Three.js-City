@@ -1,5 +1,5 @@
-Three.js City
-=============
+Three.js City Car Driving
+=========================
 
 Hi there, this is my first attempt to create an interactive 3D world using Three.js, during the prototyping phase I ended up coding an experimental framework that runs on top of Three.js called `T3` (the code is partially documented).
 
@@ -14,15 +14,15 @@ The project consists of two folders, all the common files are in the folder `boi
 ![4](http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/4.jpg)
 
 ## Features
-- You can drive the car using the WASD keys
-- Some properties world and its content can be updated in runtime using the panel on the top right corner (thanks to dat.gui)
-- The city is generated at random using a simple grid and some boxes with textures
+- You can drive the car using the WASD keys (you can also turn on its engine using the panel on the right)
+- Some properties world and its objects can be updated in runtime using the panel on the top right corner (thanks to dat.gui)
+- A random city is generated each time using a simple grid and some boxes with textures
 - *Rain* can be enabled using the panel on the top right corner of the document (raindrops have a random initial velocity and follow the car at all times, each time a raindrop's y coordinate is below 0 it goes to the top to avoid creating more particles during runtime)
-- (Chrome only) There are two *motion detection* systems that allow you to drive the car only with your movements, one uses [headtrackr](https://github.com/auduno/headtrackr/) and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left. (I learned this from: http://www.adobe.com/devnet/html5/articles/javascript-motion-detection.html). NOTE: this feature only works in Chrome
+- (Chrome only) There are two *motion detection* systems that allow you to drive the car only with your movements, one uses [headtrackr](https://github.com/auduno/headtrackr/) and the other uses a simple technique that detects the number of pixels that changed between frames and according to that moves right or left. (I learned this from: http://www.adobe.com/devnet/html5/articles/javascript-motion-detection.html)
 - The texture of the body of the car can be updated in runtime to be a *cubemap texture* (*cough* dropping the fps but allowing reflections)
-- A Radial blur shader is applied as a postprocessing filter when the car speed is very high
-- (Chrome only) There's some electronic ambient music (hope you like it!, it's the song used in the game GRITS: http://gritsgame.appspot.com/) that changes the strength of the radial blur in runtime :), just make sure the car is going fast to watch it in action. (NOTE: Since this feature analizes the song loaded in runtime you can change it! Add your favorite song to: `/T3/sounds` and change its reference in the file `/T3/js/Application.js`)
-
+- The shader "radial blur" is applied as a postprocessing filter to the scene when the car speed is very high (make sure the car is going fast)
+- Have you found a position for the camera that you want to save even if you refresh the page? Don't worry! Just click `Add Camera` and its position will be pushed to the camera queue and will be restored even if you refresh the page (thanks to `localstorage`)
+- (Chrome only) There's some electronic ambient music (hope you like it!, it's the song used in the game GRITS: http://gritsgame.appspot.com/) that changes the strength of the radial blur in runtime :) just make sure the car is going fast to watch it in action. (NOTE: Since this feature analizes the song loaded in runtime you can change it! Add your favorite song to: `/T3/sounds` and change its reference in the file `/T3/js/Application.js`)
 
 [`/T3/js/Application.js`]
 
@@ -45,8 +45,9 @@ Clone the project to see the development process step by step using git's tag sy
 - WebAudio.js - http://jeromeetienne.github.io/webaudio.js/
 - Headtrackr - https://github.com/auduno/headtrackr/
 - jQuery - http://jquery.com/
+- Bootstrap (CSS only) - http://twitter.github.io/bootstrap/index.html
 - AngularJS - http://angularjs.org/
-- Bootstrap - http://twitter.github.io/bootstrap/index.html
+- UI Bootstrap - http://angular-ui.github.io/
 - dat.gui - http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
 - tween.js - https://github.com/sole/tween.js/
 
@@ -55,6 +56,6 @@ Clone the project to see the development process step by step using git's tag sy
 - Car model by: *sepel* (http://www.blendswap.com/blends/view/67462)
 - Tree model by: *xuroiux* (http://www.blendswap.com/blends/view/54458)
 - Textures downloaded from: http://www.cgtextures.com/ and http://www.humus.name/index.php?page=Textures
-- Engine sound downloaded from: http://www.findsounds.com/
+- Engine sounds downloaded from: http://www.findsounds.com/
 
 Have fun!
