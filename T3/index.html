@@ -25,9 +25,7 @@
     <div id="loader">
         <div id="spin-wrap">
             <p id="spinner"></p>
-            <p id="loading-text" class="lead text-center">
-                {{ loading }}
-            </p>
+            <p id="loading-text" class="lead text-center" ng-bind="loading"></p>
         </div>
     </div>
 
@@ -121,7 +119,6 @@
     <script src="../boilerplate_lib/vendor/three.js/shaders/CopyShader.js"></script>
     <script src="../boilerplate_lib/vendor/three.js/shaders/FXAAShader.js"></script>
     <script src="../boilerplate_lib/vendor/three.js/shaders/RadialBlurShader.js"></script>
-    <script src="../boilerplate_lib/vendor/three.js/shaders/DepthMapShader.js"></script>
 
     <!-- Postprocessing -->
     <script src="../boilerplate_lib/vendor/three.js/postprocessing/EffectComposer.js"></script>
@@ -140,7 +137,7 @@
 
     <script src="../boilerplate_lib/vendor/threex/THREEx.FullScreen.js"></script>
     <script src="../boilerplate_lib/vendor/threex/THREEx.WindowResize.js"></script>
-    <script src="../boilerplate_lib/vendor/threex.dragpancontrols.js"></script>
+    <!--<script src="../boilerplate_lib/vendor/threex.dragpancontrols.js"></script>-->
     <!--<script src="../boilerplate_lib/vendor/threex/TrackballControls.js"></script>-->
 
     <!-- Angular -->

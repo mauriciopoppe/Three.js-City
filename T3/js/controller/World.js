@@ -542,8 +542,8 @@
 
             //<debug>
             // depth map
-            var depthShader = new THREE.ShaderPass(THREE.DepthMapShader);
-            depthShader.renderToScreen = true;
+//            var depthShader = new THREE.ShaderPass(THREE.DepthMapShader);
+//            depthShader.renderToScreen = true;
             //</debug>
 
             World.composer.addPass(renderModel);

@@ -91,6 +91,8 @@
                 initialized: new THREE.MeshFaceMaterial(me.generateRoundBlockMaterials('texture-glass-3-door'))
             }
         });
+        box.real.castShadow = true;
+        box.real.receiveShadow = true;
         box.position.y = box.height * T3.scale / 2;
         box.rotation.y = -Math.acos(Math.abs(group[0].position.x - group[1].position.x) /
             group[0].position.distanceTo(group[1].position));

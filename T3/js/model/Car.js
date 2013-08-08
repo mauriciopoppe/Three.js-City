@@ -234,6 +234,11 @@
         scene.add(me.shadow);
         me.shadow.position.y = 0.2;
 
+        // neon light
+        var light = new THREE.PointLight(0xff0000, 3, 10);
+        light.position.set(0, 2, 0);
+        me.add(light);
+
         // histogram
         me.createHistogram();
 
