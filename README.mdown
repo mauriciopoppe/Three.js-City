@@ -3,7 +3,7 @@ Three.js City Car Driving
 
 Hi there, this is my first attempt to create an interactive 3D world using Three.js, during the prototyping phase I ended up coding an experimental framework that runs on top of Three.js called `T3` (the code is partially documented).
 
-Want to see the demo? Check it out!   --   [Demo](T3/index.html)
+Want to see the demo? Check it out!   --   [Demo](http://maurizzzio.github.io/Three.js-City/T3/)
 
 The project consists of two folders, all the common files are in the folder `boilerplate` and the application is in `T3`.
 
