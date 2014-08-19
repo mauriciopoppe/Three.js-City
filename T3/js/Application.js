@@ -227,6 +227,9 @@ T3.Application = {
 
         this.datGUI.close();
 
+        // hide the simulation bodies
+        Ape.debug = false;
+
         // inits the world controller
         this.initController();
 

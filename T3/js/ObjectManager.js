@@ -8,7 +8,7 @@
 
 /*
     GLOBAL:
-    T3
+    T3, scene
  */
 /**
  *
@@ -38,7 +38,7 @@ T3.ObjectManager = {
         this.register(name, object);
 
         // add this object to the scene
-        if (object.real !== object) {
+        if (object.real && object.real !== object) {
             object instanceof THREE.Object3D &&
                 object.add &&
                 object.add(object.real);

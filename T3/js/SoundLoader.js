@@ -88,8 +88,8 @@ T3.SoundLoader = (function () {
             if (sound) {
                 options = options || {};
                 options.loop && sound.loop(options.loop);
+                options.volume && sound.volume(options.volume);
                 source = sound.play(options.time || 0);
-                options.volume && (source.node.gain.value = options.volume);
             }
             return source;
         },

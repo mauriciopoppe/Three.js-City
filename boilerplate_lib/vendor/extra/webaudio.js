@@ -485,12 +485,13 @@ WebAudio.Sound.prototype.play		= function(time){
 	// create the source object
 	var source	= {
 		node	: clonedNode,
+        sound: this,
 		stop	: function(time){
 			if( time ===  undefined )	time	= 0;
 			this.node.stop(time);
 			return source;	// for chained API
-		}
-	}
+		},
+	};
 	// return it
 	return source;
 };

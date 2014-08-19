@@ -1,5 +1,5 @@
 /**
- * @author maurizzzio / http://mauro.41090@gmail.com
+ * @author maurizzzio / http://maurizzzio.me
  * Ported from: http://www.gamerendering.com/2008/12/20/radial-blur-filter/
  */
 

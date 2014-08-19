@@ -52,7 +52,13 @@
          * @type {string}
          */
         this.folder = config.folder;
-    
+
+        /**
+         * APE simulatable instance
+         * @type {simulationInstance|*}
+         */
+        this.simulationInstance = config.simulationInstance;
+
         /**
          * `this` instance is just a wrapper to a inner element
          * which might be a Mesh, camera or even itself!

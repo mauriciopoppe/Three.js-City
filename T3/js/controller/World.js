@@ -40,6 +40,24 @@
          */
         World.ticks = 0;
 
+        this.simulatedObjects = [];
+        this.maxContacts = 256;
+        /**
+         * Holds the contacts to be resolved by the Collision
+         * Resolver class
+         * @type {Ape.collision.CollisionData}
+         */
+        this.collisionData = new Ape.collision.CollisionData();
+
+        /**
+         * Holds the contact resolver
+         * @type {Ape.collision.ContactResolver}
+         */
+        this.resolver = new Ape.collision.ContactResolver({
+            velocityIterations: this.maxContacts * 8,
+            positionIterations: this.maxContacts * 8
+        });
+
         World.prototype.init.call(this);
     };
 
@@ -70,7 +88,7 @@
             // car
             me.createCar();
             // rain!
-            me.createRain();
+//            me.createRain();
 
             // init motion detection
             me.initMotion();
@@ -132,7 +150,7 @@
                     .add(options, 'volume', 0, 1)
                     .name('Volume')
                     .onChange(function (value) {
-                        music.node.gain.value = value;
+                        music.volume(value);
                     });
             }
             initDatGui(T3.Application.datGUI);
@@ -142,13 +160,51 @@
          * Creates an instance of a car
          */
         createCar: function () {
-            var me = this;
+            var me = this,
+                config = {
+                    width: 20,
+                    depth: 40,
+                    height: 40
+                };
+
+            var box = Ape.CollisionShapeFactory.createBox(config);
+            box.body.acceleration.set(0, 0, 0);
+            box.body.setMass(1e17);
+            box.body.setInertiaTensor(
+                new Ape.Matrix3().setBlockInertialTensor(
+                    new Ape.Vector3(config.width * 0.5, config.height * 0.5, config.depth * 0.5),
+                    box.body.getMass()
+                )
+            );
+            this.simulatedObjects.push(box);
+
             me.car = new T3.model.Car({
-                name: 'car'
+                name: 'car',
+                simulationInstance: box
             });
+            me.car.position = box.body.position;
 
             // attach cameras to the car
             me.car.add(T3.ObjectManager.get('camera-main').real);
+        },
+
+        createStaticObject: function (config) {
+            var box = Ape.CollisionShapeFactory.createBox({
+                width: config.width,
+                depth: config.depth,
+                height: config.height
+            });
+            box.body.setInverseMass(0);
+            box.body.setInertiaTensor(
+                new Ape.Matrix3().setBlockInertialTensor(
+                    new Ape.Vector3(config.width * 0.5, config.height * 0.5, config.depth * 0.5),
+                    box.body.getMass()
+                )
+            );
+            box.body.acceleration.set(0, 0, 0);
+            box.body.position = config.position.clone();
+            box.calculateInternals();
+            this.simulatedObjects.push(box);
         },
 
         /**
@@ -229,7 +285,8 @@
          * @param model
          */
         createBuildings: function (x1, z1, x2, z2, model) {
-            var object,
+            var me = this,
+                object,
                 width = 10,
                 depth = 10;
 
@@ -246,6 +303,12 @@
                 0,
                 z1 * depth * T3.scale + object.depth * T3.scale / 2
             );
+            me.createStaticObject({
+                width: object.width * T3.scale,
+                depth: object.depth * T3.scale,
+                height: object.width * T3.scale,
+                position: object.position
+            });
         },
 
         /**
@@ -499,6 +562,15 @@
 
             World.ticks = (World.ticks + 1) % 1000000007;
 
+            // PHYSICS ENGINE
+            var objects = me.simulatedObjects,
+                rigidBody;
+            for (var i = -1; ++i < objects.length;) {
+                rigidBody = objects[i];
+                rigidBody.body.integrate(delta);
+                rigidBody.calculateInternals();
+            }
+
             // game update logic goes here
             // CAMERA
             activeCamera.update(delta);
@@ -507,9 +579,43 @@
             me.car && me.car.update(delta);
 
             // RAIN SYSTEM
-            me.rainSystem && me.rainSystem.update(delta);
+            // commented because it's slower since chrome 32
+//            me.rainSystem && me.rainSystem.update(delta);
 
-            World.fountain && World.fountain.update(delta);
+            // COLLISION DETECTION
+//            me.resolveContacts(delta);
+
+//            World.fountain && World.fountain.update(delta);
+        },
+
+        resolveContacts: function (delta) {
+            var me = this;
+            // Set up the collision data structure
+            this.collisionData.reset(this.maxContacts);
+            this.collisionData.friction = 0;
+            this.collisionData.restitution = 0.3;
+            this.collisionData.tolerance = 0.1;
+
+            var i, j,
+                total = this.simulatedObjects.length;
+
+            // collide the box with the planes
+
+            for (i = 0; i < total; i += 1) {
+                for (j = i + 1; j < total; j += 1) {
+                    Ape.collision.CollisionDetector.prototype
+                        .detect(
+                            this.simulatedObjects[i],
+                            this.simulatedObjects[j],
+                            this.collisionData
+                        );
+                }
+            }
+            this.resolver.resolveContacts(
+                this.collisionData.contacts,
+                this.collisionData.contacts.length,
+                delta
+            );
         },
 
         render: function () {
@@ -589,7 +695,7 @@
                 });
 
                 radialShaderFolder
-                    .add(radialShader, 'maxStrength', 0.0, 5)
+                    .add(radialShader, 'maxStrength', 0.0, 4.0)
                     .name('Strength');
 //                radialShaderFolder
 //                    .add(radialShader.uniforms.sampleStrength, 'value', 0.0, 5.0)

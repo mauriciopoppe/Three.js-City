@@ -316,7 +316,7 @@
             .name('Volume')
             .onChange(function (value) {
                 if (me.engineSound) {
-                    me.engineSound.node.gain.value = value;
+                    me.engineSound.sound.volume(value);
                 }
             });
     };
@@ -346,7 +346,7 @@
             i;
         for (i = me.histogramSize - 2; i >= 0 ; i -= 1) {
             mesh = new THREE.Mesh(
-                new THREE.CubeGeometry(width, height, depth),
+                new THREE.BoxGeometry(width, height, depth),
                 new THREE.MeshBasicMaterial()
             )
             mesh.position.set(me.musicHistogram.children.length * width, 0, 0);
@@ -354,7 +354,7 @@
         }
         for (i = 1; i < me.histogramSize - 1; i += 1) {
             mesh = new THREE.Mesh(
-                new THREE.CubeGeometry(width, height, depth),
+                new THREE.BoxGeometry(width, height, depth),
                 new THREE.MeshBasicMaterial()
             )
             mesh.position.set(me.musicHistogram.children.length * width, 0, 0);
@@ -371,6 +371,7 @@
      */
     Car.prototype.move = function (direction, delta) {
         var me = this,
+            simulationBody = me.simulationInstance.body,
             wheelOrientation = T3.ObjectManager.get('car-wheel-front-left').rotation.y,
             oldSpeed = me.speed,
             newSpeed,
@@ -393,6 +394,8 @@
         me.shadow.rotation.y = me.carOrientation;
 
         me.speed = newSpeed;
+
+        simulationBody.rotation.set(0, me.rotation.y, 0)
     };
 
     /**
@@ -435,6 +438,7 @@
      */
     Car.prototype.update = function (delta) {
         var me = this,
+            simulationBody = me.simulationInstance.body,
             source;
 
         // LEFT AND RIGHT TURN
@@ -485,10 +489,8 @@
 
         // SOUND PITCH
         if (me.engineSound) {
-            me.engineSound.node.playbackRate.value = Math.max(
-                Math.abs(me.speed * (4 / me.maxSpeed)),    // compute pitch based on the speed
-                1
-            );
+            me.engineSound.node.playbackRate.value =
+                Math.abs(me.speed * 4 / me.maxSpeed);
         }
 
         // UPDATE MATRIX FOR SOME TRANSFORMATIONS REQUIRED IN THE RAIN
@@ -574,14 +576,14 @@
             return;
         }
         radialShader.uniforms.sampleDist.value =
-            Math.pow(Math.abs(me.speed) / me.maxSpeed, 6.0) * 1.0;
+            Math.pow(Math.abs(me.speed) / me.maxSpeed, 6.0);
 
         var music = T3.SoundLoader.get('music-1');
         if (music) {
             me.histogram = music.makeHistogram(me.histogramSize);
             radialShader.uniforms.sampleStrength.value =
-                radialShader.maxStrength + (me.histogram[7] / 95 >= 1 ?
-                    (me.histogram[7] / 95 - 1) * 10 : 0)
+                radialShader.maxStrength +
+                    Math.max(me.histogram[4] / 95 - 1, 0) * 3;
         }
     };
 

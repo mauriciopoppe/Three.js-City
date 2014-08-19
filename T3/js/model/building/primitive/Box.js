@@ -48,7 +48,7 @@
     Box.prototype.fixConfig = function (config) {
         var defaults = {
             geometryConfig: {
-                initialized: new THREE.CubeGeometry(this.width, this.height, this.depth)
+                initialized: new THREE.BoxGeometry(this.width, this.height, this.depth)
             },
             materialConfig: {
                 type: 'MeshPhongMaterial',
