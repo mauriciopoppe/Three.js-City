@@ -1,0 +1,21 @@
+OBJECTIVE:
+- create a car that drives itself through
+
+STRATEGY:
+Load Assets required in the game => AssetManager
+
+
+CAR PARTS:
+Body
+background lights (red)
+lights (white) (THREE.PointLight)
+lights glass
+windows
+wheelsx4
+	tire (black)
+	rim (metallic silver)
+interior
+	seats
+	stearing wheel
+	console
+	dashboard
