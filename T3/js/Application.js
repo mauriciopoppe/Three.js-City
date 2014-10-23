@@ -80,8 +80,20 @@ T3.Application = {
      */
     createScene: function () {
         // instantiate the scene (global)
-        scene = new THREE.Scene();
-//        scene.fog = new THREE.Fog( 0x808080, 4000, 4000 );
+        window.scene = new THREE.Scene();
+        window.scene.fog = new THREE.Fog( 0x808080, 300, 1500);
+        window.scene.fog.visible = true;
+        return this;
+    },
+
+    toggleFogStatus: function () {
+        if (scene.fog.visible) {
+            scene.fog.near = 300;
+            scene.fog.far = 1500;
+        } else {
+            scene.fog.near = Infinity;
+            scene.fog.far = Infinity;
+        }
         return this;
     },
 
@@ -91,7 +103,7 @@ T3.Application = {
      */
     createSceneLights: function () {
         var light,
-            // http://planetpixelemporium.com/tutorialpages/light.html
+        // http://planetpixelemporium.com/tutorialpages/light.html
 //            color = 0xffd6aa,       // 100W Tungsten like color
             color = 0xfff1e0,       // Halogen like color
             k, d;
@@ -108,12 +120,6 @@ T3.Application = {
         d = 1000;
         light = new THREE.DirectionalLight(color, 1.5);
         light.position.set(1000 * k, 100 * k, -200 * k);
-        light.initDatGui = function (gui) {
-            var folder = gui.addFolder('World');
-            folder
-                .add(light, 'shadowCameraVisible')
-                .name('Shadow camera');
-        };
         T3.ObjectManager.add('directional-light-3', light);
         light.castShadow = true;
 
@@ -215,13 +221,28 @@ T3.Application = {
         T3.Application.world.render();
     },
 
+    initDatGui: function () {
+        var gui = this.datGUI;
+        var folder = gui.addFolder('World');
+
+        folder
+            .add(T3.ObjectManager.get('directional-light-3'), 'shadowCameraVisible')
+            .name('Shadow camera');
+        folder
+            .add(scene.fog, 'visible')
+            .name('Fog visibility')
+            .onFinishChange(this.toggleFogStatus);
+        return this;
+    },
+
     /************** LAUNCHER *************/
     launch: function () {
 
         // init the world
         this.createRender()
             .createScene()
-            .createSceneLights();
+            .createSceneLights()
+            .initDatGui();
 
         this.initHelpers();
 
@@ -245,7 +266,7 @@ T3.Application = {
     T3.AssetLoader.debug();
     T3.AssetLoader
 
-    // texture
+        // texture
         .addToLoadQueue('texture-marble', 'images/textures/marble.jpg', 'texture')
         .addToLoadQueue('texture-water', 'images/textures/water.jpg', 'texture')
         .addToLoadQueue('texture-world', 'images/textures/world.jpg', 'texture')
@@ -268,7 +289,7 @@ T3.Application = {
         .addToLoadQueue('texture-tree-leaves', 'obj/textures/tree_leaves.png', 'texture')
         .addToLoadQueue('texture-tree-trunk', 'obj/textures/tree_trunk.jpg', 'texture')
 
-    // json
+        // json
         .addToLoadQueue('tree-trunk', 'obj/tree-trunk.js', 'json')
         .addToLoadQueue('tree-leaves', 'obj/tree-leaves.js', 'json')
         .addToLoadQueue('car-body-geometry', 'obj/Skyline.body.js', 'json')
