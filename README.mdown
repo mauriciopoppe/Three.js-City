@@ -3,15 +3,15 @@ Three.js City Car Driving
 
 Hi there, this is my first attempt to create an interactive 3D world using Three.js, during the prototyping phase I ended up coding an experimental framework that runs on top of Three.js called `T3` (the code is partially documented).
 
-Want to see the demo? Check it out!   --   [Demo](http://maurizzzio.github.io/Three.js-City/T3/)
+Want to see the demo? Check it out!   --   [Demo](http://mauriciopoppe.github.io/Three.js-City/T3/)
 
 The project consists of two folders, all the common files are in the folder `boilerplate` and the application is in `T3`.
 
 ## Screenshots
-![1](http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/1.jpg)
-![2](http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/2.jpg)
-![3](http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/3.jpg)
-![4](http://maurizzzio.github.io/Three.js-City/T3/images/screenshots/4.jpg)
+![1](http://mauriciopoppe.github.io/Three.js-City/T3/images/screenshots/1.jpg)
+![2](http://mauriciopoppe.github.io/Three.js-City/T3/images/screenshots/2.jpg)
+![3](http://mauriciopoppe.github.io/Three.js-City/T3/images/screenshots/3.jpg)
+![4](http://mauriciopoppe.github.io/Three.js-City/T3/images/screenshots/4.jpg)
 
 ## Features
 - You can drive the car using the WASD keys (you can also turn on its engine using the panel on the right)
